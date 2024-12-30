@@ -1,0 +1,116 @@
+{
+  "data": [
+    {
+      "id": 1,
+      "cat_image": "product-1.png",
+      "categories": "Sub Category Name 1",
+      "category_detail": "Smart Phone",
+      "total_earnings": "$99129",
+      "total_products": 1947
+    },
+    {
+      "id": 2,
+      "cat_image": "product-2.png",
+      "categories": "Sub Category Name 2",
+      "category_detail": "Electronics",
+      "total_earnings": "$2512.50",
+      "total_products": 7283
+    },
+    {
+      "id": 3,
+      "cat_image": "product-3.png",
+      "categories": "Sub Category Name 3",
+      "category_detail": "Clocks",
+      "total_earnings": "$1612.34",
+      "total_products": 2954
+    },
+    {
+      "id": 4,
+      "cat_image": "product-4.png",
+      "categories": "Sub Category Name 4",
+      "category_detail": "Shoes",
+      "total_earnings": "$3612.98",
+      "total_products": 4940
+    },
+    {
+      "id": 5,
+      "cat_image": "product-5.png",
+      "categories": "Sub Category Name 5",
+      "category_detail": "Accessories",
+      "total_earnings": "$79129",
+      "total_products": 4665
+    },
+    {
+      "id": 6,
+      "cat_image": "product-6.png",
+      "categories": "Sub Category Name 6",
+      "category_detail": "Games",
+      "total_earnings": "$29129",
+      "total_products": 5764
+    },
+    {
+      "id": 7,
+      "cat_image": "product-10.png",
+      "categories": "Sub Category Name 7",
+      "category_detail": "Home Decor",
+      "total_earnings": "$19120.45",
+      "total_products": 9184
+    },
+    {
+      "id": 8,
+      "cat_image": "product-16.png",
+      "categories": "Sub Category Name 8",
+      "category_detail": "Travel",
+      "total_earnings": "$7912.99",
+      "total_products": 4186
+    },
+    {
+      "id": 9,
+      "cat_image": "product-21.png",
+      "categories": "Sub Category Name 9",
+      "category_detail": "Baby Products",
+      "total_earnings": "$7912.99",
+      "total_products": 4186
+    },
+    {
+      "id": 10,
+      "cat_image": "product-22.png",
+      "categories": "Sub Category Name 0",
+      "category_detail": "Jewellery",
+      "total_earnings": "$7912.99",
+      "total_products": 4186
+    },
+    {
+      "id": 11,
+      "cat_image": "product-23.png",
+      "categories": "Sub Category Name 1",
+      "category_detail": "Grocery",
+      "total_earnings": "$7912.99",
+      "total_products": 4186
+    },
+    {
+      "id": 12,
+      "cat_image": "product-24.png",
+      "categories": "Sub Category Name 2",
+      "category_detail": "Clothing",
+      "total_earnings": "$7912.99",
+      "total_products": 4186
+    },
+    {
+      "id": 13,
+      "cat_image": "product-25.png",
+      "categories": "Sub Category Name 3",
+      "category_detail": "Books",
+      "total_earnings": "$7912.99",
+      "total_products": 4186
+    },
+    {
+      "id": 14,
+      "cat_image": "product-26.png",
+      "categories": "Sub Category Name 4",
+      "category_detail": "Beauty & Personal Care",
+      "total_earnings": "$7912.99",
+      "total_products": 4186
+    }
+  ]
+}

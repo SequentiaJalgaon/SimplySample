@@ -1,0 +1,27 @@
+[03-Oct-2024 18:37:29 Asia/Kolkata] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'latitude' cannot be null in /home4/a1622dey/public_html/gp_test/dist/conf/signout.php:39
+Stack trace:
+#0 /home4/a1622dey/public_html/gp_test/dist/conf/signout.php(39): PDOStatement->execute(Array)
+#1 {main}
+  thrown in /home4/a1622dey/public_html/gp_test/dist/conf/signout.php on line 39
+[03-Oct-2024 18:37:36 Asia/Kolkata] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'latitude' cannot be null in /home4/a1622dey/public_html/gp_test/dist/conf/signout.php:39
+Stack trace:
+#0 /home4/a1622dey/public_html/gp_test/dist/conf/signout.php(39): PDOStatement->execute(Array)
+#1 {main}
+  thrown in /home4/a1622dey/public_html/gp_test/dist/conf/signout.php on line 39
+[04-Oct-2024 14:56:19 Asia/Kolkata] PHP Warning:  print_r() expects at least 1 parameter, 0 given in /home4/a1622dey/public_html/gp_test/dist/conf/signout.php on line 36
+[04-Oct-2024 15:04:02 Asia/Kolkata] PHP Warning:  print_r() expects at least 1 parameter, 0 given in /home4/a1622dey/public_html/gp_test/dist/conf/signout.php on line 36
+[04-Oct-2024 15:11:23 Asia/Kolkata] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'latitude' cannot be null in /home4/a1622dey/public_html/gp_test/dist/conf/signout.php:42
+Stack trace:
+#0 /home4/a1622dey/public_html/gp_test/dist/conf/signout.php(42): PDOStatement->execute(Array)
+#1 {main}
+  thrown in /home4/a1622dey/public_html/gp_test/dist/conf/signout.php on line 42
+[04-Oct-2024 16:26:22 Asia/Kolkata] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'latitude' cannot be null in /home4/a1622dey/public_html/gp_test/dist/conf/signout.php:43
+Stack trace:
+#0 /home4/a1622dey/public_html/gp_test/dist/conf/signout.php(43): PDOStatement->execute(Array)
+#1 {main}
+  thrown in /home4/a1622dey/public_html/gp_test/dist/conf/signout.php on line 43
+[04-Oct-2024 16:29:09 Asia/Kolkata] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'latitude' cannot be null in /home4/a1622dey/public_html/gp_test/dist/conf/signout.php:43
+Stack trace:
+#0 /home4/a1622dey/public_html/gp_test/dist/conf/signout.php(43): PDOStatement->execute(Array)
+#1 {main}
+  thrown in /home4/a1622dey/public_html/gp_test/dist/conf/signout.php on line 43
