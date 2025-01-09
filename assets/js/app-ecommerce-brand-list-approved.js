@@ -52,7 +52,7 @@ $(function () {
 
   // Customers List Datatable
   $.ajax({
-    url: brandsApi+'?status=pending',
+    url: brandsApi+'?status=approved',
     type: 'GET',
     dataType: 'json', // added data type
     success: function(data) {  
@@ -207,8 +207,7 @@ $(function () {
                   //   '</div>'
                   return (
                     '<div class="d-flex align-items-sm-left justify-content-sm-left">' +
-                    '<a class="btn btn-sm rounded-pill btn-label-success waves-effect" href="updateBrand?id='+full['id']+'&status=\"Approved\""><span class="tf-icons ri-check-double-line ri-16px me-2"></span>Approve</a>' +
-                    '<a class="btn btn-sm rounded-pill btn-label-danger waves-effect" href="updateBrand?id='+full['id']+'&status=\"Rejected\""><i class="ri-close-large-line ri-16px me-2"></i>Reject</a>' +
+                    '<a class="btn btn-sm rounded-pill btn-label-success waves-effect" href="onboard-brand.php"><span class="tf-icons ri-check-double-line ri-16px me-2"></span>OnBoard</a>' +
                     '&nbsp;&nbsp;'+
                     // '<button class="btn btn-sm rounded-pill btn-label-danger waves-effect" data-bs-toggle="dropdown"><i class="ri-close-large-line ri-16px me-2"></i>Reject</button>' +
                     '<div class="dropdown-menu dropdown-menu-end m-0">' +
@@ -384,13 +383,13 @@ $(function () {
               },
               {
                 // text: '<i class="ri-add-line ri-16px me-0 me-sm-1 align-baseline"></i><span class="d-none d-sm-inline-block">Add Brand</span>',
-                text: 'View Approved Brands',
+                text: 'View OnBoarded Brands',
                 className: 'add-new btn btn-primary waves-effect waves-light',
                 attr: {
                   // 'data-bs-toggle': 'offcanvas',
                   // 'data-bs-target': '#offcanvasEcommerceCategoryList'
                   'type' : 'button',
-                  'onclick' : "location.href='approved-brands'"
+                  'onclick' : "location.href='onboarded-brands'"
                 }
               }
             ],

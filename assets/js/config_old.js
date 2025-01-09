@@ -7,11 +7,9 @@
 
 'use strict';
 
-var actualPath = "http://localhost/SimplySample/";
-// var actualPath = "https://zecc.in/simplysample/";
-var categoryApi = actualPath + "api_category";
-var subcategoryApi = actualPath + "api_subcategory";
-var brandsApi = actualPath + "api_brands";
+
+var categoryApi = "http://localhost/simply_sample_materialize/api_category"
+var subcategoryApi = "http://localhost/simply_sample_materialize/api_subcategory"
 
 // JS global variables
 window.config = {

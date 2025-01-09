@@ -108,35 +108,11 @@
                         <div data-i18n="Sub Category List">Sub Category List</div>
                       </a>
                     </li>
-                  </ul>
-                </li>
-                <li class="menu-item">
-                  <a href="brands" class="menu-link menu-toggle">
-                  <i class="menu-icon tf-icons ri-home-smile-line"></i>
-                    <div data-i18n="Brands">Brands</div>
-                  </a>
-                  <ul class="menu-sub">
                     <li class="menu-item">
-                      <a href="primary-brands" class="menu-link">
-                        <div data-i18n="Pending List">Pending Brands</div>
+                      <a href="brands" class="menu-link">
+                        <div data-i18n="Brands List">Brands List</div>
                       </a>
                     </li>
-                    <li class="menu-item">
-                      <a href="approved-brands" class="menu-link">
-                        <div data-i18n="Approved List">Approved Brands</div>
-                      </a>
-                    </li>
-                    <li class="menu-item">
-                      <a href="onboarded-brands" class="menu-link">
-                        <div data-i18n="OnBoarded List">OnBoarded Brands</div>
-                      </a>
-                    </li>
-                    <li class="menu-item">
-                      <a href="rejected-brands" class="menu-link">
-                        <div data-i18n="Rejected List">Rejected Brands</div>
-                      </a>
-                    </li>
-                    
                   </ul>
                 </li>
                 <li class="menu-item">

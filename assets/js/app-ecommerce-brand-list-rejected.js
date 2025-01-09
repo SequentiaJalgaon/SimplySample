@@ -52,7 +52,7 @@ $(function () {
 
   // Customers List Datatable
   $.ajax({
-    url: brandsApi+'?status=pending',
+    url: brandsApi+'?status=rejected',
     type: 'GET',
     dataType: 'json', // added data type
     success: function(data) {  
@@ -69,7 +69,7 @@ $(function () {
               { data: 'email' },
               { data: 'contact' },
               { data: 'categories' },
-              { data: '' }
+              // { data: '' }
             ],
             columnDefs: [
               {
@@ -96,7 +96,7 @@ $(function () {
                   selectAllRender: '<input type="checkbox" class="form-check-input">'
                 }
               },
-              {
+              // {
                 // Categories and Category Detail
                 // targets: 2,
                 // responsivePriority: 2,
@@ -144,7 +144,7 @@ $(function () {
                 //     '</div>';
                 //   return $row_output;
                 // }
-              },
+              // },
               {
                 // Total products
                 targets: 2,
@@ -189,14 +189,14 @@ $(function () {
                   var $categories = full['categories'];
                   return "<div class='text-sm-start'>" + $categories + '</div>';
                 }
-              },
-              {
-                // Actions
-                targets: -1,
-                title: 'Actions',
-                searchable: false,
-                orderable: false,
-                render: function (data, type, full, meta) {
+              }
+              // {
+              //   // Actions
+              //   targets: -1,
+              //   title: 'Actions',
+              //   searchable: false,
+              //   orderable: false,
+                // render: function (data, type, full, meta) {
                   // '<div class="d-flex align-items-sm-center justify-content-sm-center">' +
                   //   '<button class="btn btn-sm btn-icon btn-text-secondary waves-effect waves-light rounded-pill"><i class="ri-edit-box-line ri-20px"></i></button>' +
                   //   '<button class="btn btn-sm btn-icon btn-text-secondary waves-effect waves-light rounded-pill dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ri-more-2-line ri-20px"></i></button>' +
@@ -205,20 +205,19 @@ $(function () {
                   //   '<a href="javascript:0;" class="dropdown-item">Suspend</a>' +
                   //   '</div>' +
                   //   '</div>'
-                  return (
-                    '<div class="d-flex align-items-sm-left justify-content-sm-left">' +
-                    '<a class="btn btn-sm rounded-pill btn-label-success waves-effect" href="updateBrand?id='+full['id']+'&status=\"Approved\""><span class="tf-icons ri-check-double-line ri-16px me-2"></span>Approve</a>' +
-                    '<a class="btn btn-sm rounded-pill btn-label-danger waves-effect" href="updateBrand?id='+full['id']+'&status=\"Rejected\""><i class="ri-close-large-line ri-16px me-2"></i>Reject</a>' +
-                    '&nbsp;&nbsp;'+
-                    // '<button class="btn btn-sm rounded-pill btn-label-danger waves-effect" data-bs-toggle="dropdown"><i class="ri-close-large-line ri-16px me-2"></i>Reject</button>' +
-                    '<div class="dropdown-menu dropdown-menu-end m-0">' +
-                    '<a href="javascript:0;" class="dropdown-item">View</a>' +
-                    '<a href="javascript:0;" class="dropdown-item">Suspend</a>' +
-                    '</div>' +
-                    '</div>'
-                  );
-                }
-              }
+                  // return (
+                  //   '<div class="d-flex align-items-sm-left justify-content-sm-left">' +
+                  //   '<a class="btn btn-sm rounded-pill btn-label-success waves-effect" href="onboard-brand.php"><span class="tf-icons ri-check-double-line ri-16px me-2"></span>OnBoard</a>' +
+                  //   '&nbsp;&nbsp;'+
+                  //   // '<button class="btn btn-sm rounded-pill btn-label-danger waves-effect" data-bs-toggle="dropdown"><i class="ri-close-large-line ri-16px me-2"></i>Reject</button>' +
+                  //   '<div class="dropdown-menu dropdown-menu-end m-0">' +
+                  //   '<a href="javascript:0;" class="dropdown-item">View</a>' +
+                  //   '<a href="javascript:0;" class="dropdown-item">Suspend</a>' +
+                  //   '</div>' +
+                  //   '</div>'
+                  // );
+                // }
+              // }
             ],
             order: [2, 'desc'], //set any columns order asc/desc
             dom:
@@ -382,17 +381,15 @@ $(function () {
                   }
                 ]
               },
-              {
-                // text: '<i class="ri-add-line ri-16px me-0 me-sm-1 align-baseline"></i><span class="d-none d-sm-inline-block">Add Brand</span>',
-                text: 'View Approved Brands',
-                className: 'add-new btn btn-primary waves-effect waves-light',
-                attr: {
-                  // 'data-bs-toggle': 'offcanvas',
-                  // 'data-bs-target': '#offcanvasEcommerceCategoryList'
-                  'type' : 'button',
-                  'onclick' : "location.href='approved-brands'"
-                }
-              }
+              // {
+              //   // text: '<i class="ri-add-line ri-16px me-0 me-sm-1 align-baseline"></i><span class="d-none d-sm-inline-block">Add Brand</span>',
+              //   // text: 'View OnBoarded Brands',
+              //   // className: 'add-new btn btn-primary waves-effect waves-light',
+              //   // attr: {
+              //   //   'data-bs-toggle': 'offcanvas',
+              //   //   'data-bs-target': '#offcanvasEcommerceCategoryList'
+              //   // }
+              // }
             ],
             // For responsive popup
             responsive: {

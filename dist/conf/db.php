@@ -2,11 +2,11 @@
 date_default_timezone_set("Asia/Kolkata");
 class Database {
 
-  //  private static $dbName = 'a1622dey_gp_test' ; 
-  //  private static $dbHost = 'localhost' ;
-  //  private static $dbUsername = 'a1622dey_gp_test';
-  //  private static $dbUserPassword = '=KV)(EaJ9ro^';
-  //  private static $cont  = null;
+  // private static $dbName = 'zecciunm_simplysample' ; 
+  // private static $dbHost = 'localhost' ;
+  // private static $dbUsername = 'zecciunm_simplysample';
+  // private static $dbUserPassword = '+qiLkyLb,{R*';
+  // private static $cont  = null;
    
   //  ------------------------------------------------------------
   
