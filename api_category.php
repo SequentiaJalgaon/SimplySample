@@ -23,6 +23,7 @@ if($REQUEST_METHOD == "GET") {
         $categoryElement = array (
             "CategoryID" => $row["category_id"],
             "CategoryName" => $row["category_name"],
+            "CategoryImage" => $row["category_image"],
             "Active" => $row["is_active"],
             "AddedOn" => $row["added_on"]
         );
@@ -50,11 +51,16 @@ if($REQUEST_METHOD == "GET") {
 else if($REQUEST_METHOD == "POST") {
     
     $categoryTitle = "";
-
+    $categoryImage = "";
+    
     if(isset($_POST['categoryTitle'])) {
-        $categoryTitle = $_POST['categoryTitle'];
+        $categoryTitle = trim($_POST['categoryTitle']);
     }
 
+    if(isset($_POST['categoryImage'])) {
+        $categoryImage = trim($_POST['categoryImage']);
+    }
+    
     include("dist/conf/db.php");
     $pdo = Database::connect();
     
@@ -70,13 +76,13 @@ else if($REQUEST_METHOD == "POST") {
             $added_on = date('Y-m-d H-i-s');
             
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $sql = "INSERT INTO `category`(`category_name`,`added_on`,`is_active`) VALUES (?,?,?)";
+            $sql = "INSERT INTO `category`(`category_name`,`category_image`,`added_on`,`is_active`) VALUES (?,?,?,?)";
             $q = $pdo->prepare($sql);
-            $isAdded = $q->execute(array($categoryTitle, $added_on, 1));
+            $isAdded = $q->execute(array($categoryTitle, $categoryImage, $added_on, 1));
             
             if($isAdded == true){
                 $result= ([
-                    "message" => "Caetegory Added successfully.",
+                    "message" => "Category Added successfully.",
                     "categoryTitle" => $categoryTitle,
                     "status" => "success",
                     'statusCode' => 200
@@ -85,7 +91,7 @@ else if($REQUEST_METHOD == "POST") {
             
         } else {
             $result= ([
-                "message" => "Caetegory Alaready Present.",
+                "message" => "Category Already Present.",
                 "categoryTitle" => $categoryTitle,
                 "status" => "fail",
                 'statusCode' => 200
@@ -93,14 +99,234 @@ else if($REQUEST_METHOD == "POST") {
         }
     } else {
         $result= ([
-            "message" => "Caetegory Title Cannot be Empty.",
+            "message" => "Category Title Cannot be Empty.",
             "categoryTitle" => $categoryTitle,
             "status" => "fail",
             'statusCode' => 200
         ]);
     }
 
-} else {
+}
+
+else if($REQUEST_METHOD == "PUT") {
+    
+    $categoryTitle = "";
+    $categoryId = 0;
+    $isActive = 0;
+    $category_image = "";
+
+    parse_str(file_get_contents('php://input'), $_PUT);
+    $_PUT = (array) json_decode(file_get_contents('php://input'));
+    
+    if(isset($_PUT['categoryTitle'])) {
+        $categoryTitle = trim($_PUT['categoryTitle']);
+    }
+
+    if(isset($_PUT['categoryId'])) {
+        $categoryId = trim($_PUT['categoryId']);
+    }
+
+    if(isset($_PUT['isActive'])) {
+        $isActive = trim($_PUT['isActive']);
+    }
+
+    if(isset($_PUT['categoryImage'])) {
+        $category_image = trim($_PUT['categoryImage']);
+    }
+    
+    include("dist/conf/db.php");
+    $pdo = Database::connect();
+    
+    if($categoryTitle != "" && $categoryId != 0) {
+
+        $sql = "SELECT * FROM category WHERE category_id = ?";
+        $q = $pdo->prepare($sql);
+        $q->execute(array($categoryId));
+        $isPresent = $q->fetch(PDO::FETCH_ASSOC);
+        
+        if($isPresent != "") {   
+
+            $sql = "SELECT * FROM category WHERE category_name = ?";
+            $q = $pdo->prepare($sql);
+            $q->execute(array($categoryTitle));
+            $isDuplicate = $q->fetch(PDO::FETCH_ASSOC);
+            
+            if(isset($isDuplicate["category_id"]) && ($isDuplicate["category_id"] == $isPresent["category_id"]))
+            {
+                // if( $isPresent['is_active'] != $isActive)  $isActive = $isPresent['is_active'];
+                if( $category_image == "")  $category_image = $isPresent['category_image'];
+
+                $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                $sql = "UPDATE `category` SET `is_active` = ?, category_image = ? WHERE category_id = ?";
+                $q = $pdo->prepare($sql);
+                $isAdded = $q->execute(array( $isActive, $category_image, $categoryId));
+                
+                if($isAdded == true){
+                    $result= ([
+                        "message" => "Category Information Updated successfully.",
+                        "categoryTitle" => $categoryTitle,
+                        "status" => "success",
+                        'statusCode' => 200
+                    ]);
+                }
+            } else if(!isset($isDuplicate["category_id"])) {
+                if( $category_image == "")  $category_image = $isPresent['category_image'];
+
+                $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                $sql = "UPDATE `category` SET `category_name` = ?, `is_active` = ?, category_image = ? WHERE category_id = ?";
+                $q = $pdo->prepare($sql);
+                $isAdded = $q->execute(array($categoryTitle , $isActive, $category_image, $categoryId));
+                
+                if($isAdded == true){
+                    $result= ([
+                        "message" => "Category Information Updated successfully.",
+                        "categoryTitle" => $categoryTitle,
+                        "status" => "success",
+                        'statusCode' => 200
+                    ]);
+                }
+            
+            // } else if( $isPresent['is_active'] != $isActive) {
+                
+            //     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            //     $sql = "UPDATE `category` SET `is_active` =? WHERE category_id = ?";
+            //     $q = $pdo->prepare($sql);
+            //     $isStatusUpdate = $q->execute(array($isActive, $categoryId));
+                
+            //     if($isStatusUpdate == true){
+            //         $result= ([
+            //             "message" => "Category Status Updated successfully.",
+            //             "categoryTitle" => $categoryTitle,
+            //             "status" => "success",
+            //             'statusCode' => 200
+            //         ]);
+            //     } 
+
+            // } else if( $isPresent['category_image'] != $category_image) {
+                
+            //     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            //     $sql = "UPDATE `category` SET `category_image` =? WHERE category_id = ?";
+            //     $q = $pdo->prepare($sql);
+            //     $isStatusUpdate = $q->execute(array($category_image, $categoryId));
+                
+            //     if($isStatusUpdate == true){
+            //         $result= ([
+            //             "message" => "Category Image Updated successfully.",
+            //             "categoryTitle" => $categoryTitle,
+            //             "status" => "success",
+            //             'statusCode' => 200
+            //         ]);
+            //     }
+
+            } 
+            else {
+                $result= ([
+                    "message" => "Category Title Already Exist.",
+                    "categoryTitle" => $categoryTitle,
+                    "status" => "fail",
+                    'statusCode' => 200
+                ]);
+            }
+        } else {
+            $result= ([
+                "message" => "Category Not Found.",
+                "categoryTitle" => $categoryTitle,
+                "status" => "fail",
+                'statusCode' => 200
+            ]);
+        }
+    } else {
+        $result= ([
+            "message" => "Insufficient Information.",
+            "categoryTitle" => $categoryTitle,
+            "status" => "fail",
+            'statusCode' => 200
+        ]);
+    }
+
+}
+
+else if($REQUEST_METHOD == "DELETE") {
+
+    parse_str(file_get_contents('php://input'), $_PUT);
+    $_PUT = (array) json_decode(file_get_contents('php://input'));
+
+    if(isset($_PUT['categoryId'])) {
+        $categoryId = $_PUT['categoryId'];
+    }
+
+    include("dist/conf/db.php");
+    $pdo = Database::connect();
+    
+    if($categoryId != "") {
+
+        $sql = "SELECT * FROM category WHERE category_id = ?";
+        $q = $pdo->prepare($sql);
+        $q->execute(array($categoryId));
+        $isPresent = $q->fetch(PDO::FETCH_ASSOC);
+        
+        if($isPresent != "") {           
+            $categoryTitle = $isPresent['category_name'];
+            $sql = "        SELECT c.category_id
+                    FROM    category c
+                    JOIN    product_mapping pm ON c.category_id = pm.category_id
+                    JOIN    brand_vs_category bc ON c.category_id = bc.category_id
+                    JOIN    category_vs_subcategory cs ON c.category_id = cs.category_id
+                    JOIN    user_vs_category uc ON c.category_id = uc.category_id
+                    WHERE   
+                            c.category_id = ? AND
+                            pm.is_active = '1' AND
+                            bc.is_active = '1' AND
+                            cs.is_active = '1' AND
+                            uc.is_active = '1'
+            ";
+            $q = $pdo->prepare($sql);
+            $q->execute(array($categoryId));
+            $isMapping = $q->fetch(PDO::FETCH_ASSOC);
+            if($isMapping == "") {
+                
+
+                $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                $sql = "DELETE FROM `category` WHERE `category_id` = ?";
+                $q = $pdo->prepare($sql);
+                $isDeleted = $q->execute([$categoryId]);
+                
+                if($isDeleted == true){
+                    $result= ([
+                        "message" => "Category Deleted successfully.",
+                        "categoryTitle" => $categoryTitle,
+                        "status" => "success",
+                        'statusCode' => 200
+                    ]);
+                }
+            } else {
+                $result= ([
+                    "message" => "Category Not Deleted. It has references.",
+                    "categoryTitle" => $categoryTitle,
+                    "status" => "fail",
+                    'statusCode' => 200
+                ]);
+            }
+        } else {
+            $result= ([
+                "message" => "Category Not Present.",
+                "categoryTitle" => "",
+                "status" => "fail",
+                'statusCode' => 200
+            ]);
+        }
+    } else {
+        $result= ([
+            "message" => "Category Cannot be Empty.",
+            "categoryTitle" => "",
+            "status" => "fail",
+            'statusCode' => 200
+        ]);
+    }
+
+}
+
+else {
     $result = array(
         'message' => 'Requested Method is not supported', 
         'status' => false, 
@@ -108,123 +334,4 @@ else if($REQUEST_METHOD == "POST") {
 }
 
 echo json_encode($result);
-// echo '
-//     {
-//         "data": [
-//         {
-//             "id": 1,
-//             "cat_image": "product-1.png",
-//             "categories": "Smart Phone",
-//             "category_detail": "Choose from wide range of smartphones from popular brands",
-//             "total_earnings": "$99129",
-//             "total_products": 1947
-//         },
-//         {
-//             "id": 2,
-//             "cat_image": "product-2.png",
-//             "categories": "Electronics",
-//             "category_detail": "Choose from wide range of electronics from popular brands",
-//             "total_earnings": "$2512.50",
-//             "total_products": 7283
-//         },
-//         {
-//             "id": 3,
-//             "cat_image": "product-3.png",
-//             "categories": "Clocks",
-//             "category_detail": "Choose from wide range of clocks from popular brands",
-//             "total_earnings": "$1612.34",
-//             "total_products": 2954
-//         },
-//         {
-//             "id": 4,
-//             "cat_image": "product-4.png",
-//             "categories": "Shoes",
-//             "category_detail": "Explore the latest shoes from Top brands",
-//             "total_earnings": "$3612.98",
-//             "total_products": 4940
-//         },
-//         {
-//             "id": 5,
-//             "cat_image": "product-5.png",
-//             "categories": "Accessories",
-//             "category_detail": "Explore best selling accessories from Top brands",
-//             "total_earnings": "$79129",
-//             "total_products": 4665
-//         },
-//         {
-//             "id": 6,
-//             "cat_image": "product-6.png",
-//             "categories": "Games",
-//             "category_detail": "Dive into world of Virtual Reality with latest games",
-//             "total_earnings": "$29129",
-//             "total_products": 5764
-//         },
-//         {
-//             "id": 7,
-//             "cat_image": "product-10.png",
-//             "categories": "Home Decor",
-//             "category_detail": "Choose from wide range of home decor from popular brands",
-//             "total_earnings": "$19120.45",
-//             "total_products": 9184
-//         },
-//         {
-//             "id": 8,
-//             "cat_image": "product-16.png",
-//             "categories": "Travel",
-//             "category_detail": "Choose from wide range of travel accessories from popular brands",
-//             "total_earnings": "$7912.99",
-//             "total_products": 4186
-//         },
-//         {
-//             "id": 9,
-//             "cat_image": "product-21.png",
-//             "categories": "Baby Products",
-//             "category_detail": "Choose from wide range of Baby products from popular brands",
-//             "total_earnings": "$7912.99",
-//             "total_products": 4186
-//         },
-//         {
-//             "id": 10,
-//             "cat_image": "product-22.png",
-//             "categories": "Jewellery",
-//             "category_detail": "Choose from wide range of Jewellery from popular brands",
-//             "total_earnings": "$7912.99",
-//             "total_products": 4186
-//         },
-//         {
-//             "id": 11,
-//             "cat_image": "product-23.png",
-//             "categories": "Grocery",
-//             "category_detail": "Get fresh groceries delivered at your doorstep",
-//             "total_earnings": "$7912.99",
-//             "total_products": 4186
-//         },
-//         {
-//             "id": 12,
-//             "cat_image": "product-24.png",
-//             "categories": "Clothing",
-//             "category_detail": "Choose from wide range of clothing from popular brands",
-//             "total_earnings": "$7912.99",
-//             "total_products": 4186
-//         },
-//         {
-//             "id": 13,
-//             "cat_image": "product-25.png",
-//             "categories": "Books",
-//             "category_detail": "Dive into world of books from Top authors",
-//             "total_earnings": "$7912.99",
-//             "total_products": 4186
-//         },
-//         {
-//             "id": 14,
-//             "cat_image": "product-26.png",
-//             "categories": "Beauty & Personal Care",
-//             "category_detail": "Choose from wide range of beauty & personal care from popular brands",
-//             "total_earnings": "$7912.99",
-//             "total_products": 4186
-//         }
-//         ]
-//     }
-// ';  
-
 exit();

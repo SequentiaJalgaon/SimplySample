@@ -21,9 +21,14 @@
     <script src="assets/vendor/libs/@form-validation/auto-focus.js"></script>
     <script src="assets/vendor/libs/quill/katex.js"></script>
     <script src="assets/vendor/libs/quill/quill.js"></script>
-
-    <!-- Main JS -->
+    <script src="assets/vendor/libs/tagify/tagify.js"></script>
+    <script src="assets/vendor/libs/dropzone/dropzone.js"></script>
+    <script src="assets/vendor/libs/flatpickr/flatpickr.js"></script>
+    
+    <script src="assets/vendor/libs/jquery-repeater/jquery-repeater.js"></script>
+    <script src="assets/js/dashboards-analytics.js"></script>    
     <script src="assets/js/main.js"></script>
-
-    <!-- Page JS -->
-    <script src="assets/js/dashboards-analytics.js"></script>
+    <script src="assets/js/forms-file-upload.js"></script>
+    <script src="assets/vendor/libs/bootstrap-select/bootstrap-select.js"></script>
+    <script src="assets/vendor/libs/bloodhound/bloodhound.js"></script>
+    <script src="assets/js/forms-selects.js"></script>

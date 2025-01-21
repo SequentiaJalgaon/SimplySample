@@ -500,7 +500,7 @@ function editSubCategory(sub_categoryName, categoryNameA, subcategoryid_edit, is
       
       getCategories(categoryNameA);
       
-      // document.getElementById("ecommerce-category-parent-category").value = sub_cat_id;
+      // document.getElementById("ecommerce-category-parent-category").value = sub_category_id;
       document.getElementById("subcategoryid_edit").value = subcategoryid_edit;
       document.getElementById("ecommerce-category-title").value = sub_categoryName;
       document.getElementById("isActiveSubCat").checked = false;

@@ -284,7 +284,7 @@ else if($REQUEST_METHOD == "POST") {
                 $category_id = $categoryArray['category_id'];
                 $sub_category_id = subCategoryArray['sub_category_id'];
 
-                $sql = "SELECT * FROM category_vs_subcategory WHERE cat_id = ? and sub_cat_id = ?";
+                $sql = "SELECT * FROM category_vs_subcategory WHERE category_id = ? and sub_category_id = ?";
                 $q = $pdo->prepare($sql);
                 $q->execute(array($category_id, $sub_category_id));
                 $category_vs_subcategory = $q->fetch(PDO::FETCH_ASSOC);

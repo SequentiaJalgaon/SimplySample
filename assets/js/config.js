@@ -7,11 +7,17 @@
 
 'use strict';
 
+
 var actualPath = "http://localhost/SimplySample/";
 // var actualPath = "https://zecc.in/simplysample/";
+
+var productImageUploadPath = actualPath + "/uploads/productIamges/";
+var ImgaeUploadAPI = actualPath + "api_uploadProductImage";
+
 var categoryApi = actualPath + "api_category";
 var subcategoryApi = actualPath + "api_subcategory";
 var brandsApi = actualPath + "api_brands";
+var productsApi = actualPath + "api_product";
 
 // JS global variables
 window.config = {

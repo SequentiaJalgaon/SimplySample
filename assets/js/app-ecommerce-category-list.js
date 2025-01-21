@@ -103,8 +103,41 @@ $(function () {
                 targets: 2,
                 responsivePriority: 2,
                 render: function (data, type, full, meta) {
-                  var $CategoryName = full['CategoryName'];
-                  return '<div class="text-sm-start">' + $CategoryName + '</div>';
+                  var $CategoryName = full['CategoryName'],
+                  $id =     full['CategoryID'],
+                  $image = full['CategoryImage'];
+                  if ($image) {
+                      var $output =
+                        '<img src="' +
+                        $image +
+                        '" alt="Category-' +
+                        $id +
+                        '" class="rounded-2">';
+                  } else {
+                    var stateNum = Math.floor(Math.random() * 6);
+                    var states = ['success', 'danger', 'warning', 'info', 'dark', 'primary', 'secondary'];
+                    var $state = states[stateNum],
+                      $name = full['CategoryName'],
+                      $initials = $name.match(/\b\w/g) || [];
+                    $initials = (($initials.shift() || '') + ($initials.pop() || '')).toUpperCase();
+                    $output = '<span class="avatar-initial rounded-2 bg-label-' + $state + '">' + $initials + '</span>';
+                  }
+                        var $row_output =
+                            '<div class="d-flex justify-content-start align-items-center product-name">' +
+                            '<div class="avatar-wrapper me-3">' +
+                            '<div class="avatar rounded-3 bg-label-secondary">' +
+                            $output +
+                            '</div>' +
+                            '</div>' +
+                            '<div class="d-flex flex-column">' +
+                            '<span class="text-nowrap text-heading fw-medium">' +
+                            $CategoryName +
+                            '</span>' +
+                            '</div>' +
+                            '</div>';
+                          return $row_output;
+                          
+                  // return '<div class="text-sm-start">' + $CategoryName + '</div>';
                 }
               },
               {
@@ -135,16 +168,22 @@ $(function () {
                 searchable: false,
                 orderable: false,
                 render: function (data, type, full, meta) {
+                  var $categoryID =  full["CategoryID"];
+                  var $categoryName =  full["CategoryName"];
+                  var $is_active =  full["Active"];
+                  var $base64image =  full["CategoryImage"];
                   return (
                     '<div class="d-flex align-items-sm-center justify-content-sm-center">' +
-                    '<button class="btn btn-sm btn-icon btn-text-secondary waves-effect waves-light rounded-pill"><i class="ri-edit-box-line ri-20px"></i></button>' +
+                    
+                    '<button class="btn btn-sm btn-icon btn-text-secondary waves-effect waves-light rounded-pill" type="button" data-bs-toggle="offcanvas" data-bs-target ="#offcanvasEcommerceCategoryListEdit" onclick="editCategory(\''+$categoryName+'\',\''+$categoryID+'\','+$is_active+',\''+$base64image+'\')"><i class="ri-edit-box-line ri-20px"></i></button>' +
+                    
                     '<button class="btn btn-sm btn-icon btn-text-secondary waves-effect waves-light rounded-pill dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ri-more-2-line ri-20px"></i></button>' +
                     '<div class="dropdown-menu dropdown-menu-end m-0">' +
-                    '<a href="javascript:0;" class="dropdown-item">View</a>' +
-                    '<a href="javascript:0;" class="dropdown-item">Suspend</a>' +
+                    '<a href="javascript:SubmitForm(\'delete\',\''+$categoryID+'\');" class="dropdown-item">Delete</a>' +
                     '</div>' +
                     '</div>'
                   );
+                  // '<a href="javascript:0;" class="dropdown-item">View</a>' +
                 }
               }
             ],
@@ -315,7 +354,7 @@ $(function () {
                 className: 'add-new btn btn-primary waves-effect waves-light',
                 attr: {
                   'data-bs-toggle': 'offcanvas',
-                  'data-bs-target': '#offcanvasEcommerceCategoryList'
+                  'data-bs-target': '#offcanvasEcommerceCategoryListAdd'
                 }
               }
             ],
@@ -406,3 +445,388 @@ $(function () {
     }
   });
 })();
+
+function editCategory(categoryName, categoryid_edit, isActive, base64image) {
+        
+  var category_id = document.getElementById("categoryid_edit");
+  var category_title = document.getElementById("ecommerce-category-title-edit");
+  var isActiveElement = document.getElementById("isActiveCatEdit");
+  var imagePreview = document.getElementById("imagePreviewEdit");
+
+  category_id.value=0;
+  category_title.value="";
+  isActiveElement.checked = false;
+
+  if(base64image != "") {
+    imagePreview.src = base64image;
+    imagePreview.classList.remove('d-none');
+  } else {
+    imagePreview.classList.add('d-none');
+  }
+
+  category_id.value = categoryid_edit;
+  category_title.value = categoryName;
+  if(isActive == 1) isActiveElement.checked = true;
+
+  return 0;
+}
+
+function SubmitForm(action, submittedid = 0) {
+          
+            
+  let formData = new FormData();
+
+  if(action == "add")
+  {
+    event.preventDefault(); // Prevent default form submission
+    // let fileInput = document.getElementById("fileInput");
+    let categoryTitle = document.getElementById("ecommerce-category-title").value;
+    let imageUpload = document.getElementById('imagePreview');
+    let categoryImage = "";
+    if(imageUpload != "" && imageUpload != "undefined" && imageUpload != null) {
+      categoryImage = imageUpload.src;
+    }
+        
+    if(categoryTitle != "") {
+        formData.append("categoryTitle", categoryTitle);
+        formData.append("categoryImage", categoryImage);
+        fetch("api_category.php", {
+              method: "POST",
+              body: formData,
+          })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+          if(data.status == "success"){
+            
+            document.querySelector('#messageText').innerHTML = data.message;
+            document.querySelector('#entityTitle').innerHTML = data.categoryTitle;
+            
+            const toastAnimationExample = document.querySelector('.toast-ex');
+            document.querySelector('#offcanvasEcommerceCategoryList').classList.remove("show");
+            document.querySelector('body').setAttribute('style', "");
+            document.querySelector('.offcanvas-backdrop').classList.remove("show");
+            selectedType = "bg-success";
+            selectedAnimation = "swing";
+
+            toastAnimationExample.querySelectorAll('i[class^="ri-"]').forEach(function (element) {
+              element.classList.add(selectedType);
+            });
+            toastAnimationExample.classList.remove(selectedAnimation, "bg-danger");
+            toastAnimationExample.classList.add(selectedAnimation, "bg-success");
+            toastAnimation = new bootstrap.Toast(toastAnimationExample);
+            toastAnimation.show();
+          }
+          if(data.status == "fail"){
+            
+            document.querySelector('#messageText').innerHTML = data.message;
+            document.querySelector('#entityTitle').innerHTML = data.categoryTitle;
+            
+            const toastAnimationExample = document.querySelector('.toast-ex');
+            selectedType = "bg-danger";
+            selectedAnimation = "swing";
+
+            toastAnimationExample.querySelectorAll('i[class^="ri-"]').forEach(function (element) {
+              element.classList.add(selectedType);
+            });
+            toastAnimationExample.classList.remove(selectedAnimation, "bg-success");
+            toastAnimationExample.classList.add(selectedAnimation, "bg-danger");
+            toastAnimation = new bootstrap.Toast(toastAnimationExample);
+            toastAnimation.show();
+          } 
+        })
+        .catch(error => {
+            console.error("Error occurred while adding category:", error);
+            alert("Error occurred while adding category.");
+        });
+    } else {
+        alert("Please enter a category title.");
+    }
+  }
+
+  if(action == "update")
+  {
+    event.preventDefault(); // Prevent default form submission
+    let categoryTitle = document.getElementById("ecommerce-category-title-edit").value;
+    let categoryId = document.getElementById("categoryid_edit").value;
+    let isActive = document.getElementById("isActiveCatEdit").checked;
+    isActive == true ? isActive = 1 : isActive = 0;
+    let imageUpload = document.getElementById('imagePreviewEdit');
+    let categoryImage = "";
+    if(imageUpload != "" && imageUpload != "undefined" && imageUpload != null) {
+      categoryImage = imageUpload.src;
+    }
+
+    if(categoryTitle != "") {
+        // formData.append("categoryTitle", categoryTitle);
+        // formData.append("categoryId", categoryId);
+        // formData.append("isActive", isActive);
+        // console.log(formData);
+        
+        let jsonObj = JSON.stringify(
+          {
+            "categoryTitle": categoryTitle,
+            "categoryId": categoryId,
+            "isActive": isActive,
+            "categoryImage":categoryImage
+          }
+        )
+        fetch("api_category.php", {
+              method: "PUT",
+              body:  jsonObj ,
+          })
+        .then(response => response.json())
+        .then(data => {
+          
+          let selectedType = "";
+          let selectedAnimation = "";
+          
+          if(data.status == "success"){
+            
+            document.querySelector('#messageText').innerHTML = data.message;
+            document.querySelector('#entityTitle').innerHTML = data.categoryTitle;
+            
+            const toastAnimationExample = document.querySelector('.toast-ex');
+            document.querySelector('#offcanvasEcommerceCategoryListEdit').classList.remove("show");
+            document.querySelector('body').setAttribute('style', "");
+            document.querySelector('.offcanvas-backdrop').classList.remove("show");
+            selectedType = "bg-success";
+            selectedAnimation = "swing";
+
+            toastAnimationExample.querySelectorAll('i[class^="ri-"]').forEach(function (element) {
+              element.classList.add(selectedType);
+            });
+            toastAnimationExample.classList.remove(selectedAnimation, "bg-danger");
+            toastAnimationExample.classList.add(selectedAnimation, "bg-success");
+            let toastAnimation = new bootstrap.Toast(toastAnimationExample);
+            toastAnimation.show();
+          }
+          if(data.status == "fail"){
+            
+            document.querySelector('#messageText').innerHTML = data.message;
+            document.querySelector('#entityTitle').innerHTML = data.categoryTitle;
+            
+            const toastAnimationExample = document.querySelector('.toast-ex');
+            selectedType = "bg-danger";
+            selectedAnimation = "swing";
+
+            toastAnimationExample.querySelectorAll('i[class^="ri-"]').forEach(function (element) {
+              element.classList.add(selectedType);
+            });
+            toastAnimationExample.classList.remove(selectedAnimation, "bg-success");
+            toastAnimationExample.classList.add(selectedAnimation, "bg-danger");
+            let toastAnimation = new bootstrap.Toast(toastAnimationExample);
+            toastAnimation.show();
+          } 
+        })
+        .catch(error => {
+            console.error("Error occurred while updating category:", error);
+            alert("Error occurred while updating category.");
+        });
+    } else {
+        alert("Please enter a correct information.");
+    }
+  }
+
+  if(action == "delete" && submittedid != 0)
+  {
+    console.log("Inside Delete");
+    let categoryId = submittedid;
+    if(categoryId != "") {
+        // formData.append("categoryId", categoryId);
+        let jsonObj = JSON.stringify(
+          {
+            "categoryId": categoryId
+          }
+        )
+        fetch("api_category.php", {
+              method: "DELETE",
+              body: jsonObj,
+          })
+        .then(response => response.json())
+        .then(data => {
+          
+          let selectedType = "";
+          let selectedAnimation = "";
+
+          if(data.status == "success"){
+            
+            document.querySelector('#messageText').innerHTML = data.message;
+            document.querySelector('#entityTitle').innerHTML = data.categoryTitle;
+            
+            const toastAnimationExample = document.querySelector('.toast-ex');
+            document.querySelector('#offcanvasEcommerceCategoryList').classList.remove("show");
+            document.querySelector('body').setAttribute('style', "");
+            document.querySelector('.offcanvas-backdrop').classList.remove("show");
+            selectedType = "bg-success";
+            selectedAnimation = "swing";
+
+            toastAnimationExample.querySelectorAll('i[class^="ri-"]').forEach(function (element) {
+              element.classList.add(selectedType);
+            });
+            toastAnimationExample.classList.remove(selectedAnimation, "bg-danger");
+            toastAnimationExample.classList.add(selectedAnimation, "bg-success");
+            let toastAnimation = new bootstrap.Toast(toastAnimationExample);
+            toastAnimation.show();
+          }
+          if(data.status == "fail"){
+            
+            document.querySelector('#messageText').innerHTML = data.message;
+            document.querySelector('#entityTitle').innerHTML = data.categoryTitle;
+            
+            const toastAnimationExample = document.querySelector('.toast-ex');
+            selectedType = "bg-danger";
+            selectedAnimation = "swing";
+
+            toastAnimationExample.querySelectorAll('i[class^="ri-"]').forEach(function (element) {
+              element.classList.add(selectedType);
+            });
+            toastAnimationExample.classList.remove(selectedAnimation, "bg-success");
+            toastAnimationExample.classList.add(selectedAnimation, "bg-danger");
+            toastAnimation = new bootstrap.Toast(toastAnimationExample);
+            toastAnimation.show();
+          } 
+        });
+        // .catch(error => {
+        //     console.error("Error occurred while updating category:", error);
+        //     alert("Error occurred while updating category.");
+        // });
+    } else {
+        alert("Please enter a correct information.");
+    }
+  }
+  
+  // if (fileInput.files.length > 0) {
+  //     formData.append("file", fileInput.files[0]);
+
+  //     fetch("upload.php", {
+  //         method: "POST",
+  //         body: formData,
+  //     })
+  //     .then(response => response.json())
+  //     .then(data => {
+  //         console.log("File uploaded successfully:", data);
+  //         alert("File uploaded successfully!");
+  //     })
+  //     .catch(error => {
+  //         console.error("Error uploading file:", error);
+  //         alert("Error uploading file.");
+  //     });
+  // } else {
+  //     alert("Please select a file to upload.");
+  // }
+// });
+}
+
+function checkImage(idName = "") {
+                                  
+  const input = document.getElementById('categoryIcon'+idName);
+  const file = input.files[0];
+  const preview = document.getElementById('imagePreview'+idName);
+  const statusMessage = document.getElementById('statusMessage'+idName);
+
+  if (file) {
+      // Create a preview of the image
+      const reader = new FileReader();
+      reader.onload = function (e) {
+          preview.src = e.target.result;
+          preview.classList.remove("d-none");
+          preview.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+
+      // Prepare the form data to send to the server
+      // const formData = new FormData();
+      // formData.append('image', file);
+
+      // // Send the image to the server using Fetch API
+      // fetch('upload.php', {
+      //     method: 'POST',
+      //     body: formData
+      // })
+      // .then(response => response.json())
+      // .then(data => {
+      //     if (data.success) {
+      //         statusMessage.textContent = "Image uploaded successfully!";
+      //     } else {
+      //         statusMessage.textContent = "Image upload failed.";
+      //     }
+      // })
+      // .catch(error => {
+      //     console.error('Error:', error);
+      //     statusMessage.textContent = "Error uploading image.";
+      // });
+  } else {
+    preview.classList.add("d-none");
+  }
+}
+
+function updateSequence() {
+    var sequenceNumber = 1;
+    var newSequence = [];
+    var elements = document.querySelectorAll('li.list-group-item');
+    elements.forEach((element, index) => {
+        let categoryId = element.dataset.id;
+        if(categoryId != 0 && categoryId != undefined && categoryId != null)
+        {
+                // let a = [{"CategoryId": categoryId}];
+                // let b = [{"SequenceId": index+1}];
+                // let c = [{"CategoryId": categoryId},{"SequenceId": index+1}];
+                newSequence.push({"CategoryId": categoryId , "SequenceId": index+1});        
+        }
+    });
+    
+    console.log(JSON.stringify(newSequence));
+    
+
+    fetch("api_categoryArrange.php", {
+        method: "POST",
+        body: JSON.stringify(newSequence),
+    })
+    .then(response => response.json())
+    .then(data => {
+    console.log(data);
+    if(data.status == "success"){
+        
+        let selectedType = "";
+        let selectedAnimation = "";
+
+        document.querySelector('#messageText').innerHTML = data.message;
+        document.querySelector('#entityTitle').innerHTML = data.categoryTitle;
+        
+        const toastAnimationExample = document.querySelector('.toast-ex');
+        document.querySelector('body').setAttribute('style', "");
+        selectedType = "bg-success";
+        selectedAnimation = "swing";
+
+        // toastAnimationExample.querySelectorAll('i[class^="ri-"]').forEach(function (element) {
+        //   element.classList.add(selectedType);
+        // });
+        toastAnimationExample.classList.remove(selectedAnimation, "bg-danger");
+        toastAnimationExample.classList.add(selectedAnimation, "bg-success");
+        let toastAnimation = new bootstrap.Toast(toastAnimationExample);
+        toastAnimation.show();
+    }
+    if(data.status == "fail"){
+        
+        document.querySelector('#messageText').innerHTML = data.message;
+        document.querySelector('#entityTitle').innerHTML = data.categoryTitle;
+        
+        const toastAnimationExample = document.querySelector('.toast-ex');
+        selectedType = "bg-danger";
+        selectedAnimation = "swing";
+
+        // toastAnimationExample.querySelectorAll('i[class^="ri-"]').forEach(function (element) {
+        // element.classList.add(selectedType);
+        // });
+        toastAnimationExample.classList.remove(selectedAnimation, "bg-success");
+        toastAnimationExample.classList.add(selectedAnimation, "bg-danger");
+        let toastAnimation = new bootstrap.Toast(toastAnimationExample);
+        toastAnimation.show();
+    } 
+    })
+    .catch(error => {
+        console.error("Error occurred while updating category sequence:", error);
+        alert("Error occurred while updating category sequence.");
+    });
+}

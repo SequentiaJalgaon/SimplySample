@@ -135,15 +135,15 @@
                     </table>
                   </div>
                 </div>
-                <!-- Offcanvas to add new customer -->
+                <!-- Start: Offcanvas to add new category -->
                 <div
                   class="offcanvas offcanvas-end"
                   tabindex="-1"
-                  id="offcanvasEcommerceCategoryList"
-                  aria-labelledby="offcanvasEcommerceCategoryListLabel">
+                  id="offcanvasEcommerceCategoryListAdd"
+                  aria-labelledby="offcanvasEcommerceCategoryListLabelAdd">
                   <!-- Offcanvas Header -->
                   <div class="offcanvas-header">
-                    <h5 id="offcanvasEcommerceCategoryListLabel" class="offcanvas-title">Add Category</h5>
+                    <h5 id="offcanvasEcommerceCategoryListLabelAdd" class="offcanvas-title">Add Category</h5>
                     <button
                       type="button"
                       class="btn-close text-reset"
@@ -152,115 +152,115 @@
                   </div>
                   <!-- Offcanvas Body -->
                   <div class="offcanvas-body border-top">
-                    <form class="pt-0" action="#" id="eCommerceCategoryListForm" enctype="multipart/form-data" onsubmit="myFunction()">
+                    <form class="pt-0" action="#" id="eCommerceCategoryListFormAdd" enctype="multipart/form-data">
                       <!-- Title -->
-
+                      <input type="hidden" id="categoryid_edit">
                       <div class="form-floating form-floating-outline mb-5">
                         <input
                           type="text"
                           class="form-control"
-                          id="categoryTitle"
+                          id="ecommerce-category-title"
                           placeholder="Enter category title"
                           name="categoryTitle"
                           aria-label="category title" />
-                        <label for="category-title">Title</label>
+                        <label for="ecommerce-category-title">Category Title</label>
+                      </div>
+
+                      <div class="form-floating form-floating-outline mb-5">
+                        <input class="form-control" type="file" id="categoryIcon" oninput="checkImage()" />
+                        <label for="formFile" class="form-label">Category Image</label>
+                        
+                        <img class="d-none" id="imagePreview" src="" alt="Image Preview" style="width: 100%;height: 100%;">
+                      
+                      </div>
+                      
+                      <div class="form-floating form-floating-outline mb-5">
+                        <div class="form-check form-check-success">
+                          <input class="form-check-input" type="checkbox" value="" id="isActiveCat" checked>
+                          <label class="form-check-label" for="isActiveCat">
+                            Is Active
+                          </label>
+                        </div>
                       </div>
 
                       <!-- Submit and reset -->
                       <div>
-                        <button type="submit" class="btn btn-primary me-3 data-submit">Add</button>
+                        <button type="button" class="btn btn-primary me-3 data-submit" onclick="SubmitForm('add')">Add</button>
                         <button type="reset" class="btn btn-outline-danger" data-bs-dismiss="offcanvas">Discard</button>
                       </div>
+
                     </form>
                   </div>
                   <!-- Offcanvas Body -->
                 </div>
+                <!-- End: Offcanvas to add new category -->
+
+                <!-- Start: Offcanvas to edit category -->
+                <div
+                  class="offcanvas offcanvas-end"
+                  tabindex="-1"
+                  id="offcanvasEcommerceCategoryListEdit"
+                  aria-labelledby="offcanvasEcommerceCategoryListLabelEdit">
+                  <!-- Offcanvas Header -->
+                  <div class="offcanvas-header">
+                    <h5 id="offcanvasEcommerceCategoryListLabelEdit" class="offcanvas-title">Update Category</h5>
+                    <button
+                      type="button"
+                      class="btn-close text-reset"
+                      data-bs-dismiss="offcanvas"
+                      aria-label="Close"></button>
+                  </div>
+                  <!-- Offcanvas Body -->
+                  <div class="offcanvas-body border-top">
+                    <form class="pt-0" action="#" id="eCommerceCategoryListFormEdit" enctype="multipart/form-data">
+                      <!-- Title -->
+                      <input type="hidden" id="categoryid_edit">
+                      <div class="form-floating form-floating-outline mb-5">
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="ecommerce-category-title-edit"
+                          placeholder="Enter category title"
+                          name="categoryTitle"
+                          aria-label="category title" />
+                        <label for="ecommerce-category-title">Category Title</label>
+                      </div>
+
+                      <div class="form-floating form-floating-outline mb-5">
+                        <div class="form-check form-check-success">
+                          <input class="form-check-input" type="checkbox" value="" id="isActiveCatEdit" checked>
+                          <label class="form-check-label" for="isActiveCatEdit">
+                            Is Active
+                          </label>
+                        </div>
+                      </div>
+
+                      <div class="form-floating form-floating-outline mb-5">
+                        <input class="form-control" type="file" id="categoryIconEdit" oninput="checkImage('Edit')" />
+                        <label for="formFile" class="form-label">Category Image</label>
+                        
+                        <img class="d-none" id="imagePreviewEdit" src="" alt="Image Preview" style="width: 100%;height: 100%;">
+                      
+                      </div>
+
+                      <!-- Submit and reset -->
+                      <div>
+                        <button type="button" class="btn btn-primary me-3 data-submit" onclick="SubmitForm('update')">Update</button>
+                        <button type="reset" class="btn btn-outline-danger" data-bs-dismiss="offcanvas">Discard</button>
+                      </div>
+
+                    </form>
+                  </div>
+                  <!-- Offcanvas Body -->
+                </div>
+                <!-- End: Offcanvas to edit category -->
+
               </div>
             </div>
             <!-- / Content -->
             <script>
         // document.getElementById("eCommerceCategoryListForm").addEventListener("submit", function(event) {
-        function myFunction() {
-          
-            event.preventDefault(); // Prevent default form submission
-            let formData = new FormData();
-            // let fileInput = document.getElementById("fileInput");
-            let categoryTitle = document.getElementById("categoryTitle").value;
-            if(categoryTitle != "") {
-                formData.append("categoryTitle", categoryTitle);
-                fetch("api_category.php", {
-                      method: "POST",
-                      body: formData,
-                  })
-                .then(response => response.json())
-                .then(data => {
-                  console.log(data);
-                  if(data.status == "success"){
-                    
-                    document.querySelector('#messageText').innerHTML = data.message;
-                    document.querySelector('#entityTitle').innerHTML = data.categoryTitle;
-                    
-                    const toastAnimationExample = document.querySelector('.toast-ex');
-                    document.querySelector('#offcanvasEcommerceCategoryList').classList.remove("show");
-                    document.querySelector('body').setAttribute('style', "");
-                    document.querySelector('.offcanvas-backdrop').classList.remove("show");
-                    selectedType = "bg-success";
-                    selectedAnimation = "swing";
-
-                    toastAnimationExample.querySelectorAll('i[class^="ri-"]').forEach(function (element) {
-                      element.classList.add(selectedType);
-                    });
-                    toastAnimationExample.classList.remove(selectedAnimation, "bg-danger");
-                    toastAnimationExample.classList.add(selectedAnimation, "bg-success");
-                    toastAnimation = new bootstrap.Toast(toastAnimationExample);
-                    toastAnimation.show();
-                  }
-                  if(data.status == "fail"){
-                    
-                    document.querySelector('#messageText').innerHTML = data.message;
-                    document.querySelector('#entityTitle').innerHTML = data.categoryTitle;
-                    
-                    const toastAnimationExample = document.querySelector('.toast-ex');
-                    selectedType = "bg-danger";
-                    selectedAnimation = "swing";
-
-                    toastAnimationExample.querySelectorAll('i[class^="ri-"]').forEach(function (element) {
-                      element.classList.add(selectedType);
-                    });
-                    toastAnimationExample.classList.remove(selectedAnimation, "bg-success");
-                    toastAnimationExample.classList.add(selectedAnimation, "bg-danger");
-                    toastAnimation = new bootstrap.Toast(toastAnimationExample);
-                    toastAnimation.show();
-                  } 
-                })
-                .catch(error => {
-                    console.error("Error occurred while adding category:", error);
-                    alert("Error occurred while adding category.");
-                });
-            } else {
-                alert("Please enter a category title.");
-            }
-            // if (fileInput.files.length > 0) {
-            //     formData.append("file", fileInput.files[0]);
-
-            //     fetch("upload.php", {
-            //         method: "POST",
-            //         body: formData,
-            //     })
-            //     .then(response => response.json())
-            //     .then(data => {
-            //         console.log("File uploaded successfully:", data);
-            //         alert("File uploaded successfully!");
-            //     })
-            //     .catch(error => {
-            //         console.error("Error uploading file:", error);
-            //         alert("Error uploading file.");
-            //     });
-            // } else {
-            //     alert("Please select a file to upload.");
-            // }
-        // });
-          }
+        
     </script>
             <!-- Footer -->
             <?php include('layout/footer.php'); ?>

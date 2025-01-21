@@ -207,8 +207,8 @@ $(function () {
                   //   '</div>'
                   return (
                     '<div class="d-flex align-items-sm-left justify-content-sm-left">' +
-                    '<a class="btn btn-sm rounded-pill btn-label-success waves-effect" href="updateBrand?id='+full['id']+'&status=\"Approved\""><span class="tf-icons ri-check-double-line ri-16px me-2"></span>Approve</a>' +
-                    '<a class="btn btn-sm rounded-pill btn-label-danger waves-effect" href="updateBrand?id='+full['id']+'&status=\"Rejected\""><i class="ri-close-large-line ri-16px me-2"></i>Reject</a>' +
+                    '<a class="btn btn-sm rounded-pill btn-label-success waves-effect" href="updateBrand?id='+full['id']+'&status=Approved"><span class="tf-icons ri-check-double-line ri-16px me-2"></span>Approve</a>' +
+                    '<a class="btn btn-sm rounded-pill btn-label-danger waves-effect" href="updateBrand?id='+full['id']+'&status=Rejected"><i class="ri-close-large-line ri-16px me-2"></i>Reject</a>' +
                     '&nbsp;&nbsp;'+
                     // '<button class="btn btn-sm rounded-pill btn-label-danger waves-effect" data-bs-toggle="dropdown"><i class="ri-close-large-line ri-16px me-2"></i>Reject</button>' +
                     '<div class="dropdown-menu dropdown-menu-end m-0">' +

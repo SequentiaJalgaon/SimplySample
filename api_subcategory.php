@@ -19,8 +19,8 @@ if($REQUEST_METHOD == "GET") {
     $sql = "SELECT 
                 cat_subcat_id, category_id, category_name, sub_category_id, sub_category_name, sc.is_active as catsub_is_active, s.is_active as sub_is_active , c.is_active as cat_is_active
         FROM    category_vs_subcategory sc
-        JOIN    category c ON sc.cat_id = c.category_id
-        JOIN    sub_category s ON sc.sub_cat_id = s.sub_category_id
+        JOIN    category c ON sc.category_id = c.category_id
+        JOIN    sub_category s ON sc.sub_category_id = s.sub_category_id
         WHERE   sc.is_active = '1'
     ";
     $q = $pdo->query($sql);
@@ -121,7 +121,7 @@ else if($REQUEST_METHOD == "POST") {
                 $category_id = $categoryArray['category_id'];
                 $sub_category_id = subCategoryArray['sub_category_id'];
 
-                $sql = "SELECT * FROM category_vs_subcategory WHERE cat_id = ? and sub_cat_id = ?";
+                $sql = "SELECT * FROM category_vs_subcategory WHERE category_id = ? and sub_category_id = ?";
                 $q = $pdo->prepare($sql);
                 $q->execute(array($category_id, $sub_category_id));
                 $category_vs_subcategory = $q->fetch(PDO::FETCH_ASSOC);

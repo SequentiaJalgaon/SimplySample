@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         try {
                 // First, delete the associations in category_vs_subcategory
-                $sql1 = "DELETE FROM `category_vs_subcategory` WHERE `sub_cat_id` = ?";
+                $sql1 = "DELETE FROM `category_vs_subcategory` WHERE `sub_category_id` = ?";
                 $q1 = $pdo->prepare($sql1);
                 $q1->execute([$id]);
 
@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt1->execute([$name, $id]);
     
             // Update the category_vs_subcategory table
-            $sql2 = "UPDATE category_vs_subcategory SET cat_id = ? WHERE sub_cat_id = ?";
+            $sql2 = "UPDATE category_vs_subcategory SET category_id = ? WHERE sub_category_id = ?";
             $stmt2 = $pdo->prepare($sql2);
             $stmt2->execute([$categoryId, $id]);
 
@@ -147,8 +147,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 $q = $pdo->query($sql);
                                 foreach ($pdo->query($sql) as $row) 
                                 { 
-                                    $sub_cat_id = $row['sub_category_id'];
-                                    $cvs_sql = "SELECT * FROM category_vs_subcategory where sub_cat_id = '$sub_cat_id' ";
+                                    $sub_category_id = $row['sub_category_id'];
+                                    $cvs_sql = "SELECT * FROM category_vs_subcategory where sub_category_id = '$sub_category_id' ";
                                     $q = $pdo->prepare($cvs_sql);
                                     $q->execute(array());
                                     $categoryArray = $q->fetch(PDO::FETCH_ASSOC);
@@ -172,7 +172,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                                     data-bs-target="#editCategoryModal" 
                                                     data-id="<?php echo $row['sub_category_id']; ?>" 
                                                     data-name="<?php echo $row['sub_category_name']; ?>" 
-                                                    data-categoryid="<?php echo $categoryArray['cat_id']; ?>">
+                                                    data-categoryid="<?php echo $categoryArray['category_id']; ?>">
                                                     <i class="ri-pencil-line me-1"></i>
                                                 </a>
                                         <!-- </div> -->

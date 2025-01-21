@@ -21,14 +21,22 @@
     <link rel="stylesheet" href="assets/css/demo.css" />
 
     <!-- Vendors CSS -->
+    <link rel="stylesheet" href="assets/vendor/libs/quill/typography.css" />
+    <link rel="stylesheet" href="assets/vendor/libs/quill/katex.css" />
+    <link rel="stylesheet" href="assets/vendor/libs/quill/editor.css" />
+    <link rel="stylesheet" href="assets/vendor/libs/select2/select2.css" />
+    <link rel="stylesheet" href="assets/vendor/libs/dropzone/dropzone.css" />
+    <link rel="stylesheet" href="assets/vendor/libs/flatpickr/flatpickr.css" />
+    <link rel="stylesheet" href="assets/vendor/libs/tagify/tagify.css" />
+
     <link rel="stylesheet" href="assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
     <link rel="stylesheet" href="assets/vendor/libs/typeahead-js/typeahead.css" />
     <link rel="stylesheet" href="assets/vendor/libs/apex-charts/apex-charts.css" />
     <link rel="stylesheet" href="assets/vendor/libs/swiper/swiper.css" />
-
+    <link rel="stylesheet" href="assets/vendor/libs/bootstrap-select/bootstrap-select.css" />
     <!-- Page CSS -->
-    <link rel="stylesheet" href="assets/vendor/css/pages/cards-statistics.css" />
-    <link rel="stylesheet" href="assets/vendor/css/pages/cards-analytics.css" />
+    <!-- <link rel="stylesheet" href="assets/vendor/css/pages/cards-statistics.css" />
+    <link rel="stylesheet" href="assets/vendor/css/pages/cards-analytics.css" /> -->
 
     <!-- Helpers -->
     <script src="assets/vendor/js/helpers.js"></script>
@@ -37,3 +45,10 @@
     <script src="assets/vendor/js/template-customizer.js"></script>
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="assets/js/config.js"></script>
+<style>
+  @media (min-width: 1600px) {
+      .container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
+          max-width: 95%;
+      }
+  }
+</style>

@@ -36,7 +36,7 @@
         $lastInsertedId = $pdo->lastInsertId();   
 
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $sqlc = "INSERT INTO `category_vs_subcategory`(`cat_id`,`sub_cat_id`,`added_on`,`is_active`) VALUES (?,?,?,?)";
+        $sqlc = "INSERT INTO `category_vs_subcategory`(`category_id`,`sub_category_id`,`added_on`,`is_active`) VALUES (?,?,?,?)";
         $q = $pdo->prepare($sqlc);
         $q->execute(array($category_id, $lastInsertedId, $added_on, 1));
 

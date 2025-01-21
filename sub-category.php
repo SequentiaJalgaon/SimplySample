@@ -252,7 +252,7 @@
                     });
                     toastAnimationExample.classList.remove(selectedAnimation, "bg-danger");
                     toastAnimationExample.classList.add(selectedAnimation, "bg-success");
-                    toastAnimation = new bootstrap.Toast(toastAnimationExample);
+                    let toastAnimation = new bootstrap.Toast(toastAnimationExample);
                     toastAnimation.show();
                   }
                   if(data.status == "fail"){
