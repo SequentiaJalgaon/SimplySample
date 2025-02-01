@@ -16,7 +16,24 @@ if($REQUEST_METHOD == "GET") {
     include("dist/conf/db.php");
     $pdo = Database::connect();
     $categories = array();
-    $sql = "SELECT * FROM category";
+    $sql = "SELECT 
+                c.category_id,
+                c.category_name,
+                c.category_image,
+                c.is_active,
+                c.added_on
+            FROM 
+                category c
+            JOIN 
+                category_sequence cs
+            ON 
+                c.category_id = cs.category_id
+            WHERE
+                cs.is_active = '1'
+            GROUP BY 
+                c.category_id
+            ORDER BY 
+                sequence_number";
     $q = $pdo->query($sql);
     foreach ($pdo->query($sql) as $row) 
     {
@@ -36,13 +53,13 @@ if($REQUEST_METHOD == "GET") {
         // var_dump (($categories));
         // echo "</pre>";
         $result = array(
-            'message' => $categories, 
+            'data' => $categories, 
             'status' => true,
             'statusCode' => 200
         );
     } else {
         $result = array(
-            'message' => 'No Record Found', 
+            'data' => 'No Record Found', 
             'status' => false, 
             'statusCode' => 200);
     }
@@ -82,7 +99,7 @@ else if($REQUEST_METHOD == "POST") {
             
             if($isAdded == true){
                 $result= ([
-                    "message" => "Category Added successfully.",
+                    "data" => "Category Added successfully.",
                     "categoryTitle" => $categoryTitle,
                     "status" => "success",
                     'statusCode' => 200
@@ -91,7 +108,7 @@ else if($REQUEST_METHOD == "POST") {
             
         } else {
             $result= ([
-                "message" => "Category Already Present.",
+                "data" => "Category Already Present.",
                 "categoryTitle" => $categoryTitle,
                 "status" => "fail",
                 'statusCode' => 200
@@ -99,7 +116,7 @@ else if($REQUEST_METHOD == "POST") {
         }
     } else {
         $result= ([
-            "message" => "Category Title Cannot be Empty.",
+            "data" => "Category Title Cannot be Empty.",
             "categoryTitle" => $categoryTitle,
             "status" => "fail",
             'statusCode' => 200
@@ -163,7 +180,7 @@ else if($REQUEST_METHOD == "PUT") {
                 
                 if($isAdded == true){
                     $result= ([
-                        "message" => "Category Information Updated successfully.",
+                        "data" => "Category Information Updated successfully.",
                         "categoryTitle" => $categoryTitle,
                         "status" => "success",
                         'statusCode' => 200
@@ -179,7 +196,7 @@ else if($REQUEST_METHOD == "PUT") {
                 
                 if($isAdded == true){
                     $result= ([
-                        "message" => "Category Information Updated successfully.",
+                        "data" => "Category Information Updated successfully.",
                         "categoryTitle" => $categoryTitle,
                         "status" => "success",
                         'statusCode' => 200
@@ -195,7 +212,7 @@ else if($REQUEST_METHOD == "PUT") {
                 
             //     if($isStatusUpdate == true){
             //         $result= ([
-            //             "message" => "Category Status Updated successfully.",
+            //             "data" => "Category Status Updated successfully.",
             //             "categoryTitle" => $categoryTitle,
             //             "status" => "success",
             //             'statusCode' => 200
@@ -211,7 +228,7 @@ else if($REQUEST_METHOD == "PUT") {
                 
             //     if($isStatusUpdate == true){
             //         $result= ([
-            //             "message" => "Category Image Updated successfully.",
+            //             "data" => "Category Image Updated successfully.",
             //             "categoryTitle" => $categoryTitle,
             //             "status" => "success",
             //             'statusCode' => 200
@@ -221,7 +238,7 @@ else if($REQUEST_METHOD == "PUT") {
             } 
             else {
                 $result= ([
-                    "message" => "Category Title Already Exist.",
+                    "data" => "Category Title Already Exist.",
                     "categoryTitle" => $categoryTitle,
                     "status" => "fail",
                     'statusCode' => 200
@@ -229,7 +246,7 @@ else if($REQUEST_METHOD == "PUT") {
             }
         } else {
             $result= ([
-                "message" => "Category Not Found.",
+                "data" => "Category Not Found.",
                 "categoryTitle" => $categoryTitle,
                 "status" => "fail",
                 'statusCode' => 200
@@ -237,7 +254,7 @@ else if($REQUEST_METHOD == "PUT") {
         }
     } else {
         $result= ([
-            "message" => "Insufficient Information.",
+            "data" => "Insufficient Information.",
             "categoryTitle" => $categoryTitle,
             "status" => "fail",
             'statusCode' => 200
@@ -293,7 +310,7 @@ else if($REQUEST_METHOD == "DELETE") {
                 
                 if($isDeleted == true){
                     $result= ([
-                        "message" => "Category Deleted successfully.",
+                        "data" => "Category Deleted successfully.",
                         "categoryTitle" => $categoryTitle,
                         "status" => "success",
                         'statusCode' => 200
@@ -301,7 +318,7 @@ else if($REQUEST_METHOD == "DELETE") {
                 }
             } else {
                 $result= ([
-                    "message" => "Category Not Deleted. It has references.",
+                    "data" => "Category Not Deleted. It has references.",
                     "categoryTitle" => $categoryTitle,
                     "status" => "fail",
                     'statusCode' => 200
@@ -309,7 +326,7 @@ else if($REQUEST_METHOD == "DELETE") {
             }
         } else {
             $result= ([
-                "message" => "Category Not Present.",
+                "data" => "Category Not Present.",
                 "categoryTitle" => "",
                 "status" => "fail",
                 'statusCode' => 200
@@ -317,7 +334,7 @@ else if($REQUEST_METHOD == "DELETE") {
         }
     } else {
         $result= ([
-            "message" => "Category Cannot be Empty.",
+            "data" => "Category Cannot be Empty.",
             "categoryTitle" => "",
             "status" => "fail",
             'statusCode' => 200
@@ -328,7 +345,7 @@ else if($REQUEST_METHOD == "DELETE") {
 
 else {
     $result = array(
-        'message' => 'Requested Method is not supported', 
+        'data' => 'Requested Method is not supported', 
         'status' => false, 
         'statusCode' => 200);
 }

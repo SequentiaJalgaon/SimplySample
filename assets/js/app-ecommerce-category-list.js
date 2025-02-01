@@ -63,7 +63,7 @@ $(function () {
           var dt_category = dt_category_list_table.DataTable({
             // ajax: "assets/json/ecommerce-category-list.json", // JSON file to add data
             // ajax: res, // JSON file to add data
-            data: data.message,
+            data: data.data,
             columns: [
               // columns according to JSON
               { data: '' },
@@ -356,6 +356,14 @@ $(function () {
                   'data-bs-toggle': 'offcanvas',
                   'data-bs-target': '#offcanvasEcommerceCategoryListAdd'
                 }
+              },
+              {
+                text: '<span class="d-none d-sm-inline-block">Update Category Sequence</span>',
+                className: 'btn btn-success waves-effect waves-light',
+                attr: {
+                  'href': 'category_sequence',
+                  'style': 'margin-left: 20px'
+                }
               }
             ],
             // bAutoWidth: false, 
@@ -499,7 +507,7 @@ function SubmitForm(action, submittedid = 0) {
           console.log(data);
           if(data.status == "success"){
             
-            document.querySelector('#messageText').innerHTML = data.message;
+            document.querySelector('#messageText').innerHTML = data.data;
             document.querySelector('#entityTitle').innerHTML = data.categoryTitle;
             
             const toastAnimationExample = document.querySelector('.toast-ex');
@@ -519,7 +527,7 @@ function SubmitForm(action, submittedid = 0) {
           }
           if(data.status == "fail"){
             
-            document.querySelector('#messageText').innerHTML = data.message;
+            document.querySelector('#messageText').innerHTML = data.data;
             document.querySelector('#entityTitle').innerHTML = data.categoryTitle;
             
             const toastAnimationExample = document.querySelector('.toast-ex');
@@ -583,7 +591,7 @@ function SubmitForm(action, submittedid = 0) {
           
           if(data.status == "success"){
             
-            document.querySelector('#messageText').innerHTML = data.message;
+            document.querySelector('#messageText').innerHTML = data.data;
             document.querySelector('#entityTitle').innerHTML = data.categoryTitle;
             
             const toastAnimationExample = document.querySelector('.toast-ex');
@@ -603,7 +611,7 @@ function SubmitForm(action, submittedid = 0) {
           }
           if(data.status == "fail"){
             
-            document.querySelector('#messageText').innerHTML = data.message;
+            document.querySelector('#messageText').innerHTML = data.data;
             document.querySelector('#entityTitle').innerHTML = data.categoryTitle;
             
             const toastAnimationExample = document.querySelector('.toast-ex');
@@ -651,7 +659,7 @@ function SubmitForm(action, submittedid = 0) {
 
           if(data.status == "success"){
             
-            document.querySelector('#messageText').innerHTML = data.message;
+            document.querySelector('#messageText').innerHTML = data.data;
             document.querySelector('#entityTitle').innerHTML = data.categoryTitle;
             
             const toastAnimationExample = document.querySelector('.toast-ex');
@@ -671,7 +679,7 @@ function SubmitForm(action, submittedid = 0) {
           }
           if(data.status == "fail"){
             
-            document.querySelector('#messageText').innerHTML = data.message;
+            document.querySelector('#messageText').innerHTML = data.data;
             document.querySelector('#entityTitle').innerHTML = data.categoryTitle;
             
             const toastAnimationExample = document.querySelector('.toast-ex');
@@ -785,13 +793,14 @@ function updateSequence() {
     })
     .then(response => response.json())
     .then(data => {
-    console.log(data);
+    
+    let selectedType = "";
+    let selectedAnimation = "";
+
     if(data.status == "success"){
         
-        let selectedType = "";
-        let selectedAnimation = "";
 
-        document.querySelector('#messageText').innerHTML = data.message;
+        document.querySelector('#messageText').innerHTML = data.data;
         document.querySelector('#entityTitle').innerHTML = data.categoryTitle;
         
         const toastAnimationExample = document.querySelector('.toast-ex');
@@ -809,7 +818,7 @@ function updateSequence() {
     }
     if(data.status == "fail"){
         
-        document.querySelector('#messageText').innerHTML = data.message;
+        document.querySelector('#messageText').innerHTML = data.data;
         document.querySelector('#entityTitle').innerHTML = data.categoryTitle;
         
         const toastAnimationExample = document.querySelector('.toast-ex');

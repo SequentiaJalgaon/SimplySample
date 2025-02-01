@@ -2,7 +2,6 @@
 include("dist/conf/db.php");
 $pdo = Database::connect();
 
-
       if(isset($_REQUEST['id'])) {
         $id = $_REQUEST['id'];
       } else {
@@ -191,7 +190,11 @@ $pdo = Database::connect();
 
     <!-- <link rel="stylesheet" href="assets/vendor/libs/select2/select2.css" /> -->
     <!-- <link rel="stylesheet" href="assets/vendor/libs/bootstrap-select/bootstrap-select.css" /> -->
-
+      <style>
+        .tagify {
+          height: max-content !important;
+        }
+      </style>
   </head>
 
   <body>
@@ -565,7 +568,7 @@ $pdo = Database::connect();
                           </div>
                           <div class="card-body">                            
                               <div class="mb-3">
-                                <div class="form-floating form-floating-outline">
+                                <div class="form-floating form-floating-outline"> 
                                   <input
                                       id="TagifyReadonly"
                                       class="form-control readonlyMix"

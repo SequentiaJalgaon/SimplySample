@@ -59,7 +59,7 @@ $(function () {
         if (dt_category_list_table.length) {
           var dt_category = dt_category_list_table.DataTable({
             // ajax: assetsPath + 'json/ecommerce-brand-list.json', // JSON file to add data
-            data: data.message,
+            data: data.data,
             columns: [
               // columns according to JSON
               { data: '' },
@@ -207,7 +207,7 @@ $(function () {
                   //   '</div>'
                   return (
                     '<div class="d-flex align-items-sm-left justify-content-sm-left">' +
-                    '<a class="btn btn-sm rounded-pill btn-label-success waves-effect" href="onboard-brand.php"><span class="tf-icons ri-check-double-line ri-16px me-2"></span>OnBoard</a>' +
+                    '<a class="btn btn-sm rounded-pill btn-label-success waves-effect" href="onboard-brand.php?id='+full['id']+'"><span class="tf-icons ri-check-double-line ri-16px me-2"></span>OnBoard</a>' +
                     '&nbsp;&nbsp;'+
                     // '<button class="btn btn-sm rounded-pill btn-label-danger waves-effect" data-bs-toggle="dropdown"><i class="ri-close-large-line ri-16px me-2"></i>Reject</button>' +
                     '<div class="dropdown-menu dropdown-menu-end m-0">' +

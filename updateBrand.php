@@ -35,7 +35,7 @@
                 
                 if($isAdded == true){
                     $result= ([
-                        "message" => "Brand Status Updated Successfully.",
+                        "data" => "Brand Status Updated Successfully.",
                         "BrandTitle" => isset($isPresent['brand_name']) ? $isPresent['brand_name'] : "",
                         "status" => "success",
                         'statusCode' => 200
@@ -43,7 +43,7 @@
                 }
             } else {
                 $result= ([
-                    "message" => "Brand Status Already Updated.",
+                    "data" => "Brand Status Already Updated.",
                     "BrandTitle" => isset($isPresent['brand_name']) ? $isPresent['brand_name'] : "",
                     "status" => "fail",
                     'statusCode' => 200
@@ -52,7 +52,7 @@
             
         } else {
             $result= ([
-                "message" => "Brand Not Found.",
+                "data" => "Brand Not Found.",
                 "BrandTitle" => "",
                 "status" => "fail",
                 'statusCode' => 200
@@ -60,7 +60,7 @@
         }
     } else {
         $result= ([
-            "message" => "Invalid Brand.",
+            "data" => "Invalid Brand.",
             "BrandTitle" => "",
             "status" => "fail",
             'statusCode' => 200

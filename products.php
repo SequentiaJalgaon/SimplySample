@@ -56,7 +56,22 @@
           <!-- Content wrapper -->
           <div class="content-wrapper">
             <!-- Content -->
-
+            <div
+              class="bs-toast toast toast-ex animate__animated my-2"
+              role="alert"
+              aria-live="assertive"
+              aria-atomic="true"
+              data-bs-delay="2000">
+              <!-- style="display: inline; opacity: 1"> -->
+              <div class="toast-header">
+                <!-- <i class="ri-home-4-fill me-2"></i> -->
+                <div class="me-auto fw-medium" id="entityTitle"></div>
+                <!-- <small class="text-muted">11 mins ago</small> -->
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+              </div>
+              <div class="toast-body"><span id="messageText"></span></div>
+            </div>
+            
             <div class="container-xxl flex-grow-1 container-p-y">
               <!-- Product List Table -->
               <div class="card">
@@ -74,14 +89,14 @@
                       <tr>
                         <th></th>
                         <th></th>
-                        <th>product</th>
-                        <th>category</th>
-                        <th>stock</th>
-                        <th>weight</th>
-                        <th>price</th>
-                        <th>qty</th>
-                        <th>status</th>
-                        <th>actions</th>
+                        <th>Product</th>
+                        <th>Category</th>
+                        <th>Brand</th>
+                        <th>Weight(gm)</th>
+                        <th>Price</th>
+                        <th>Qauntity</th>
+                        <th>Status</th>
+                        <th>Actions</th>
                       </tr>
                     </thead>
                   </table>

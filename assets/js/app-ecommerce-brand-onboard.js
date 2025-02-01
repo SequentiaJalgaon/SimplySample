@@ -17,7 +17,7 @@
 
         const categories = [];
 
-        data.message.forEach(addCategories);
+        data.data.forEach(addCategories);
         
         function addCategories(item, index) {
             categories.push(item.CategoryName);

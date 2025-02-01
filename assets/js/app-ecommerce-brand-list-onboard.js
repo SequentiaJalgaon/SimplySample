@@ -59,7 +59,7 @@ $(function () {
         if (dt_category_list_table.length) {
           var dt_category = dt_category_list_table.DataTable({
             // ajax: assetsPath + 'json/ecommerce-brand-list.json', // JSON file to add data
-            data: data.message,
+            data: data.data,
             columns: [
               // columns according to JSON
               { data: '' },
@@ -197,25 +197,25 @@ $(function () {
                 searchable: false,
                 orderable: false,
                 render: function (data, type, full, meta) {
-                  // '<div class="d-flex align-items-sm-center justify-content-sm-center">' +
-                  //   '<button class="btn btn-sm btn-icon btn-text-secondary waves-effect waves-light rounded-pill"><i class="ri-edit-box-line ri-20px"></i></button>' +
-                  //   '<button class="btn btn-sm btn-icon btn-text-secondary waves-effect waves-light rounded-pill dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ri-more-2-line ri-20px"></i></button>' +
+                  return '<div class="d-flex align-items-sm-center justify-content-sm-center">' +
+                    '<button class="btn btn-sm btn-icon btn-text-secondary waves-effect waves-light rounded-pill"><i class="ri-edit-box-line ri-20px"></i></button>' +
+                    '<button class="btn btn-sm btn-icon btn-text-secondary waves-effect waves-light rounded-pill dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ri-more-2-line ri-20px"></i></button>' +
+                    '<div class="dropdown-menu dropdown-menu-end m-0">' +
+                    '<a href="javascript:0;" class="dropdown-item">View</a>' +
+                    '<a href="javascript:0;" class="dropdown-item">Suspend</a>' +
+                    '</div>' +
+                    '</div>';
+                  // return (
+                  //   '<div class="d-flex align-items-sm-left justify-content-sm-left">' +
+                  //   '<a class="btn btn-sm rounded-pill btn-label-success waves-effect" href="brand-details.php"><span class="tf-icons ri-check-double-line ri-16px me-2"></span>View Details</a>' +
+                  //   '&nbsp;&nbsp;'+
+                  //   '<button class="btn btn-sm rounded-pill btn-label-danger waves-effect" data-bs-toggle="dropdown"><i class="ri-close-large-line ri-16px me-2"></i>Reject</button>' +
                   //   '<div class="dropdown-menu dropdown-menu-end m-0">' +
                   //   '<a href="javascript:0;" class="dropdown-item">View</a>' +
                   //   '<a href="javascript:0;" class="dropdown-item">Suspend</a>' +
                   //   '</div>' +
                   //   '</div>'
-                  return (
-                    '<div class="d-flex align-items-sm-left justify-content-sm-left">' +
-                    // '<a class="btn btn-sm rounded-pill btn-label-success waves-effect" href="brand-details.php"><span class="tf-icons ri-check-double-line ri-16px me-2"></span>View Details</a>' +
-                    '&nbsp;&nbsp;'+
-                    // '<button class="btn btn-sm rounded-pill btn-label-danger waves-effect" data-bs-toggle="dropdown"><i class="ri-close-large-line ri-16px me-2"></i>Reject</button>' +
-                    '<div class="dropdown-menu dropdown-menu-end m-0">' +
-                    '<a href="javascript:0;" class="dropdown-item">View</a>' +
-                    '<a href="javascript:0;" class="dropdown-item">Suspend</a>' +
-                    '</div>' +
-                    '</div>'
-                  );
+                  // );
                 }
               }
             ],

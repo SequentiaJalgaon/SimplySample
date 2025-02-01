@@ -73,7 +73,22 @@
           <!-- Content wrapper -->
           <div class="content-wrapper">
             <!-- Content -->
-
+            <div
+              class="bs-toast toast toast-ex animate__animated my-2"
+              role="alert"
+              aria-live="assertive"
+              aria-atomic="true"
+              data-bs-delay="2000">
+              <!-- style="display: inline; opacity: 1"> -->
+              <div class="toast-header">
+                <!-- <i class="ri-home-4-fill me-2"></i> -->
+                <div class="me-auto fw-medium" id="entityTitle"></div>
+                <!-- <small class="text-muted">11 mins ago</small> -->
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+              </div>
+              <div class="toast-body"><span id="messageText"></span></div>
+            </div>
+            
             <form class="needs-validation" novalidate method="POST" enctype="multipart/form-data">
                 <div class="container-xxl flex-grow-1 container-p-y">
                   <div class="app-ecommerce">
@@ -109,13 +124,14 @@
                                 placeholder="Product title"
                                 name="productTitle"
                                 aria-label="Product title" 
-                                required value="asdsadsa das ds d "/>
+                                value="adjskdhgsh djahs djsag djahs djgsa j"
+                                required />
                               <label for="ecommerce-product-name">Product Title*</label>
                             </div>
                             
                             <!-- Comment -->
                             <div>
-                              <textarea style="display: none" name="productdescription" id="productdescription" required>value="asdsadsa das ds d "</textarea>
+                              <textarea style="display: none" name="productdescription" id="productdescription" required></textarea>
                               <!-- <p class="mb-1">Description*</p> -->
                               <div class="form-control p-0 pt-1">
                                 <div class="comment-toolbar border-0 border-bottom">
@@ -491,7 +507,9 @@
                                 id="ecommerce-product-price"
                                 placeholder="Price"
                                 name="productPrice"
-                                aria-label="Product price" required value="200"/>
+                                aria-label="Product price" 
+                                value="100"
+                                required />
                               <label for="ecommerce-product-price">Best Price*</label>
                             </div>
 
@@ -504,7 +522,9 @@
                                     id="ecommerce-product-weight"
                                     placeholder="00000"
                                     name="productweight"
-                                    aria-label="Product weight" required value="20" />
+                                    aria-label="Product weight" 
+                                    value="200"
+                                    required />
                                   <label for="ecommerce-product-weight">Weight*</label>
                                 </div>
                             <!-- Charge tax check box -->
@@ -581,7 +601,7 @@
                                       } 
                                   ?>
                                 </select>
-                                <label for="select2Basic">Brand*</label>
+                                <label for="brands">Brand*</label>
                                 <div class="invalid-feedback">
                                   Please select a valid Brand.
                                 </div>

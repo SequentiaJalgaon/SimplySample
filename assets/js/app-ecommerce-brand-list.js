@@ -59,7 +59,7 @@ $(function () {
         if (dt_category_list_table.length) {
           var dt_category = dt_category_list_table.DataTable({
             // ajax: assetsPath + 'json/ecommerce-brand-list.json', // JSON file to add data
-            data: data.message,
+            data: data.data,
             columns: [
               // columns according to JSON
               { data: '' },

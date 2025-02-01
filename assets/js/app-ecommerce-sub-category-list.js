@@ -60,7 +60,7 @@ $(function () {
       if (dt_sub_category_list_table.length) {
         var dt_category = dt_sub_category_list_table.DataTable({
           // ajax: assetsPath + 'json/ecommerce-sub-category-list.json', // JSON file to add data
-          data: data.message,
+          data: data.data,
           columns: [
             // columns according to JSON
             { data: '' },
@@ -209,9 +209,10 @@ $(function () {
                 var $sub_categoryName =  full["sub_categoryName"];
                 var $categoryName =  full["categoryName"];
                 var $sub_active =  full["sub_active"];
+                var $cat_subcat_id =  full["cat_subcat_id"];
                 return (
                   '<div class="d-flex align-items-sm-center justify-content-sm-center">' +
-                    '<button class="btn btn-sm btn-icon btn-text-secondary waves-effect waves-light rounded-pill" type="button" data-bs-toggle="offcanvas" data-bs-target ="#offcanvasEcommerceCategoryList" onclick="editSubCategory(\''+$sub_categoryName+'\',\''+$categoryName+'\','+$id+','+$sub_active+')"><i class="ri-edit-box-line ri-20px"></i></button>' +
+                    '<button class="btn btn-sm btn-icon btn-text-secondary waves-effect waves-light rounded-pill" type="button" data-bs-toggle="offcanvas" data-bs-target ="#offcanvasEcommerceCategoryListedit" onclick="editSubCategory(\''+$sub_categoryName+'\',\''+$categoryName+'\','+$id+','+$cat_subcat_id+','+$sub_active+')"><i class="ri-edit-box-line ri-20px"></i></button>' +
                   '<button class="btn btn-sm btn-icon btn-text-secondary waves-effect waves-light rounded-pill dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ri-more-2-line ri-20px"></i></button>' +
                   '<div class="dropdown-menu dropdown-menu-end m-0">' +
                   '<a href="javascript:0;" class="dropdown-item">View</a>' +
@@ -403,7 +404,7 @@ $(function () {
                     if(xmlhttpr.readyState == 4 && xmlhttpr.status == 200) {
                         var categoryDropdown = document.getElementById("ecommerce-category-parent-category");
                         var result = JSON.parse(xmlhttpr.responseText);
-                        var categories = result.message;
+                        var categories = result.data;
                         categories.forEach((obj) => {
                           var CategoryID = obj.CategoryID ;
                           var CategoryName = obj.CategoryName ;
@@ -496,16 +497,17 @@ $(function () {
 
 //Edit Popup Values
 
-function editSubCategory(sub_categoryName, categoryNameA, subcategoryid_edit, isActive) {
+function editSubCategory(sub_categoryName, categoryNameA, subcategoryid_edit, cat_subcat_id, isActive) {
       
       getCategories(categoryNameA);
       
       // document.getElementById("ecommerce-category-parent-category").value = sub_category_id;
       document.getElementById("subcategoryid_edit").value = subcategoryid_edit;
-      document.getElementById("ecommerce-category-title").value = sub_categoryName;
-      document.getElementById("isActiveSubCat").checked = false;
+      document.getElementById("cat_subcat_id").value = cat_subcat_id;
+      document.getElementById("ecommerce-category-title-edit").value = sub_categoryName;
+      document.getElementById("isActiveSubCatEdit").checked = false;
       if(isActive == 1) {
-        document.getElementById("isActiveSubCat").checked = true;
+        document.getElementById("isActiveSubCatEdit").checked = true;
       }
       return(0);
     }
@@ -520,9 +522,10 @@ function getCategories(categoryNameA = "") {
 
   xmlhttpr.onreadystatechange = function () {
       if(xmlhttpr.readyState == 4 && xmlhttpr.status == 200) {
-          var categoryDropdown = document.getElementById("ecommerce-category-parent-category");
+          // var categoryDropdown = document.getElementById("ecommerce-category-parent-category");
+          var categoryDropdownEdit = document.getElementById("ecommerce-category-parent-category-edit");
           var result = JSON.parse(xmlhttpr.responseText);
-          var categories = result.message;
+          var categories = result.data;
           categories.forEach((obj) => {
             var CategoryID = obj.CategoryID ;
             var CategoryName = obj.CategoryName ;
@@ -530,9 +533,11 @@ function getCategories(categoryNameA = "") {
             option.text = CategoryName;
             if(CategoryName == categoryNameA){
               option.selected = true;
-              categoryDropdown.add(option);
+              // categoryDropdown.add(option);
+              categoryDropdownEdit.add(option);
             } else {
-              categoryDropdown.add(option);
+              // categoryDropdown.add(option);
+              categoryDropdownEdit.add(option);
             }
         });
       }
@@ -540,4 +545,161 @@ function getCategories(categoryNameA = "") {
 
   xmlhttpr.open("GET", "api_category.php", true);
   xmlhttpr.send();
+}
+function myFunction() {
+    
+  event.preventDefault(); // Prevent default form submission
+  let formData = new FormData();
+  // let fileInput = document.getElementById("fileInput");
+  // let subcategoryid_edit = document.getElementById("subcategoryid_edit").value;
+  let subcategoryTitle = document.getElementById("ecommerce-category-title").value;
+  let parentCategoryName = document.getElementById("ecommerce-category-parent-category").value;
+  let isActive = document.getElementById("isActiveSubCat").checked;
+  if(subcategoryTitle != "") {
+    
+    formData.append("subcategoryTitle", subcategoryTitle);
+    formData.append("parentCategoryName", parentCategoryName);
+    formData.append("isActive", isActive);
+
+    // if(subcategoryid_edit == "" || subcategoryid_edit != undefined ) {
+            // formData.append("subcategoryid_edit", subcategoryid_edit);
+            fetch("api_subcategory.php", {
+                method: "POST",
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+              
+              let selectedType = "";
+              let selectedAnimation = "";
+              
+              if(data.status == "success"){
+                
+                document.querySelector('#messageText').innerHTML = data.data;
+                document.querySelector('#entityTitle').innerHTML = data.sub_categoryTitle;
+                
+                const toastAnimationExample = document.querySelector('.toast-ex');
+                document.querySelector('#offcanvasEcommerceCategoryList').classList.remove("show");
+                document.querySelector('body').setAttribute('style', "");
+                document.querySelector('.offcanvas-backdrop').classList.remove("show");
+                selectedType = "bg-success";
+                selectedAnimation = "swing";
+
+                toastAnimationExample.querySelectorAll('i[class^="ri-"]').forEach(function (element) {
+                  element.classList.add(selectedType);
+                });
+                toastAnimationExample.classList.remove(selectedAnimation, "bg-danger");
+                toastAnimationExample.classList.add(selectedAnimation, "bg-success");
+                let toastAnimation = new bootstrap.Toast(toastAnimationExample);
+                toastAnimation.show();
+              }
+              if(data.status == "fail"){
+                
+                document.querySelector('#messageText').innerHTML = data.data;
+                document.querySelector('#entityTitle').innerHTML = data.sub_categoryTitle;
+                
+                const toastAnimationExample = document.querySelector('.toast-ex');
+                selectedType = "bg-danger";
+                selectedAnimation = "swing";
+
+                toastAnimationExample.querySelectorAll('i[class^="ri-"]').forEach(function (element) {
+                  element.classList.add(selectedType);
+                });
+                toastAnimationExample.classList.remove(selectedAnimation, "bg-success");
+                toastAnimationExample.classList.add(selectedAnimation, "bg-danger");
+                let toastAnimation = new bootstrap.Toast(toastAnimationExample);
+                toastAnimation.show();
+              } 
+            })
+            // .catch(error => {
+            //     console.log("Error occurred while adding category:", error);
+            //     // alert("Error occurred while adding category.");
+            // });
+    // }
+  } else {
+        // alert("Please enter a sub category title.");
+  }
+}
+
+function myFunctionUpdate() {
+
+  event.preventDefault(); // Prevent default form submission
+  let formData = new FormData();
+  // let fileInput = document.getElementById("fileInput");
+  let subcategoryID = document.getElementById("subcategoryid_edit").value;
+  let subcategoryTitle = document.getElementById("ecommerce-category-title-edit").value;
+  let parentCategoryName = document.getElementById("ecommerce-category-parent-category-edit").value;
+  let cat_subcat_id = document.getElementById("cat_subcat_id").value;
+  let isActive = document.getElementById("isActiveSubCatEdit").checked;
+  if(subcategoryTitle != "") {
+    
+    var subCategoryData = {
+       cat_subcat_id : cat_subcat_id,
+       subCategoryID : subcategoryID ,
+       subcategoryTitle : subcategoryTitle ,
+       parentCategoryName : parentCategoryName ,
+       isActive : isActive
+    };
+
+    if(subcategoryid_edit != "" || subcategoryid_edit != undefined ){
+          fetch("api_subcategory.php", {
+              method: "PUT",
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify( {subCategoryData} )
+          })
+          .then(response => response.json())
+          .then(data => {
+
+            let selectedType = "";
+            let selectedAnimation = "";
+
+            if(data.status == "success"){
+              
+              document.querySelector('#messageText').innerHTML = data.data;
+              document.querySelector('#entityTitle').innerHTML = data.sub_categoryTitle;
+              
+              const toastAnimationExample = document.querySelector('.toast-ex');
+              document.querySelector('#offcanvasEcommerceCategoryListedit').classList.remove("show");
+              document.querySelector('body').setAttribute('style', "");
+              document.querySelector('.offcanvas-backdrop').classList.remove("show");
+              selectedType = "bg-success";
+              selectedAnimation = "swing";
+
+              toastAnimationExample.querySelectorAll('i[class^="ri-"]').forEach(function (element) {
+                element.classList.add(selectedType);
+              });
+              toastAnimationExample.classList.remove(selectedAnimation, "bg-danger");
+              toastAnimationExample.classList.add(selectedAnimation, "bg-success");
+              let toastAnimation = new bootstrap.Toast(toastAnimationExample);
+              toastAnimation.show();
+            }
+            if(data.status == "fail"){
+              
+              document.querySelector('#messageText').innerHTML = data.data;
+              document.querySelector('#entityTitle').innerHTML = data.sub_categoryTitle;
+              
+              const toastAnimationExample = document.querySelector('.toast-ex');
+              selectedType = "bg-danger";
+              selectedAnimation = "swing";
+
+              toastAnimationExample.querySelectorAll('i[class^="ri-"]').forEach(function (element) {
+                element.classList.add(selectedType);
+              });
+              toastAnimationExample.classList.remove(selectedAnimation, "bg-success");
+              toastAnimationExample.classList.add(selectedAnimation, "bg-danger");
+              let toastAnimation = new bootstrap.Toast(toastAnimationExample);
+              toastAnimation.show();
+            } 
+          })
+          // .catch(error => {
+          //     console.error("Error occurred while adding category:", error);
+          //     // alert("Error occurred while adding category.");
+          // });
+      
+    }
+  } else {
+        alert("Please enter a sub category title.");
+  }
 }

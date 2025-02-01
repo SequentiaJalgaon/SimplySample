@@ -23,7 +23,7 @@
 
         const categories = [];
 
-        data.message.forEach(addCategories);
+        data.data.forEach(addCategories);
         
         function addCategories(item, index) {
             categories.push(item.CategoryName);
@@ -65,21 +65,21 @@
   // ! Don't change it unless you really know what you are doing
 
   const previewTemplate = `<div class="dz-preview dz-file-preview">
-<div class="dz-details">
-  <div class="dz-thumbnail">
-    <img data-dz-thumbnail>
-    <span class="dz-nopreview">No preview</span>
-    <div class="dz-success-mark"></div>
-    <div class="dz-error-mark"></div>
-    <div class="dz-error-message"><span data-dz-errormessage></span></div>
-    <div class="progress">
-      <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuemin="0" aria-valuemax="100" data-dz-uploadprogress></div>
-    </div>
-  </div>
-  <div class="dz-filename" data-dz-name></div>
-  <div class="dz-size" data-dz-size></div>
-</div>
-</div>`;
+                                <div class="dz-details">
+                                  <div class="dz-thumbnail">
+                                    <img data-dz-thumbnail>
+                                    <span class="dz-nopreview">No preview</span>
+                                    <div class="dz-success-mark"></div>
+                                    <div class="dz-error-mark"></div>
+                                    <div class="dz-error-message"><span data-dz-errormessage></span></div>
+                                    <div class="progress">
+                                      <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuemin="0" aria-valuemax="100" data-dz-uploadprogress></div>
+                                    </div>
+                                  </div>
+                                  <div class="dz-filename" data-dz-name></div>
+                                  <div class="dz-size" data-dz-size></div>
+                                </div>
+                                </div>`;
 
   // ? Start your code from here
 
@@ -109,100 +109,100 @@
   const productDate = document.querySelector('.product-date');
 
   if (productDate) {
-    productDate.flatpickr({
-      monthSelectorType: 'static',
-      defaultDate: date
-    });
-  }
-})();
-
-//Jquery to handle the e-commerce product add page
-
-$(function () {
-  // Select2
-  var select2 = $('.select2');
-  if (select2.length) {
-    select2.each(function () {
-      var $this = $(this);
-      select2Focus($this);
-      $this.wrap('<div class="position-relative"></div>').select2({
-        dropdownParent: $this.parent(),
-        placeholder: $this.data('placeholder') // for dynamic placeholder
+      productDate.flatpickr({
+        monthSelectorType: 'static',
+        defaultDate: date
       });
-    });
-  }
+    }
+  })();
 
-  var formRepeater = $('.form-repeater');
+      //Jquery to handle the e-commerce product add page
 
-  // Form Repeater
-  // ! Using jQuery each loop to add dynamic id and class for inputs. You may need to improve it based on form fields.
-  // -----------------------------------------------------------------------------------------------------------------
-
-  if (formRepeater.length) {
-    var row = 2;
-    var col = 1;
-    formRepeater.on('submit', function (e) {
-      e.preventDefault();
-    });
-    formRepeater.repeater({
-      show: function () {
-        var fromControl = $(this).find('.form-control, .form-select');
-        var formLabel = $(this).find('.form-label');
-
-        fromControl.each(function (i) {
-          var id = 'form-repeater-' + row + '-' + col;
-          $(fromControl[i]).attr('id', id);
-          $(formLabel[i]).attr('for', id);
-          col++;
-        });
-
-        row++;
-        $(this).slideDown();
-        $('.select2-container').remove();
-        $('.select2.form-select').select2({
-          placeholder: 'Placeholder text'
-        });
-        $('.select2-container').css('width', '100%');
-        var $this = $(this);
-        select2Focus($this);
-        $('.form-repeater:first .form-select').select2({
-          dropdownParent: $(this).parent(),
-          placeholder: 'Placeholder text'
-        });
-        $('.position-relative .select2').each(function () {
-          $(this).select2({
-            dropdownParent: $(this).closest('.position-relative')
+      $(function () {
+        // Select2
+        var select2 = $('.select2');
+        if (select2.length) {
+          select2.each(function () {
+            var $this = $(this);
+            select2Focus($this);
+            $this.wrap('<div class="position-relative"></div>').select2({
+              dropdownParent: $this.parent(),
+              placeholder: $this.data('placeholder') // for dynamic placeholder
+            });
           });
-        });
-      }
-    });
-  }
-});
-
-(function () {
-  'use strict'
-
-  // Fetch all the forms we want to apply custom Bootstrap validation styles to
-  var forms = document.querySelectorAll('.needs-validation')
-
-  // Loop over them and prevent submission
-  Array.prototype.slice.call(forms)
-    .forEach(function (form) {
-      form.addEventListener('submit', function (event) {
-        if (!form.checkValidity()) {
-          event.preventDefault()
-          event.stopPropagation()
-        } else {
-          myFunction(event);
         }
-        
-        form.classList.add('was-validated')
-      }, true)
-    })
-})()
 
-var texteditor = document.getElementsByClassName("ql-editor")[0];
-      texteditor.oninput  = function(){ 
+        var formRepeater = $('.form-repeater');
+
+        // Form Repeater
+        // ! Using jQuery each loop to add dynamic id and class for inputs. You may need to improve it based on form fields.
+        // -----------------------------------------------------------------------------------------------------------------
+
+        if (formRepeater.length) {
+          var row = 2;
+          var col = 1;
+          formRepeater.on('submit', function (e) {
+            e.preventDefault();
+          });
+          formRepeater.repeater({
+            show: function () {
+              var fromControl = $(this).find('.form-control, .form-select');
+              var formLabel = $(this).find('.form-label');
+
+              fromControl.each(function (i) {
+                var id = 'form-repeater-' + row + '-' + col;
+                $(fromControl[i]).attr('id', id);
+                $(formLabel[i]).attr('for', id);
+                col++;
+              });
+
+              row++;
+              $(this).slideDown();
+              $('.select2-container').remove();
+              $('.select2.form-select').select2({
+                placeholder: 'Placeholder text'
+              });
+              $('.select2-container').css('width', '100%');
+              var $this = $(this);
+              select2Focus($this);
+              $('.form-repeater:first .form-select').select2({
+                dropdownParent: $(this).parent(),
+                placeholder: 'Placeholder text'
+              });
+              $('.position-relative .select2').each(function () {
+                $(this).select2({
+                  dropdownParent: $(this).closest('.position-relative')
+                });
+              });
+            }
+          });
+        }
+      });
+
+      (function () {
+        'use strict'
+
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        var forms = document.querySelectorAll('.needs-validation')
+
+        // Loop over them and prevent submission
+        Array.prototype.slice.call(forms)
+          .forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+              if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+              } else {
+                myFunction(event);
+              }
+              
+              form.classList.add('was-validated')
+            }, true)
+          })
+      })()
+
+      var texteditor = document.getElementsByClassName("ql-editor")[0];
+      texteditor.oninput  = function() { 
         if(texteditor.innerHTML != "")
         { 
           document.getElementById("productdescription").value = texteditor.innerHTML; 
@@ -250,129 +250,264 @@ var texteditor = document.getElementsByClassName("ql-editor")[0];
             })
           }
 
-          var productname = document.getElementById("ecommerce-product-name").value;
-          var productDescription = document.getElementsByClassName("ql-editor")[0].innerHTML;
-          var productprice = document.getElementById("ecommerce-product-price").value;
-          var productweight = document.getElementById("ecommerce-product-weight").value;
-          var checkStock = document.getElementById("checkStock").value;
-          var brand = document.getElementById("select2Basic").value;
-          var category = document.getElementById("select3Basic").value;
-          var subcategory = document.getElementById("select4Basic").value;
-
-          var productData = {
-             productname : productname ,
-             productDescription : productDescription ,
-             productprice : productprice ,
-             productweight : productweight ,
-             checkStock : checkStock ,
-             brand : brand ,
-             category : category ,
-             subcategory : subcategory ,
-             image : imagesSaved.toString()
-          };
-          
-
-          async function fetchMoviesAndCategories() {
-            const [moviesResponse, categoriesResponse] = await Promise.all([
-              fetch(ImgaeUploadAPI, {
-                method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ images: uploadedImagesbase64 }),
-                }
-              ),
-              fetch(productsApi, {
-                method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ productData }),
-                })
-            ]);
-          
-            const movies = await moviesResponse.json();
-            const categories = await categoriesResponse.json();
-          
-            return [movies, categories];
-          }
-          
-          fetchMoviesAndCategories().then(([movies, categories]) => {
-            movies;     // fetched movies
-            categories; // fetched categories
-          }).catch(error => {
-            // /movies or /categories request failed
-          });
-
-          async function saveImageProductInfo() {
-            const savedImages = await Promise.all(
-              // saveImages(uploadedImages)
-                fetch(ImgaeUploadAPI, {
-                method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ images: uploadedImagesbase64 }),
-                })
-            );
-          
-            const imagesSaved = await savedImages.json();
-          
-            return imagesSaved;
-          }
-          
-          saveImageProductInfo().then((imagesSaved) => {
-            
-            var productname = document.getElementById("ecommerce-product-name").value;
-            var productDescription = document.getElementsByClassName("ql-editor")[0].innerHTML;
-            var productprice = document.getElementById("ecommerce-product-price").value;
-            var productweight = document.getElementById("ecommerce-product-weight").value;
-            var checkStock = document.getElementById("checkStock").value;
-            var brand = document.getElementById("select2Basic").value;
-            var category = document.getElementById("select3Basic").value;
-            var subcategory = document.getElementById("select4Basic").value;
-
-            var productData = [
-              { productname : productname },
-              { productDescription : productDescription },
-              { productprice : productprice },
-              { productweight : productweight },
-              { checkStock : checkStock },
-              { brand : brand },
-              { category : category },
-              { subcategory : subcategory },
-              { image : imagesSaved }
-            ];
-  
-            async function saveProductInformation() {
-              const saveProduct = await Promise.all(
-                fetch(productsApi, {
-                  method: 'POST',
-                      headers: {
-                          'Content-Type': 'application/json',
-                      },
-                      body: JSON.stringify({ productData }),
-                  })
-              );
-            
-              const productsaved = await saveProduct.json();
-            
-              return productsaved;
-            }
-            
-            saveProductInformation().then((productsaved) => {
-              if (productsaved.ok) {
-                const result = productsaved.json();
-                console.log(result);
-            }
-            }).catch(error => {
-              // /movies or /categories request failed
+          const promise = fetch(ImgaeUploadAPI, {
+            method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ images: uploadedImagesbase64 }),
             });
+  
+          promise
+            .then(response => response.json())
+            .then(data => {
 
-          }).catch(error => {
-            // /movies or /categories request failed
-          });
+              let uploadResult = true;
+              if (typeof data.status !== 'undefined' && data.status == 'success' && data.responses.length > 0) {
+                data.responses.forEach((p) => { if(p.status != "success") uploadResult = uploadResult == true ? false : uploadResult;  });
 
+                if(uploadResult == true) {
+
+                  var productname = document.getElementById("ecommerce-product-name").value;
+                  var productDescription = document.getElementsByClassName("ql-editor")[0].innerHTML;
+                  var productprice = document.getElementById("ecommerce-product-price").value;
+                  var productweight = document.getElementById("ecommerce-product-weight").value;
+                  var checkStock = document.getElementById("checkStock").value;
+                  var brand = document.getElementById("select2Basic").value;
+                  var category = document.getElementById("select3Basic").value;
+                  var subcategory = document.getElementById("select4Basic").value;
+      
+                  var productData = {
+                    productname : productname ,
+                    productDescription : productDescription ,
+                    productprice : productprice ,
+                    productweight : productweight ,
+                    checkStock : checkStock ,
+                    brand : brand ,
+                    category : category ,
+                    subcategory : subcategory ,
+                    image : imagesSaved
+                  };
+
+
+                  const promise1 = fetch(productsApi, {
+                    method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ productData:  productData }),
+                    });
+          
+                  promise1
+                    .then(response => response.json())
+                    .then(data => {
+                      
+                      let selectedType = "";
+                      let selectedAnimation = "";
+
+                      if (typeof data.status !== 'undefined' && data.status == 'success' && data.ProductTitle != "") {
+
+                          document.querySelector('#messageText').innerHTML = data.data;
+                          document.querySelector('#entityTitle').innerHTML = data.ProductTitle;
+                          
+                          const toastAnimationExample = document.querySelector('.toast-ex');
+                          document.querySelector('body').setAttribute('style', "");
+                          selectedType = "bg-success";
+                          selectedAnimation = "swing";
+
+                          // toastAnimationExample.querySelectorAll('i[class^="ri-"]').forEach(function (element) {
+                          //   element.classList.add(selectedType);
+                          // });
+                          toastAnimationExample.classList.remove(selectedAnimation, "bg-danger");
+                          toastAnimationExample.classList.add(selectedAnimation, "bg-success");
+                          let toastAnimation = new bootstrap.Toast(toastAnimationExample);
+                          toastAnimation.show();
+
+                          setTimeout(function() {
+                            // Redirect to another URL, replacing the current page in history
+                            window.location.replace('products');
+                          }, 3000);
+
+                      } else {
+                        document.querySelector('#messageText').innerHTML = data.data;
+                        document.querySelector('#entityTitle').innerHTML = data.ProductTitle;
+                        
+                        const toastAnimationExample = document.querySelector('.toast-ex');
+                        selectedType = "bg-danger";
+                        selectedAnimation = "swing";
+
+                        // toastAnimationExample.querySelectorAll('i[class^="ri-"]').forEach(function (element) {
+                        // element.classList.add(selectedType);
+                        // });
+                        toastAnimationExample.classList.remove(selectedAnimation, "bg-success");
+                        toastAnimationExample.classList.add(selectedAnimation, "bg-danger");
+                        let toastAnimation = new bootstrap.Toast(toastAnimationExample);
+                        toastAnimation.show();
+                      }
+                      
+                    })
+                    .catch(error => console.error('Error:', error));
+                }
+              }
+              
+            })
+            .catch(error => console.error('Error:', error));
+
+            return;
+
+
+          // Action - 3
+          // fetch(ImgaeUploadAPI, 
+          //   {
+          //     method: 'POST',
+          //     headers: {
+          //         'Content-Type': 'application/json',
+          //     },
+          //     body: JSON.stringify({ images: uploadedImagesbase64 }),
+          //   }
+          // )
+          // .then(response => 
+          //   {
+          //     if (!response.ok) {
+          //       throw new Error('Network response was not ok');
+          //       console.log(response);
+          //     }
+          //     console.log(response.json());
+          // })
+          // .then(data => {
+          //     console.log(data);
+          // })
+          // .catch(error => {
+          //     console.error('There was a problem with the fetch operation:', error);
+          // });
+
+          // Action - 2
+          // async function saveImageProductInfo() {
+          //   const savedImages = await Promise.all(
+          //     // saveImages(uploadedImages)
+          //       fetch(ImgaeUploadAPI, {
+          //       method: 'POST',
+          //           headers: {
+          //               'Content-Type': 'application/json',
+          //           },
+          //           body: JSON.stringify({ images: uploadedImagesbase64 }),
+          //       })
+          //   );
+          
+          //   const imagesSavedResult = await savedImages.json();
+          
+          //   return imagesSavedResult;
+          // }
+          
+          // saveImageProductInfo().then((imagesSavedResult) => {
+            
+          //   var productname = document.getElementById("ecommerce-product-name").value;
+          //   var productDescription = document.getElementsByClassName("ql-editor")[0].innerHTML;
+          //   var productprice = document.getElementById("ecommerce-product-price").value;
+          //   var productweight = document.getElementById("ecommerce-product-weight").value;
+          //   var checkStock = document.getElementById("checkStock").value;
+          //   var brand = document.getElementById("select2Basic").value;
+          //   var category = document.getElementById("select3Basic").value;
+          //   var subcategory = document.getElementById("select4Basic").value;
+
+          //   var productData = [
+          //     { productname : productname },
+          //     { productDescription : productDescription },
+          //     { productprice : productprice },
+          //     { productweight : productweight },
+          //     { checkStock : checkStock },
+          //     { brand : brand },
+          //     { category : category },
+          //     { subcategory : subcategory },
+          //     { image : imagesSaved }
+          //   ];
+  
+          //   async function saveProductInformation() {
+          //     const saveProduct = await Promise.all(
+          //       fetch(productsApi, {
+          //         method: 'POST',
+          //             headers: {
+          //                 'Content-Type': 'application/json',
+          //             },
+          //             body: JSON.stringify({ productData }),
+          //         })
+          //     );
+            
+          //     const productsaved = await saveProduct.json();
+            
+          //     return productsaved;
+          //   }
+            
+          //   saveProductInformation().then((productsaved) => {
+          //     if (productsaved.ok) {
+          //       const result = productsaved.json();
+          //       console.log(result);
+          //   }
+          //   }).catch(error => {
+          //     // /movies or /categories request failed
+          //   });
+
+          // }).catch(error => {
+          //   // /movies or /categories request failed
+          // });
+
+          
+          // Action -1
+          // var productname = document.getElementById("ecommerce-product-name").value;
+          // var productDescription = document.getElementsByClassName("ql-editor")[0].innerHTML;
+          // var productprice = document.getElementById("ecommerce-product-price").value;
+          // var productweight = document.getElementById("ecommerce-product-weight").value;
+          // var checkStock = document.getElementById("checkStock").value;
+          // var brand = document.getElementById("select2Basic").value;
+          // var category = document.getElementById("select3Basic").value;
+          // var subcategory = document.getElementById("select4Basic").value;
+
+          // var productData = {
+          //    productname : productname ,
+          //    productDescription : productDescription ,
+          //    productprice : productprice ,
+          //    productweight : productweight ,
+          //    checkStock : checkStock ,
+          //    brand : brand ,
+          //    category : category ,
+          //    subcategory : subcategory ,
+          //    image : imagesSaved.toString()
+          // };
+          
+
+          // async function fetchMoviesAndCategories() {
+          //   const [moviesResponse, categoriesResponse] = await Promise.all([
+          //     fetch(ImgaeUploadAPI, {
+          //       method: 'POST',
+          //           headers: {
+          //               'Content-Type': 'application/json',
+          //           },
+          //           body: JSON.stringify({ images: uploadedImagesbase64 }),
+          //       }
+          //     ),
+          //     fetch(productsApi, {
+          //       method: 'POST',
+          //           headers: {
+          //               'Content-Type': 'application/json',
+          //           },
+          //           body: JSON.stringify({ productData }),
+          //       })
+          //   ]);
+          
+          //   const movies = await moviesResponse.json();
+          //   const categories = await categoriesResponse.json();
+          
+          //   return [movies, categories];
+          // }
+          
+          // fetchMoviesAndCategories().then(([movies, categories]) => {
+          //   movies;     // fetched movies
+          //   categories; // fetched categories
+          // }).catch(error => {
+          //   // /movies or /categories request failed
+          // });
+
+          // // Image Upload Action - 3
           // uploadedImageCount = document.querySelectorAll('[data-dz-thumbnail]').length;
           
           // uploadedImages.forEach(uploadImage);
@@ -406,6 +541,7 @@ var texteditor = document.getElementsByClassName("ql-editor")[0];
             
           // saveImages(uploadedImages);
           
+          // // Add Product Action - 1
           // async function saveProduct() {
           //   var productData = [
           //     { productname : productname },
@@ -454,6 +590,7 @@ var texteditor = document.getElementsByClassName("ql-editor")[0];
           // console.log(subcategory +"\n");
       }
       
+      // Image Upload Action - 1
       // async function saveImages(uploadedImages) {
       //   const imageArray = [];
       //   uploadedImages.forEach(uploadImage);
@@ -490,6 +627,7 @@ var texteditor = document.getElementsByClassName("ql-editor")[0];
       //   return imageArray;
       // }
 
+      // Image Upload Action - 2
       // function base64ToPng(base64String) {
       //     // Create a Blob from the base64 string
       //     const byteCharacters = atob(base64String.split(',')[1]);
@@ -518,26 +656,26 @@ var texteditor = document.getElementsByClassName("ql-editor")[0];
       //     URL.revokeObjectURL(imageUrl);
       // }
 
-    //   async function saveFileOnServer(base64Data) {
-    //     try {
-    //         const response = await fetch(ImgaeUploadAPI, {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //             },
-    //             body: JSON.stringify({ image: base64Data }),  // Sending the URL to the server
-    //         });
-    
-    //         if (response.ok) {
-    //             const result = await response.json();
-    //             if(typeof result.filePath !== 'undefined') {
+      //   async function saveFileOnServer(base64Data) {
+      //     try {
+      //         const response = await fetch(ImgaeUploadAPI, {
+      //             method: 'POST',
+      //             headers: {
+      //                 'Content-Type': 'application/json',
+      //             },
+      //             body: JSON.stringify({ image: base64Data }),  // Sending the URL to the server
+      //         });
+      
+      //         if (response.ok) {
+      //             const result = await response.json();
+      //             if(typeof result.filePath !== 'undefined') {
 
-    //             }
-    //             // console.log('File saved successfully:', result.filePath);
-    //         } else {
-    //             console.log('Error saving file:', response.statusText);
-    //         }
-    //     } catch (error) {
-    //         console.error('Error during fetch:', error);
-    //     }
-    // }
+      //             }
+      //             // console.log('File saved successfully:', result.filePath);
+      //         } else {
+      //             console.log('Error saving file:', response.statusText);
+      //         }
+      //     } catch (error) {
+      //         console.error('Error during fetch:', error);
+      //     }
+      // }

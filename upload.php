@@ -18,7 +18,7 @@ if (isset($_FILES['file'])) {
 
     // Check if the file already exists (optional)
     if (file_exists($targetFilePath)) {
-        echo json_encode(["message" => "File already exists.", "status" => "error"]);
+        echo json_encode(["data" => "File already exists.", "status" => "error"]);
         exit;
     }
 
@@ -26,18 +26,18 @@ if (isset($_FILES['file'])) {
     if (move_uploaded_file($file["tmp_name"], $targetFilePath)) {
         // Respond with success
         echo json_encode([
-            "message" => "File uploaded successfully.",
+            "data" => "File uploaded successfully.",
             "filename" => $fileName,
             "file_path" => $targetFilePath,
             "status" => "success"
         ]);
     } else {
         // Respond with an error if the file could not be moved
-        echo json_encode(["message" => "Error uploading file.", "status" => "error"]);
+        echo json_encode(["data" => "Error uploading file.", "status" => "error"]);
     }
 } else {
     // No file was uploaded
-    echo json_encode(["message" => "No file uploaded.", "status" => "error"]);
+    echo json_encode(["data" => "No file uploaded.", "status" => "error"]);
 }
 
 ?>

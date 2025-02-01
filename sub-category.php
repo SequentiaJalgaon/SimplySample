@@ -107,7 +107,7 @@
                     </table>
                   </div>
                 </div>
-                <!-- Offcanvas to add new customer -->
+                <!-- Offcanvas to add new sub category -->
                 <div
                   class="offcanvas offcanvas-end"
                   tabindex="-1"
@@ -177,6 +177,75 @@
                     </form>
                   </div>
                 </div>
+
+                
+                <!-- Offcanvas to edit sub category -->
+                <div
+                  class="offcanvas offcanvas-end"
+                  tabindex="-1"
+                  id="offcanvasEcommerceCategoryListedit"
+                  aria-labelledby="offcanvasEcommerceCategoryListLabel">
+                  <!-- Offcanvas Header -->
+                  <div class="offcanvas-header">
+                    <h5 id="offcanvasEcommerceCategoryListLabel" class="offcanvas-title">Edit Sub Category</h5>
+                    <button
+                      type="button"
+                      class="btn-close text-reset"
+                      data-bs-dismiss="offcanvas"
+                      aria-label="Close"></button>
+                  </div>
+                  <!-- Offcanvas Body -->
+                  <div class="offcanvas-body border-top">
+                    <form class="pt-0" action="#" enctype="multipart/form-data" id="eCommerceCategoryListForm" >
+                      <!-- Image -->
+                      <!-- <div class="form-floating form-floating-outline mb-5">
+                        <input class="form-control" type="file" id="ecommerce-category-image" />
+                        <label for="ecommerce-category-image">Attachment</label>
+                      </div> -->
+                      <input type="hidden" id="subcategoryid_edit">
+                      <input type="hidden" id="cat_subcat_id">
+                      <!-- Parent category -->
+                      <div class="mb-5 ecommerce-select2-dropdown">
+                        <div class="form-floating form-floating-outline">
+                          <select
+                            id="ecommerce-category-parent-category-edit"
+                            class="select2 form-select"
+                            data-placeholder="Select parent category"
+                            data-allow-clear="true" required>
+                          </select>
+                          <label for="ecommerce-category-parent-category-edit">Parent category</label>
+                        </div>
+                      </div>
+                      <!-- Title -->
+                      <div class="form-floating form-floating-outline mb-5">
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="ecommerce-category-title-edit"
+                          placeholder="Enter sub category title"
+                          name="categoryTitle"
+                          aria-label="category title" required />
+                        <label for="ecommerce-category-title">Sub Category Title</label>
+                      </div>
+                      <div class="form-floating form-floating-outline mb-5">
+                        <div class="form-check form-check-success">
+                          <input class="form-check-input" type="checkbox" value="" id="isActiveSubCatEdit" checked>
+                          <label class="form-check-label" for="isActiveSubCatEdit">
+                            Is Active
+                          </label>
+                        </div>
+                      </div>
+
+                      <!-- Submit and reset -->
+                      <div>
+                        <button type="button" class="btn btn-primary me-3 data-submit" onclick="myFunctionUpdate()">Update</button>
+                        <button type="reset" class="btn btn-outline-danger" data-bs-dismiss="offcanvas">Discard</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+
+
               </div>
             </div>
             <!-- / Content -->
@@ -209,150 +278,7 @@
     <script src="assets/js/app-ecommerce-sub-category-list.js"></script>
     <script>
     // document.getElementById("eCommerceCategoryListForm").addEventListener("submit", function(event) {
-  function myFunction() {
-    
-      event.preventDefault(); // Prevent default form submission
-      let formData = new FormData();
-      // let fileInput = document.getElementById("fileInput");
-      let subcategoryid_edit = document.getElementById("subcategoryid_edit").value;
-      let subcategoryTitle = document.getElementById("ecommerce-category-title").value;
-      let parentCategoryName = document.getElementById("ecommerce-category-parent-category").value;
-      let isActive = document.getElementById("isActiveSubCat").checked;
-      if(subcategoryTitle != "") {
-        
-        formData.append("subcategoryTitle", subcategoryTitle);
-        formData.append("parentCategoryName", parentCategoryName);
-        formData.append("isActive", isActive);
-
-        if(subcategoryid_edit == "" || subcategoryid_edit != undefined ) {
-                formData.append("subcategoryid_edit", subcategoryid_edit);
-                fetch("api_subcategory.php", {
-                    method: "POST",
-                    body: formData,
-                })
-                .then(response => response.json())
-                .then(data => {
-                  
-                  let selectedType = "";
-                  let selectedAnimation = "";
-                  if(data.status == "success"){
-                    
-                    document.querySelector('#messageText').innerHTML = data.message;
-                    document.querySelector('#entityTitle').innerHTML = data.subcategoryTitle;
-                    
-                    const toastAnimationExample = document.querySelector('.toast-ex');
-                    document.querySelector('#offcanvasEcommerceCategoryList').classList.remove("show");
-                    document.querySelector('body').setAttribute('style', "");
-                    document.querySelector('.offcanvas-backdrop').classList.remove("show");
-                    selectedType = "bg-success";
-                    selectedAnimation = "swing";
-
-                    toastAnimationExample.querySelectorAll('i[class^="ri-"]').forEach(function (element) {
-                      element.classList.add(selectedType);
-                    });
-                    toastAnimationExample.classList.remove(selectedAnimation, "bg-danger");
-                    toastAnimationExample.classList.add(selectedAnimation, "bg-success");
-                    let toastAnimation = new bootstrap.Toast(toastAnimationExample);
-                    toastAnimation.show();
-                  }
-                  if(data.status == "fail"){
-                    
-                    document.querySelector('#messageText').innerHTML = data.message;
-                    document.querySelector('#entityTitle').innerHTML = data.subcategoryTitle;
-                    
-                    const toastAnimationExample = document.querySelector('.toast-ex');
-                    selectedType = "bg-danger";
-                    selectedAnimation = "swing";
-
-                    toastAnimationExample.querySelectorAll('i[class^="ri-"]').forEach(function (element) {
-                      element.classList.add(selectedType);
-                    });
-                    toastAnimationExample.classList.remove(selectedAnimation, "bg-success");
-                    toastAnimationExample.classList.add(selectedAnimation, "bg-danger");
-                    toastAnimation = new bootstrap.Toast(toastAnimationExample);
-                    toastAnimation.show();
-                  } 
-                })
-                .catch(error => {
-                    console.log("Error occurred while adding category:", error);
-                    // alert("Error occurred while adding category.");
-                });
-        } else {
-              fetch("api_subcategory.php", {
-                  method: "PUT",
-                  body: formData,
-              })
-              .then(response => response.json())
-              .then(data => {
-                
-                if(data.status == "success"){
-                  
-                  document.querySelector('#messageText').innerHTML = data.message;
-                  document.querySelector('#entityTitle').innerHTML = data.subcategoryTitle;
-                  
-                  const toastAnimationExample = document.querySelector('.toast-ex');
-                  document.querySelector('#offcanvasEcommerceCategoryList').classList.remove("show");
-                  document.querySelector('body').setAttribute('style', "");
-                  document.querySelector('.offcanvas-backdrop').classList.remove("show");
-                  selectedType = "bg-success";
-                  selectedAnimation = "swing";
-
-                  toastAnimationExample.querySelectorAll('i[class^="ri-"]').forEach(function (element) {
-                    element.classList.add(selectedType);
-                  });
-                  toastAnimationExample.classList.remove(selectedAnimation, "bg-danger");
-                  toastAnimationExample.classList.add(selectedAnimation, "bg-success");
-                  toastAnimation = new bootstrap.Toast(toastAnimationExample);
-                  toastAnimation.show();
-                }
-                if(data.status == "fail"){
-                  
-                  document.querySelector('#messageText').innerHTML = data.message;
-                  document.querySelector('#entityTitle').innerHTML = data.subcategoryTitle;
-                  
-                  const toastAnimationExample = document.querySelector('.toast-ex');
-                  selectedType = "bg-danger";
-                  selectedAnimation = "swing";
-
-                  toastAnimationExample.querySelectorAll('i[class^="ri-"]').forEach(function (element) {
-                    element.classList.add(selectedType);
-                  });
-                  toastAnimationExample.classList.remove(selectedAnimation, "bg-success");
-                  toastAnimationExample.classList.add(selectedAnimation, "bg-danger");
-                  toastAnimation = new bootstrap.Toast(toastAnimationExample);
-                  toastAnimation.show();
-                } 
-              })
-              .catch(error => {
-                  console.error("Error occurred while adding category:", error);
-                  // alert("Error occurred while adding category.");
-              });
-          
-        }
-      } else {
-            // alert("Please enter a sub category title.");
-      }
-      // if (fileInput.files.length > 0) {
-      //     formData.append("file", fileInput.files[0]);
-
-      //     fetch("upload.php", {
-      //         method: "POST",
-      //         body: formData,
-      //     })
-      //     .then(response => response.json())
-      //     .then(data => {
-      //         console.log("File uploaded successfully:", data);
-      //         alert("File uploaded successfully!");
-      //     })
-      //     .catch(error => {
-      //         console.error("Error uploading file:", error);
-      //         alert("Error uploading file.");
-      //     });
-      // } else {
-      //     alert("Please select a file to upload.");
-      // }
-      // });
-  }
+  
 </script>
   </body>
 </html>

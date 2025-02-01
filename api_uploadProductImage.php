@@ -4,11 +4,11 @@ header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
 // Define the folder where the images will be saved
-$saveFolder = 'uploads/productIamges/';
+$productImagePath = 'uploads/productIamges/';
 
 // Check if the save folder exists, if not, create it
-if (!file_exists($saveFolder)) {
-    mkdir($saveFolder, 0777, true);
+if (!file_exists($productImagePath)) {
+    mkdir($productImagePath, 0777, true);
 }
 
 // Function to save the base64 image data to a file
@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $base64Data = $image['base64Data'];
 
                 // Define the file path where the image will be saved
-                $filePath = $saveFolder . '/' . $name;
+                $filePath = $productImagePath . '/' . $name;
 
                 // Save the image and collect the response
                 $success = saveBase64Image($base64Data, $filePath);
@@ -55,16 +55,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $responses[] = ['name' => $name, 'status' => 'error'];
                 }
             } else {
-                $responses[] = ['status' => 'error', 'message' => 'Invalid image data'];
+                $responses[] = ['status' => 'error', 'data' => 'Invalid image data'];
             }
         }
 
         // Send a JSON response with the result
         echo json_encode(['status' => 'success', 'responses' => $responses]);
     } else {
-        echo json_encode(['status' => 'error', 'message' => 'No images provided']);
+        echo json_encode(['status' => 'error', 'data' => 'No images provided']);
     }
 } else {
-    echo json_encode(['status' => 'error', 'message' => 'Invalid request method']);
+    echo json_encode(['status' => 'error', 'data' => 'Invalid request method']);
 }
 ?>

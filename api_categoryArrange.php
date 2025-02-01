@@ -42,7 +42,7 @@ if($REQUEST_METHOD == "POST") {
         }
 
         $result= ([
-            "message" => "Category Sequence Updated successfully.",
+            "data" => "Category Sequence Updated successfully.",
             "categoryTitle" => "",
             "status" => "success",
             'statusCode' => 200
@@ -50,7 +50,7 @@ if($REQUEST_METHOD == "POST") {
 
     } else {
         $result= ([
-            "message" => "Category Sequence Updation Failed.",
+            "data" => "Category Sequence Updation Failed.",
             "categoryTitle" => "",
             "status" => "fail",
             'statusCode' => 200
@@ -59,7 +59,7 @@ if($REQUEST_METHOD == "POST") {
      
 } else {
     $result = array(
-        'message' => 'Requested Method is not supported', 
+        'data' => 'Requested Method is not supported', 
         'status' => false, 
         'statusCode' => 200);
 }
