@@ -130,7 +130,7 @@ $(function () {
                             '</div>' +
                             '</div>' +
                             '<div class="d-flex flex-column">' +
-                            '<span class="text-nowrap text-heading fw-medium">' +
+                            '<span class="text-nowrap text-heading fw-bold">' +
                             $CategoryName +
                             '</span>' +
                             '</div>' +
@@ -172,17 +172,28 @@ $(function () {
                   var $categoryName =  full["CategoryName"];
                   var $is_active =  full["Active"];
                   var $base64image =  full["CategoryImage"];
-                  return (
+                  var $return =
                     '<div class="d-flex align-items-sm-center justify-content-sm-center">' +
                     
-                    '<button class="btn btn-sm btn-icon btn-text-secondary waves-effect waves-light rounded-pill" type="button" data-bs-toggle="offcanvas" data-bs-target ="#offcanvasEcommerceCategoryListEdit" onclick="editCategory(\''+$categoryName+'\',\''+$categoryID+'\','+$is_active+',\''+$base64image+'\')"><i class="ri-edit-box-line ri-20px"></i></button>' +
+                    '<button class="btn btn-sm btn-icon btn-text-secondary waves-effect waves-light rounded-pill" type="button" data-bs-toggle="offcanvas" data-bs-target ="#offcanvasEcommerceCategoryListEdit" onclick="editCategory(\''+$categoryName+'\',\''+$categoryID+'\','+$is_active+',\''+$base64image+'\')"><i class="ri-edit-box-line ri-20px"></i></button>';
+                    $return += '<button class="btn btn-sm btn-icon btn-text-secondary waves-effect waves-light rounded-pill dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ri-more-2-line ri-20px"></i></button>';
+                    if($is_active == 1) {
+                        $return += 
+                        '<div class="dropdown-menu dropdown-menu-end m-0">' +
+                        '<a href="javascript:SubmitForm(\'delete\',\''+$categoryID+'\');" class="dropdown-item">Delete</a>' +
+                        '</div>' +
+                        '</div>';
+                    }
                     
-                    '<button class="btn btn-sm btn-icon btn-text-secondary waves-effect waves-light rounded-pill dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ri-more-2-line ri-20px"></i></button>' +
-                    '<div class="dropdown-menu dropdown-menu-end m-0">' +
-                    '<a href="javascript:SubmitForm(\'delete\',\''+$categoryID+'\');" class="dropdown-item">Delete</a>' +
-                    '</div>' +
-                    '</div>'
-                  );
+                    if($is_active == 0) {
+                        $return += 
+                        '<div class="dropdown-menu dropdown-menu-end m-0">' +
+                        '<a href="javascript:SubmitForm(\'active\',\''+$categoryID+'\');" class="dropdown-item">Active</a>' +
+                        '</div>' +
+                        '</div>';
+                    }
+
+                    return $return;
                   // '<a href="javascript:0;" class="dropdown-item">View</a>' +
                 }
               }
@@ -361,7 +372,7 @@ $(function () {
                 text: '<span class="d-none d-sm-inline-block">Update Category Sequence</span>',
                 className: 'btn btn-success waves-effect waves-light',
                 attr: {
-                  'href': 'category_sequence',
+                  'onclick': 'window.location=\'category_sequence\'',
                   'style': 'margin-left: 20px'
                 }
               }
@@ -480,7 +491,6 @@ function editCategory(categoryName, categoryid_edit, isActive, base64image) {
 }
 
 function SubmitForm(action, submittedid = 0) {
-          
             
   let formData = new FormData();
 
@@ -511,7 +521,7 @@ function SubmitForm(action, submittedid = 0) {
             document.querySelector('#entityTitle').innerHTML = data.categoryTitle;
             
             const toastAnimationExample = document.querySelector('.toast-ex');
-            document.querySelector('#offcanvasEcommerceCategoryList').classList.remove("show");
+            document.querySelector('#offcanvasEcommerceCategoryListAdd').classList.remove("show");
             document.querySelector('body').setAttribute('style', "");
             document.querySelector('.offcanvas-backdrop').classList.remove("show");
             selectedType = "bg-success";
@@ -522,7 +532,7 @@ function SubmitForm(action, submittedid = 0) {
             });
             toastAnimationExample.classList.remove(selectedAnimation, "bg-danger");
             toastAnimationExample.classList.add(selectedAnimation, "bg-success");
-            toastAnimation = new bootstrap.Toast(toastAnimationExample);
+            let toastAnimation = new bootstrap.Toast(toastAnimationExample);
             toastAnimation.show();
           }
           if(data.status == "fail"){
@@ -539,14 +549,14 @@ function SubmitForm(action, submittedid = 0) {
             });
             toastAnimationExample.classList.remove(selectedAnimation, "bg-success");
             toastAnimationExample.classList.add(selectedAnimation, "bg-danger");
-            toastAnimation = new bootstrap.Toast(toastAnimationExample);
+            let toastAnimation = new bootstrap.Toast(toastAnimationExample);
             toastAnimation.show();
           } 
         })
-        .catch(error => {
-            console.error("Error occurred while adding category:", error);
-            alert("Error occurred while adding category.");
-        });
+        // .catch(error => {
+        //     console.error("Error occurred while adding category:", error);
+        //     alert("Error occurred while adding category.");
+        // });
     } else {
         alert("Please enter a category title.");
     }
@@ -636,19 +646,19 @@ function SubmitForm(action, submittedid = 0) {
     }
   }
 
-  if(action == "delete" && submittedid != 0)
+  if((action == "delete" || action == "active") && submittedid != 0)
   {
-    console.log("Inside Delete");
     let categoryId = submittedid;
     if(categoryId != "") {
         // formData.append("categoryId", categoryId);
         let jsonObj = JSON.stringify(
           {
+            "status": action,
             "categoryId": categoryId
           }
         )
         fetch("api_category.php", {
-              method: "DELETE",
+              method: "PUT",
               body: jsonObj,
           })
         .then(response => response.json())
@@ -663,9 +673,9 @@ function SubmitForm(action, submittedid = 0) {
             document.querySelector('#entityTitle').innerHTML = data.categoryTitle;
             
             const toastAnimationExample = document.querySelector('.toast-ex');
-            document.querySelector('#offcanvasEcommerceCategoryList').classList.remove("show");
-            document.querySelector('body').setAttribute('style', "");
-            document.querySelector('.offcanvas-backdrop').classList.remove("show");
+            // document.querySelector('#offcanvasEcommerceCategoryListEdit').classList.remove("show");
+            // document.querySelector('body').setAttribute('style', "");
+            // document.querySelector('.offcanvas-backdrop').classList.remove("show");
             selectedType = "bg-success";
             selectedAnimation = "swing";
 
@@ -676,6 +686,11 @@ function SubmitForm(action, submittedid = 0) {
             toastAnimationExample.classList.add(selectedAnimation, "bg-success");
             let toastAnimation = new bootstrap.Toast(toastAnimationExample);
             toastAnimation.show();
+            setTimeout(function() {
+              // Redirect to another URL, replacing the current page in history
+              window.location.replace('category');
+            }, 2000);
+
           }
           if(data.status == "fail"){
             
@@ -691,7 +706,7 @@ function SubmitForm(action, submittedid = 0) {
             });
             toastAnimationExample.classList.remove(selectedAnimation, "bg-success");
             toastAnimationExample.classList.add(selectedAnimation, "bg-danger");
-            toastAnimation = new bootstrap.Toast(toastAnimationExample);
+            let toastAnimation = new bootstrap.Toast(toastAnimationExample);
             toastAnimation.show();
           } 
         });

@@ -100,7 +100,7 @@
                         <p class="mb-0">Orders placed across your store</p>
                       </div>
                       <div class="d-flex align-content-center flex-wrap gap-4">
-                        <button class="btn btn-outline-secondary">Discard</button>
+                        <button type="button" onclick="window.location.href='products'"  class="btn btn-outline-secondary">Discard</button>
                         <!-- <button class="btn btn-outline-primary">Save draft</button> -->
                         <button name="submit" type="submit" class="btn btn-primary">Add product</button>
                       </div>

@@ -91,17 +91,45 @@ else if($REQUEST_METHOD == "POST") {
         if($isPresent == "") {        
             
             $added_on = date('Y-m-d H-i-s');
-            
+            $recentCategoryId = 0;
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $sql = "INSERT INTO `category`(`category_name`,`category_image`,`added_on`,`is_active`) VALUES (?,?,?,?)";
             $q = $pdo->prepare($sql);
             $isAdded = $q->execute(array($categoryTitle, $categoryImage, $added_on, 1));
+            $recentCategoryId = $pdo->lastInsertId();
+
+            $sql = "SELECT count(*) as count FROM category_sequence WHERE is_active = '1'";
+            $q = $pdo->prepare($sql);
+            $q->execute(array());
+            $sequenceCategories = $q->fetch(PDO::FETCH_ASSOC);
             
-            if($isAdded == true){
+            $categories = 0;
+            if($sequenceCategories["count"]) $categories = (int)$sequenceCategories["count"];
+            
+            $isAddeds = false;
+            if($categories > 0 && $recentCategoryId > 0) {
+                $sql = "INSERT INTO `category_sequence`(`category_id`,`sequence_number`,`added_on`,`is_active`) VALUES (?,?,?,?)";
+                $q = $pdo->prepare($sql);
+                $isAddeds = $q->execute(array($recentCategoryId, $categories+1, $added_on, 1));
+            } else {
+                $sql = "DELETE FROM category WHERE category_id = ?";
+                $q = $pdo->prepare($sql);
+                $q->execute(array($recentCategoryId));        
+            }
+            
+            
+            if($isAdded == true && $isAddeds == true) {
                 $result= ([
                     "data" => "Category Added successfully.",
                     "categoryTitle" => $categoryTitle,
                     "status" => "success",
+                    'statusCode' => 200
+                ]);
+            } else {
+                $result= ([
+                    "data" => "Category Couln't be added.",
+                    "categoryTitle" => $categoryTitle,
+                    "status" => "fail",
                     'statusCode' => 200
                 ]);
             }
@@ -131,6 +159,7 @@ else if($REQUEST_METHOD == "PUT") {
     $categoryId = 0;
     $isActive = 0;
     $category_image = "";
+    $status = "";
 
     parse_str(file_get_contents('php://input'), $_PUT);
     $_PUT = (array) json_decode(file_get_contents('php://input'));
@@ -150,11 +179,15 @@ else if($REQUEST_METHOD == "PUT") {
     if(isset($_PUT['categoryImage'])) {
         $category_image = trim($_PUT['categoryImage']);
     }
+
+    if(isset($_PUT['status'])) {
+        $status = trim($_PUT['status']);
+    }
     
     include("dist/conf/db.php");
     $pdo = Database::connect();
     
-    if($categoryTitle != "" && $categoryId != 0) {
+    if( $categoryId != 0) {
 
         $sql = "SELECT * FROM category WHERE category_id = ?";
         $q = $pdo->prepare($sql);
@@ -163,82 +196,138 @@ else if($REQUEST_METHOD == "PUT") {
         
         if($isPresent != "") {   
 
-            $sql = "SELECT * FROM category WHERE category_name = ?";
-            $q = $pdo->prepare($sql);
-            $q->execute(array($categoryTitle));
-            $isDuplicate = $q->fetch(PDO::FETCH_ASSOC);
-            
-            if(isset($isDuplicate["category_id"]) && ($isDuplicate["category_id"] == $isPresent["category_id"]))
-            {
-                // if( $isPresent['is_active'] != $isActive)  $isActive = $isPresent['is_active'];
-                if( $category_image == "")  $category_image = $isPresent['category_image'];
-
-                $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                $sql = "UPDATE `category` SET `is_active` = ?, category_image = ? WHERE category_id = ?";
-                $q = $pdo->prepare($sql);
-                $isAdded = $q->execute(array( $isActive, $category_image, $categoryId));
-                
-                if($isAdded == true){
+            if($status != "" && $categoryTitle == "") {
+                if($status == "delete") {
+                    $sql = "UPDATE `category` SET `is_active` = ? WHERE category_id = ?";
+                    $q = $pdo->prepare($sql);
+                    $isAdded = $q->execute(array( '0', $categoryId));
+                    
+                    if($isAdded == true){
+                        $result= ([
+                            "data" => "Category Status Updated successfully.",
+                            "categoryTitle" => $categoryTitle,
+                            "status" => "success",
+                            'statusCode' => 200
+                        ]);
+                    }
+    
+                } else if($status == "active") {
+    
+                    $sql = "UPDATE `category` SET `is_active` = ? WHERE category_id = ?";
+                    $q = $pdo->prepare($sql);
+                    $isAdded = $q->execute(array( '1', $categoryId));
+    
+                    if($isAdded == true){
+                        $result= ([
+                            "data" => "Category Status Updated successfully.",
+                            "categoryTitle" => $categoryTitle,
+                            "status" => "success",
+                            'statusCode' => 200
+                        ]);
+                    }
+                } else if($status == "") {
                     $result= ([
-                        "data" => "Category Information Updated successfully.",
+                        "data" => "Invalid Action.",
+                        "categoryTitle" => "",
+                        "status" => "fail",
+                        'statusCode' => 204
+                    ]);
+                }
+            } else if($status == "" && $categoryTitle != "") {
+
+                $sql = "SELECT * FROM category WHERE category_name = ?";
+                $q = $pdo->prepare($sql);
+                $q->execute(array($categoryTitle));
+                $isDuplicate = $q->fetch(PDO::FETCH_ASSOC);
+                
+                if(isset($isDuplicate["category_id"]) && ($isDuplicate["category_id"] == $isPresent["category_id"]))
+                {
+                    if ($categoryTitle != ""){
+                        
+                        if( $category_image == "")  $category_image = $isPresent['category_image'];
+
+                        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                        $sql = "UPDATE `category` SET `is_active` = ?, category_image = ? WHERE category_id = ?";
+                        $q = $pdo->prepare($sql);
+                        $isAdded = $q->execute(array( $isActive, $category_image, $categoryId));
+                        
+                        if($isAdded == true){
+                            $result= ([
+                                "data" => "Category Information Updated successfully.",
+                                "categoryTitle" => $categoryTitle,
+                                "status" => "success",
+                                'statusCode' => 200
+                            ]);
+                        }
+                    } else {
+                        $result= ([
+                            "data" => "Category Title Cannot be blank.",
+                            "categoryTitle" => $categoryTitle,
+                            "status" => "fail",
+                            'statusCode' => 200
+                        ]);
+                    }
+                } else if(!isset($isDuplicate["category_id"])) {
+                    if( $category_image == "")  $category_image = $isPresent['category_image'];
+
+                    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                    $sql = "UPDATE `category` SET `category_name` = ?, `is_active` = ?, category_image = ? WHERE category_id = ?";
+                    $q = $pdo->prepare($sql);
+                    $isAdded = $q->execute(array($categoryTitle , $isActive, $category_image, $categoryId));
+                    
+                    if($isAdded == true){
+                        $result= ([
+                            "data" => "Category Information Updated successfully.",
+                            "categoryTitle" => $categoryTitle,
+                            "status" => "success",
+                            'statusCode' => 200
+                        ]);
+                    }
+                
+                    // } else if( $isPresent['is_active'] != $isActive) {
+                        
+                    //     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                    //     $sql = "UPDATE `category` SET `is_active` =? WHERE category_id = ?";
+                    //     $q = $pdo->prepare($sql);
+                    //     $isStatusUpdate = $q->execute(array($isActive, $categoryId));
+                        
+                    //     if($isStatusUpdate == true){
+                    //         $result= ([
+                    //             "data" => "Category Status Updated successfully.",
+                    //             "categoryTitle" => $categoryTitle,
+                    //             "status" => "success",
+                    //             'statusCode' => 200
+                    //         ]);
+                    //     } 
+
+                    // } else if( $isPresent['category_image'] != $category_image) {
+                        
+                    //     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                    //     $sql = "UPDATE `category` SET `category_image` =? WHERE category_id = ?";
+                    //     $q = $pdo->prepare($sql);
+                    //     $isStatusUpdate = $q->execute(array($category_image, $categoryId));
+                        
+                    //     if($isStatusUpdate == true){
+                    //         $result= ([
+                    //             "data" => "Category Image Updated successfully.",
+                    //             "categoryTitle" => $categoryTitle,
+                    //             "status" => "success",
+                    //             'statusCode' => 200
+                    //         ]);
+                    //     }
+
+                } 
+                else {
+                    $result= ([
+                        "data" => "Category Title Already Exist.",
                         "categoryTitle" => $categoryTitle,
-                        "status" => "success",
+                        "status" => "fail",
                         'statusCode' => 200
                     ]);
                 }
-            } else if(!isset($isDuplicate["category_id"])) {
-                if( $category_image == "")  $category_image = $isPresent['category_image'];
-
-                $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                $sql = "UPDATE `category` SET `category_name` = ?, `is_active` = ?, category_image = ? WHERE category_id = ?";
-                $q = $pdo->prepare($sql);
-                $isAdded = $q->execute(array($categoryTitle , $isActive, $category_image, $categoryId));
-                
-                if($isAdded == true){
-                    $result= ([
-                        "data" => "Category Information Updated successfully.",
-                        "categoryTitle" => $categoryTitle,
-                        "status" => "success",
-                        'statusCode' => 200
-                    ]);
-                }
-            
-            // } else if( $isPresent['is_active'] != $isActive) {
-                
-            //     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            //     $sql = "UPDATE `category` SET `is_active` =? WHERE category_id = ?";
-            //     $q = $pdo->prepare($sql);
-            //     $isStatusUpdate = $q->execute(array($isActive, $categoryId));
-                
-            //     if($isStatusUpdate == true){
-            //         $result= ([
-            //             "data" => "Category Status Updated successfully.",
-            //             "categoryTitle" => $categoryTitle,
-            //             "status" => "success",
-            //             'statusCode' => 200
-            //         ]);
-            //     } 
-
-            // } else if( $isPresent['category_image'] != $category_image) {
-                
-            //     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            //     $sql = "UPDATE `category` SET `category_image` =? WHERE category_id = ?";
-            //     $q = $pdo->prepare($sql);
-            //     $isStatusUpdate = $q->execute(array($category_image, $categoryId));
-                
-            //     if($isStatusUpdate == true){
-            //         $result= ([
-            //             "data" => "Category Image Updated successfully.",
-            //             "categoryTitle" => $categoryTitle,
-            //             "status" => "success",
-            //             'statusCode' => 200
-            //         ]);
-            //     }
-
-            } 
-            else {
+            } else {
                 $result= ([
-                    "data" => "Category Title Already Exist.",
+                    "data" => "Insufficient Information.",
                     "categoryTitle" => $categoryTitle,
                     "status" => "fail",
                     'statusCode' => 200
@@ -292,7 +381,6 @@ else if($REQUEST_METHOD == "DELETE") {
                     JOIN    user_vs_category uc ON c.category_id = uc.category_id
                     WHERE   
                             c.category_id = ? AND
-                            pm.is_active = '1' AND
                             bc.is_active = '1' AND
                             cs.is_active = '1' AND
                             uc.is_active = '1'
@@ -304,7 +392,7 @@ else if($REQUEST_METHOD == "DELETE") {
                 
 
                 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                $sql = "DELETE FROM `category` WHERE `category_id` = ?";
+                $sql = "UPDATE `category` SET is_active = '0' WHERE `category_id` = ?";
                 $q = $pdo->prepare($sql);
                 $isDeleted = $q->execute([$categoryId]);
                 

@@ -16,11 +16,10 @@
 //   echo "<pre>";
 //   print_R($_SESSION);
 //   exit();
+  $admin_id = $_SESSION['admin_id'];
 
-  $login_user_id = $_SESSION['login_user_id'];
-
-//   $employee_id = $_REQUEST['employee_id'];
-  $sql = "select * from employee where admin_id= $login_user_id ";
+//   $admin_id = $_REQUEST['admin_id'];
+  $sql = "select * from `admin` where admin_id= $admin_id ";
   $q = $pdo->prepare($sql);
   $q->execute(array());      
   $row_d = $q->fetch(PDO::FETCH_ASSOC);
@@ -30,28 +29,21 @@
 
   if(isSet($_POST["submit"]))
   { 
-    // echo "<pre>";
-    // print_R($_POST);
-    // exit();
-
-    $employee_name = $_POST['employee_name'];
+    $login_name = $_POST['login_name'];
     $added_on = date('Y-m-d H-i-s');
-    
-
-    $employee_id = $_POST['employee_id'];
-
+    // $admin_id = $_POST['admin_id'];
 
     // $sql = "select * from location where id = $_employeelocation_id ";
     // $q = $pdo->prepare($sql);
     // $q->execute(array());      
     // $row_loc = $q->fetch(PDO::FETCH_ASSOC);
 
-    $sql = "select * from employee where employee_id = $employee_id ";
-    $q = $pdo->prepare($sql);
-    $q->execute(array());      
-    $row_d13 = $q->fetch(PDO::FETCH_ASSOC);
+    // $sql = "select * from employee where admin_id = $admin_id ";
+    // $q = $pdo->prepare($sql);
+    // $q->execute(array());      
+    // $row_d13 = $q->fetch(PDO::FETCH_ASSOC);
 
-    $admin_id = $row_d13['admin_id'];
+    // $admin_id = $row_d13['admin_id'];
 
     $sql = "select * from admin where admin_id = $admin_id ";
     $q = $pdo->prepare($sql);
@@ -72,10 +64,10 @@
         $q = $pdo->prepare($sql);
         $q->execute(array($password, $admin_id));
 
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $sql = "UPDATE employee set  password=?, edited_on=? WHERE admin_id =?";
-        $q = $pdo->prepare($sql);
-        $q->execute(array( $password, $added_on, $admin_id));
+        // $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        // $sql = "UPDATE employee set  password=?, edited_on=? WHERE admin_id =?";
+        // $q = $pdo->prepare($sql);
+        // $q->execute(array( $password, $added_on, $admin_id));
         // echo "<pre>";
         // print_r($sql);
         // exit();
@@ -118,12 +110,12 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>Edit Employee |  Guru Properties</title>
+    <title>Edit Employee | Simply Sample</title>
 
     <meta name="description" content="" />
 
     <!-- *********** header******************  -->
-    <?php include 'layout/header_js.php'; ?>
+    <?php include ('layout/header_css.php');  ?>
      <!-- *********** /header******************  -->
     
   </head>
@@ -145,13 +137,13 @@
 
             <div class="container-xxl flex-grow-1 container-p-y">
               <!-- *************** - main containt in page write here - **********************  -->
-              <h5 class="card-header mar-bot-10">Employee Details Form</h5>
+              <h5 class="card-header mar-bot-10">Password Change Form</h5>
                 <div class="card">
-                    <h5 class="card-header">Edit Employee</h5>
+                    <h5 class="card-header">Change Password</h5>
                     <div class="card-body demo-vertical-spacing demo-only-element">
                         <div class="d-flex align-items-center1 justify-content-center">
                         <form action="#" method="post">
-                          <input type="hidden" value="<?php echo $row_d['employee_id']; ?>" name="employee_id">
+                          <input type="hidden" value="<?php echo $row_d['admin_id']; ?>" name="admin_id">
                           <div class="row g-4">
                             <div class="col-md-6" style="display:none;">
                               <div class="row">
@@ -171,7 +163,7 @@
                               <div class="row">
                                 <!-- <label class="col-sm-3 col-form-label text-sm-end" for="formtabs-username"> Name</label> -->
                                 <div class="col-sm-12 form-floating form-floating-outline">
-                                  <input type="text" readonly name="employee_name" id="formtabs-username" class="form-control" value="<?php echo $row_d['employee_name']; ?>">
+                                  <input type="text" readonly name="login_name" id="formtabs-username" class="form-control" value="<?php echo $row_d['login_name']; ?>">
                                   
                                   <label for="formtabs-username">Name</label>
                                 </div>
@@ -182,7 +174,7 @@
                               <div class="row">
                                 <!-- <label class="col-sm-3 col-form-label text-sm-end" for="formtabs-username">User ID</label> -->
                                 <div class="col-sm-12 form-floating form-floating-outline">
-                                  <input type="text" readonly name="user_id"  id="formtabs-username" class="form-control" value="<?php echo $row_d['user_id']; ?>">
+                                  <input type="text" readonly name="user_id"  id="formtabs-username" class="form-control" value="<?php echo $row_d['login_id']; ?>">
                                   
                                   <label for="formtabs-username">User ID</label>
                                 </div>
@@ -201,7 +193,7 @@
                                   <!-- </div> -->
                                 </div>
                               </div>
-                            </div>
+                            </div>  
 
                             <div class="col-md-6">
                               <div class="row form-password-toggle">
@@ -210,15 +202,16 @@
                                     <input type="text" onkeyup="check_pass();" name="confirm_password"  id="confirm_password" value="" class="form-control" aria-describedby="formtabs-password2" required>
                                   <label for="formtabs-password">Confirm Password</label>
                                   <!-- </div> -->
-                                  <?php if($isError){ 
-                                      // $error = 'fgds';?>
-                                      <span class="col-sm-12 text-center"><?php echo $error; ?></span>
-                                    <!-- </div> -->
-                                    <?php } ?>
                                 </div>
                               </div>
                             </div>
+                          
 
+                            <div class="col-md-12">
+                                <?php if($isError){  ?>
+                                  <span class="col-sm-12 text-center"><?php echo $error; ?></span>
+                                <?php } ?>
+                            </div>
 
                           </div>
                           <!-- <div class="row mt-12">
@@ -229,10 +222,10 @@
                           </div> -->
 
                           <div class="row mt-10">
-                            <div class="col-md-12">
+                            <!-- <div class="col-md-12"> -->
                                   <button type="submit"  data-bs-toggle="tooltip" data-bs-placement="left"  class="btn btn-success waves-effect waves-light d-flex float-right" name="submit">Submit</button>
-                                  <button type="reset" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
-                            </div>
+                                  <!-- <button type="reset" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button> -->
+                            <!-- </div> -->
                           </div>
 
                         </form>

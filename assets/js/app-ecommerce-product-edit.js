@@ -152,6 +152,7 @@ const $productImageAcceptanceType = ["image/jpeg","image/jpg","image/png","image
 
                             document.getElementById("productID").value = $product_id;
                             document.getElementById("ecommerce-product-name").value = $product_name;
+                            document.getElementById("editProductNameShow").innerHTML = $product_name;
                             document.getElementsByClassName("ql-editor")[0].innerHTML = $product_description;
                             document.getElementById("productdescription").value = $product_description;
                             document.getElementById("ecommerce-category-description").value = $product_description;

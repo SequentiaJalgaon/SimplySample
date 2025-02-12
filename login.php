@@ -66,6 +66,7 @@ if(isset($_POST["submit"]))
           if (password_verify($_POST['password'], $data['login_password']))
           {
             $_SESSION['employee_id'] = $data['admin_id'];
+            $_SESSION['admin_id'] = $data['admin_id'];
             $_SESSION['login_photo'] = $data['login_photo'];
             $_SESSION['login_name'] = $data['login_name'];
             $_SESSION['login_id'] = $data['login_id'];
@@ -153,13 +154,13 @@ if(isset($_POST["submit"]))
       name="viewport"
       content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>Login | Guru Properties</title>
+    <title>Login | Simpy Sample</title>
 
     <meta name="description" content="" />
 
     <?php //include ('layout/header_css.php');  ?>
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="assets/img/favicon/favicon.ico" />
+    <link rel="icon" type="image/x-icon" href="assets/img/favicon/favicon.png" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -217,15 +218,6 @@ if(isset($_POST["submit"]))
     <!-- Content -->
 
     <div class="authentication-wrapper authentication-cover">
-      <!-- Logo -->
-      <!-- <a href="login" class="auth-cover-brand d-flex align-items-center gap-2">
-        <span class="app-brand-logo demo">
-          <span style="color: var(--bs-primary)">
-            <img src="guru-logo-short.jpg" alt class="rounded-circle" style="height: 40px;width: 40px;"/>
-          </span>
-        </span>
-        <span class="app-brand-text demo text-heading fw-semibold">Guru Properties</span>
-      </a> -->
       <!-- /Logo -->
       <div class="authentication-inner row m-0">
         <!-- /Left Section -->

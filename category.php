@@ -8,34 +8,6 @@
   include ('dist/conf/db.php');
   $pdo = Database::connect();
 
-  if(isSet($_POST["submit"]))
-  { 
-
-    // echo "<pre>";
-    // print_r($_POST);
-    // exit();
-    
-    $location = $_POST['location'];
-    $subCount= count($_POST['location']);
-
-    for($i=0;$i<$subCount;$i++) 
-    {        
-
-        $added_on = date('Y-m-d H-i-s');
-        $locationSingle = $location[$i];
-
-        // echo "<pre>";
-        // print_r($locationSingle);
-        // exit();
-
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $sql = "INSERT INTO `category`(`category_name`,`added_on`,`is_active`) VALUES (?,?,?)";
-        $q = $pdo->prepare($sql);
-        $q->execute(array($locationSingle, $added_on, 1));
-    }
-
-    header('location:add_category.php');
-  }
 
 ?>
 <!doctype html>

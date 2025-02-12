@@ -521,7 +521,7 @@ $pdo = Database::connect();
                             <div class="card-body">
                                 <?php if($brand_logo != "") { ?>
                                     <div>
-                                      <img class="img-fluid mb-2 rounded-4" src="brandDocuments/1/<?php echo $brand_logo; ?>">
+                                      <img class="img-fluid mb-2 rounded-4" src="uploads/logos/<?php echo $brand_logo; ?>">
                                       <hr>
                                     </div>
                                 <?php } ?>

@@ -46,7 +46,7 @@
             <div class="container-xxl flex-grow-1 container-p-y">
               <div class="row g-6">
                 <!-- Gamification Card -->
-                <div class="col-md-12 col-xxl-8">
+                <!-- <div class="col-md-12 col-xxl-8">
                   <div class="card">
                     <div class="d-flex align-items-end row">
                       <div class="col-md-6 order-2 order-md-1">
@@ -70,7 +70,7 @@
                       </div>
                     </div>
                   </div>
-                </div>
+                </div> -->
                 <!--/ Gamification Card -->
 
                 <!-- Statistics Total Order -->

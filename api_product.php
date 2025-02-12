@@ -691,34 +691,39 @@ else if($REQUEST_METHOD == "PUT") {
                     ){
                     
                         $sql = "UPDATE `product_mapping` SET 
-                                `is_active` = '0'
+                                `brand_id` = ?,
+                                `category_id` = ?,
+                                `sub_category_id` = ?
                                 WHERE 
                                 product_id = ?;
                         ";
                         $q = $pdo->prepare($sql);
-                        $p1isUpdated = $q->execute(array(
+                        $p3isUpdated = $q->execute(array(
+                            $brand,
+                            $category,
+                            $subcategory,
                             $productID
                         ));
 
-                            $sql = "INSERT INTO `product_mapping`
-                                        (
-                                        `product_id`,
-                                        `brand_id`,
-                                        `category_id`,
-                                        `sub_category_id`,
-                                        `is_active`
-                                        )
-                                        VALUES
-                                        (?,?,?,?,?);
-                            ";
-                            $q = $pdo->prepare($sql);
-                            $p3isUpdated = $q->execute(array(
-                                $productID,
-                                $brand,
-                                $category,
-                                $subcategory,
-                                '1'
-                            ));
+                            // $sql = "INSERT INTO `product_mapping`
+                            //             (
+                            //             `product_id`,
+                            //             `brand_id`,
+                            //             `category_id`,
+                            //             `sub_category_id`,
+                            //             `is_active`
+                            //             )
+                            //             VALUES
+                            //             (?,?,?,?,?);
+                            // ";
+                            // $q = $pdo->prepare($sql);
+                            // $p3isUpdated = $q->execute(array(
+                            //     $productID,
+                            //     $brand,
+                            //     $category,
+                            //     $subcategory,
+                            //     '1'
+                            // ));
                     } else {
                         $p3isUpdated = true;
                     }

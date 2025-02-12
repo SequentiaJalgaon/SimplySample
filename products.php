@@ -76,7 +76,7 @@
               <!-- Product List Table -->
               <div class="card">
                 <div class="card-header">
-                  <h5 class="card-title mb-4">Filter</h5>
+                  <h5 class="card-title mb-4">Produt List</h5>
                   <div class="d-flex justify-content-between align-items-center row gap-5 gx-6 gap-md-0">
                     <div class="col-md-4 product_status"></div>
                     <div class="col-md-4 product_category"></div>
