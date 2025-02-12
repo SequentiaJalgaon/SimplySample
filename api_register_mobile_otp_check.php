@@ -50,6 +50,8 @@ if ($REQUEST_METHOD == "GET") {
                 "status" => "fail",
                 'statusCode' => 400
             ];
+            echo json_encode($result);
+            exit();
         }
 
        
@@ -95,7 +97,7 @@ if ($REQUEST_METHOD == "GET") {
 
                 } else {
                     $result[] = [
-                        "message" => "OTP is not expired.",
+                        "message" => "OTP is expired.",
                         "status" => "fail",
                         'statusCode' => 422
                     ];

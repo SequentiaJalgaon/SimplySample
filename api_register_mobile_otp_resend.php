@@ -49,6 +49,24 @@ if ($REQUEST_METHOD == "POST") {
                 'statusCode' => 400
             ];            
         } else {
+            
+            $sql_exist = "SELECT * FROM users WHERE mobile_number = ?";
+            $stmt_exist = $pdo->prepare($sql_exist);
+            $stmt_exist->execute([$mobile_number]);
+            $isPresentMobile = $stmt_exist->fetch(PDO::FETCH_ASSOC);
+
+            if ($isPresentMobile) {
+                $result[] = [
+                    "message" => "This mobile number already exists. Can not resend OTP to already exist number.",
+                    "status" => "fail",
+                    'statusCode' => 422
+                ];
+                
+                // Return the result as JSON
+                echo json_encode($result);
+                exit();
+
+            }
 
             try {
                 // Check OTP resend attempts within the day

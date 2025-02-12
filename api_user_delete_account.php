@@ -57,10 +57,10 @@ if($REQUEST_METHOD == "POST") {
     include("dist/conf/db.php");
     $pdo = Database::connect();
 
-    // $sql = "SELECT * FROM users WHERE user_id = ? And mobile_number = ?";
-    $sql = "SELECT * FROM users WHERE mobile_number = ?";
+    $sql = "SELECT * FROM users WHERE user_id = ? And mobile_number = ?";
+    // $sql = "SELECT * FROM users WHERE mobile_number = ?";
     $q = $pdo->prepare($sql);
-    $q->execute(array($mobile_number));
+    $q->execute(array($user_id,$mobile_number));
     $addressFound = $q->fetch(PDO::FETCH_ASSOC);
 
     if($addressFound != false) {            

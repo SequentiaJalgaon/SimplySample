@@ -66,6 +66,14 @@ if($REQUEST_METHOD == "POST") {
 
                 $user_id = $userFound['user_id'];
 
+                $sqlDelete = "DELETE FROM user_vs_category WHERE is_active = '0'";
+                $qDelete = $pdo->prepare($sqlDelete);
+                $qDelete->execute(array());
+                
+                $sqlUpdate = "UPDATE user_vs_category SET is_active = '0' WHERE user_id = ?";
+                $qUpdate = $pdo->prepare($sqlUpdate);
+                $qUpdate->execute(array($user_id));                    
+                
                 $categoriesString = implode(",", $categories);
                 
                 $sql = "SELECT * FROM category WHERE category_id IN ($categoriesString) ORDER BY $categoriesString ";

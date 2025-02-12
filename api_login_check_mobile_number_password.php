@@ -49,7 +49,7 @@ if($REQUEST_METHOD == "POST") {
         
         if($mobileFound != false) {
             
-            if (password_verify($password, $data['password'])) 
+            if (password_verify($password, $mobileFound['password'])) 
             // if ($password == $mobileFound['password']) 
             {
                 if($mobileFound['is_active'] == 0) {

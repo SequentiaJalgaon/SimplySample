@@ -1,283 +1,175 @@
 <?php
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
+header("Access-Control-Allow-Methods: GET, POST");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-$fixedInterval = "24 HOUR";
+include("dist/conf/db.php");
+$pdo = Database::connect();
 
 $REQUEST_METHOD = $_SERVER["REQUEST_METHOD"];
-$result = "";
+$result = [];
+$currentDateTime = date('Y-m-d H:i:s');
 
-$currentdDateTime = date('Y-m-d H:i:s');
-
-if($REQUEST_METHOD == "POST") {
-    
-    $userInfo = json_decode(file_get_contents('php://input'), true);    
-    
-    $user_id = 0;
-    // $password = "";
-    $categories = [];
-
-    if(isset($userInfo['user_id'])) {
-        $user_id = trim($userInfo['user_id']);
-    }
-    if(isset($userInfo['mobile_number'])) {
-        $mobile_number = trim($userInfo['mobile_number']);
-    }
-    if(isset($userInfo['first_name'])) {
-        $first_name = trim($userInfo['first_name']);
-    }
-    if(isset($userInfo['last_name'])) {
-        $last_name = trim($userInfo['last_name']);
-    }
-    if(isset($userInfo['gender'])) {
-        $gender = trim($userInfo['gender']);
-    }
-    if(isset($userInfo['city'])) {
-        $city = trim($userInfo['city']);
-    }
-    if(isset($userInfo['state'])) {
-        $state = trim($userInfo['state']);
-    }
-    if(isset($userInfo['zipcode'])) {
-        $zipcode = trim($userInfo['zipcode']);
-    }
-    if(isset($userInfo['profile_photo'])) {
-        $profile_photo = trim($userInfo['profile_photo']);
-    }
-    if(isset($userInfo['password'])) {
-        $password = trim($userInfo['password']);
-    }
-    
-    if(isset($userInfo['categories'])) {
-        $categories = $userInfo['categories'];
-    }    
-    
-    if(count($categories) <= 0) {
-        $result= ([
-            "data" => "Incorrect information.",
+if ($REQUEST_METHOD == "GET") {
+    // Handle GET request to fetch user details with categories
+    if (!isset($_GET['user_id']) && !isset($_GET['mobile_number'])) {
+        echo json_encode([
+            "data" => "User ID or Mobile Number is required.",
             "title" => "",
             "status" => "fail",
-            "statusCode" => 202
+            "statusCode" => 400
         ]);
-        echo json_encode($result);
         exit();
     }
 
-    
-    if(empty($mobile_number) ) {
-        $result= ([
-            "data" => "Mobile number cannot be empty.",
-            "title" => "",
-            "status" => "fail",
-            "statusCode" => 202
-        ]);
-        echo json_encode($result);
-        exit();
-    }
+    $user_id = $_GET['user_id'] ?? null;
+    $mobile_number = $_GET['mobile_number'] ?? null;
 
-    // Condition 2: Check if password is empty
-    if (empty($user_id)) {
-        $result= ([
-            "data" => "User ID cannot be empty.",
-            "title" => "",
-            "status" => "fail",
-            "statusCode" => 202
-        ]);
-        // continue;
-        echo json_encode($result);
-        exit();
-    }
-
-    include("dist/conf/db.php");
-    $pdo = Database::connect();
-
-    $sql = "SELECT * FROM users WHERE user_id = ? And mobile_number = ?";
-    // $sql = "SELECT * FROM users WHERE mobile_number = ?";
+    // Fetch user details
+    $sql = "SELECT * FROM users WHERE user_id = ? OR mobile_number = ?";
     $q = $pdo->prepare($sql);
-    $q->execute(array($user_id,$mobile_number));
-    $addressFound = $q->fetch(PDO::FETCH_ASSOC);
+    $q->execute([$user_id, $mobile_number]);
+    $user = $q->fetch(PDO::FETCH_ASSOC);
 
-    // print_r($addressFound);
-    // exit();
+    if ($user) {
+        // Fetch user categories
 
-    if($addressFound != false) {            
-        
-            if($addressFound['is_active'] == '0') {
-                $result= ([
-                    "data" => "This User Already Suspended",
-                    "title" => "",
-                    "status" => "fail",
-                    "statusCode" => 202
-                ]);
-                echo json_encode($result);
-                exit();
-            } 
+        // $sqlCategories = "SELECT c.category_id, c.category_name 
+        //                   FROM user_vs_category uc
+        //                   JOIN category c ON uc.category_id = c.category_id
+        //                   WHERE uc.user_id = ? AND uc.is_active = 1";
+        // $qCategories = $pdo->prepare($sqlCategories);
+        // $qCategories->execute([$user['user_id']]);
+        // $categories = $qCategories->fetchAll(PDO::FETCH_ASSOC);
 
-            else if($addressFound['is_active'] == '1') {
+        $sqlCategories = "SELECT * FROM user_vs_category WHERE user_id = ? AND is_active = '1'";
+        $qCategories = $pdo->prepare($sqlCategories);
+        $qCategories->execute([$user['user_id']]);
+        $categories = $qCategories->fetchAll(PDO::FETCH_ASSOC);
 
-                // print_r($addressFound);
-                // print_r($city);
-                // print_r($state);
-                // print_r($zipcode);
-                // exit();
+        // print_r($sqlCategories);
+        // exit();
 
-                // $user_id = $addressFound['user_id'];
-
-                // update password query for user table
-                $sqlUpdate = "UPDATE users SET first_name = ?, last_name=?, password=? , gender=?, profile_photo = ?, city = ?, state=?, pincode=? WHERE mobile_number = ? and user_id=?";
-                $qUpdate = $pdo->prepare($sqlUpdate);
-                $qUpdate->execute(array($first_name, $last_name, $password, $gender, $profile_photo, $city, $state, $zipcode, $mobile_number, $user_id)); 
-
-                // insert new address against user
-                // $sql_insert = "INSERT INTO user_vs_address (`user_id`, `address_line_1`, `address_line_2`, `taluka`, `city`, `state`, `pincode`) VALUES (?,?,?,?,?,?,?)";
-                // $stmt_insert = $pdo->prepare($sql_insert);
-                // $stmt_insert->execute([$user_id, $city, $city, $city, $city, $state, $zipcode]);
-                 
-                // Update address query (but no logic is developed wich address is update?)
-                // $sqlUpdate = "UPDATE user_vs_address SET address_line_1 = ?, address_line_2=?, taluka=?, city=?, state=?, pincode=? WHERE user_id=? AND is_active ='1'";
-                // $qUpdate = $pdo->prepare($sqlUpdate);
-                // $qUpdate->execute(array($address_line_1, $address_line_2, $taluka, $city, $state, $zipcode, $user_id)); 
-
-                // -------------Category flow-------------------------------------------------------------------
-                // $sqlDelete = "DELETE FROM user_vs_category WHERE is_active = '0'";
-                // $qDelete = $pdo->prepare($sqlDelete);
-                // $qDelete->execute(array());
-                
-                // $sqlUpdate = "UPDATE user_vs_category SET is_active = '0' WHERE user_id = ?";
-                // $qUpdate = $pdo->prepare($sqlUpdate);
-                // $qUpdate->execute(array($user_id));     
-                
-                $categoriesString = implode(",", $categories);
-
-                // $sql = "SELECT * FROM category WHERE category_id IN ($categoriesString) ORDER BY $categoriesString ";
-                $sql = "SELECT category_id FROM category WHERE category_id IN ($categoriesString) ";
-                $q = $pdo->prepare($sql);
-                $q->execute(array());
-                $requestedCategoriesFoundArray = $q->fetchAll(PDO::FETCH_ASSOC);
-
-                $requestedCategoriesFound = [];
-                foreach($requestedCategoriesFoundArray as $requestedCategoriesFoundElement) {
-                    $requestedCategoriesFound[] = $requestedCategoriesFoundElement['category_id'];
-                }                
-                                                
-                if(count($requestedCategoriesFound) > 0) {
-                    
-                    $sqlexistingcat = "SELECT * FROM user_vs_category WHERE user_id = '$user_id' ";
-                    $q = $pdo->prepare($sqlexistingcat);
-                    $q->execute(array());
-                    $existingUserCategoriesArray = $q->fetchAll(PDO::FETCH_ASSOC);
-
-                    $existingUserCategories = [];
-                    foreach($existingUserCategoriesArray as $existingUserCategoriesElement) {
-                        $existingUserCategories[] = $existingUserCategoriesElement['category_id'];
-                    }  
-
-                    $addCategoreis = [];
-                    $markActiveCategories = [];
-                    // not present actegories in the db
-                    foreach($requestedCategoriesFound as $requestedCategory) {
-                        if(!in_array($requestedCategory, $existingUserCategories)) {
-                            $addCategoreis[] = $requestedCategory;
-                        }
-                    }                    
-
-                    // mark active categories
-                    foreach($requestedCategoriesFound as $requestedCategory) {
-                        if(in_array($requestedCategory, $existingUserCategories)) {
-                            
-                            $categoryIndex = array_search($requestedCategory, $existingUserCategories);
-                            $searchCategory = $existingUserCategories[$categoryIndex];
-
-                            foreach($existingUserCategoriesArray as $existingUserCategoriesElement) {
-                                if($existingUserCategoriesElement['category_id'] == $searchCategory) {
-                                    // if($existingUserCategoriesElement['is_active'] == '0') {
-                                        $markActiveCategories[] = $existingUserCategoriesElement['category_id'];
-                                    // }
-                                }
-                            }
-                        }
-                    }
-                    
-                    $sqlUpdate = "UPDATE user_vs_category SET is_active = '0' WHERE user_id = ?";
-                    $qUpdate = $pdo->prepare($sqlUpdate);
-                    $qUpdate->execute([$user_id]);
-
-                    foreach($markActiveCategories as $markActiveCategoryId) {
-                        $sqlUpdate = "UPDATE user_vs_category SET is_active = '1' WHERE user_id = ? and category_id = ?";
-                        $qUpdate = $pdo->prepare($sqlUpdate);
-                        $qUpdate->execute([$user_id,$markActiveCategoryId]);
-                        // $qUpdate->execute([]);
-                    }
-
-                    foreach($addCategoreis as $addCategorey) {
-                        $sql = "INSERT INTO user_vs_category(user_id, category_id, is_active) VALUES (?,?,?)";
-                        $q = $pdo->prepare($sql);
-                        $isInserted = $q->execute([$user_id, $addCategorey,'1']);
-                    }      
-
-                    $result= ([
-                        "data" => "Categories updated.",
-                        "title" => "",
-                        "status" => "success",
-                        "statusCode" => 200
-                    ]);        
-                    
-                } else {
-                    $result= ([
-                        "data" => "Category Not Found",
-                        "title" => "",
-                        "status" => "fail",
-                        "statusCode" => 202
-                    ]);
-                }
-
-                // -----
-                $result= ([
-                    "data" => "User Update successfully.",
-                    "title" => "",
-                    "status" => "success",
-                    "statusCode" => 200
-                ]);
-            }
-
-            else {
-                $result = array(
-                    'data' => null, 
-                    "title" => null,
-                    'status' => false, 
-                    'statusCode' => 204);
-            }
-
+        echo json_encode([
+            "data" => [
+                "user" => $user,
+                "categories" => $categories
+            ],
+            "title" => "User Found",
+            "status" => "success",
+            "statusCode" => 200
+        ]);
     } else {
-        $result= ([
-            "data" => "Mobile number Not Found",
+        echo json_encode([
+            "data" => "User Not Found",
             "title" => "",
             "status" => "fail",
-            "statusCode" => 202
+            "statusCode" => 404
         ]);
     }
-}
-else {
-    $result = array(
-        'data' => 'Requested Method is not supported', 
-        "title" => null,
-        'status' => false, 
-        'statusCode' => 405);
+    exit();
 }
 
-if($result == null || $result == "") {
-    $result = array(
-        'data' => null, 
-        "title" => null,
-        'status' => false, 
-        'statusCode' => 204);
-}
-echo json_encode($result);
+if ($REQUEST_METHOD == "POST") {
+    $userInfo = json_decode(file_get_contents('php://input'), true);
 
+    $requiredFields = ['user_id', 'mobile_number', 'first_name', 'last_name', 'gender', 'city', 'state', 'zipcode', 'profile_photo', 'categories'];
+    foreach ($requiredFields as $field) {
+        if (empty($userInfo[$field])) {
+            echo json_encode([
+                "data" => ucfirst(str_replace("_", " ", $field)) . " cannot be empty.",
+                "title" => "",
+                "status" => "fail",
+                "statusCode" => 400
+            ]);
+            exit();
+        }
+    }
+
+    $user_id = trim($userInfo['user_id']);
+    $mobile_number = trim($userInfo['mobile_number']);
+    $first_name = trim($userInfo['first_name']);
+    $last_name = trim($userInfo['last_name']);
+    $gender = trim($userInfo['gender']);
+    $city = trim($userInfo['city']);
+    $state = trim($userInfo['state']);
+    $zipcode = trim($userInfo['zipcode']);
+    $profile_photo = trim($userInfo['profile_photo']);
+    $categories = $userInfo['categories'];
+
+    $sql = "SELECT * FROM users WHERE user_id = ? AND mobile_number = ?";
+    $q = $pdo->prepare($sql);
+    $q->execute([$user_id, $mobile_number]);
+    $userExists = $q->fetch(PDO::FETCH_ASSOC);
+
+    if (!$userExists) {
+        echo json_encode([
+            "data" => "User not found.",
+            "title" => "",
+            "status" => "fail",
+            "statusCode" => 404
+        ]);
+        exit();
+    }
+
+    if ($userExists['is_active'] == '0') {
+        echo json_encode([
+            "data" => "This User is suspended.",
+            "title" => "",
+            "status" => "fail",
+            "statusCode" => 403
+        ]);
+        exit();
+    }
+
+    $sqlUpdate = "UPDATE users SET first_name = ?, last_name = ?, gender = ?, profile_photo = ?, city = ?, state = ?, pincode = ? WHERE mobile_number = ? AND user_id = ?";
+    $qUpdate = $pdo->prepare($sqlUpdate);
+    $qUpdate->execute([$first_name, $last_name, $gender, $profile_photo, $city, $state, $zipcode, $mobile_number, $user_id]);
+
+    // Update categories
+    $categoriesString = implode(",", array_map('intval', $categories));
+    $sql = "SELECT category_id FROM category WHERE category_id IN ($categoriesString)";
+    $q = $pdo->prepare($sql);
+    $q->execute();
+    $categoriesFound = $q->fetchAll(PDO::FETCH_ASSOC);
+
+    if ($categoriesFound) {
+        $pdo->prepare("UPDATE user_vs_category SET is_active = '0' WHERE user_id = ?")->execute([$user_id]);
+
+        foreach ($categoriesFound as $category) {
+            $categoryId = $category['category_id'];
+            $q = $pdo->prepare("SELECT COUNT(*) FROM user_vs_category WHERE user_id = ? AND category_id = ?");
+            $q->execute([$user_id, $categoryId]);
+            $exists = $q->fetchColumn();
+
+            if ($exists) {
+                $pdo->prepare("UPDATE user_vs_category SET is_active = '1' WHERE user_id = ? AND category_id = ?")->execute([$user_id, $categoryId]);
+            } else {
+                $pdo->prepare("INSERT INTO user_vs_category(user_id, category_id, is_active) VALUES (?, ?, '1')")->execute([$user_id, $categoryId]);
+            }
+        }
+    }
+
+    echo json_encode([
+        "data" => "User and categories updated successfully.",
+        "title" => "",
+        "status" => "success",
+        "statusCode" => 200
+    ]);
+    exit();
+}
+
+// If method is not GET or POST
+echo json_encode([
+    "data" => "Method Not Allowed",
+    "title" => "",
+    "status" => "fail",
+    "statusCode" => 405
+]);
 exit();
+?>

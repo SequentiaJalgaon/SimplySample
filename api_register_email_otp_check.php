@@ -14,6 +14,10 @@ $pdo = Database::connect();
 $REQUEST_METHOD = $_SERVER["REQUEST_METHOD"];
 $result = "";
 
+$otpExpiryTime = "180 SECOND"; // In Seconds
+$currentdDateTime = date('Y-m-d H:i:s');
+
+
 if ($REQUEST_METHOD == "GET") {
     // Handle GET requests if needed
 } else if ($REQUEST_METHOD == "POST") {
@@ -81,9 +85,9 @@ if ($REQUEST_METHOD == "GET") {
        
         try {
 
-            $sql_existUser = "SELECT * FROM users WHERE user_id = ? AND verification_code = ?";
+            $sql_existUser = "SELECT * FROM users WHERE user_id = ?";
             $q = $pdo->prepare($sql_existUser);
-            $q->execute([$email,$registration_code]);
+            $q->execute([$user_id]);
             $isPresentUser = $q->fetch(PDO::FETCH_ASSOC);
 
             if($isPresentUser) {
@@ -97,11 +101,18 @@ if ($REQUEST_METHOD == "GET") {
 
                 if ($isPresentMobile) {
 
-                    $otpExpired = true;
+                    $otpExpired = false;
                     $optmaxtime = date('Y-m-d H:i:s', strtotime( "+".$otpExpiryTime, strtotime($isPresentMobile['added_on']))); 
-                    if ($optmaxtime >= $currentdDateTime) $otpExpired = false;
+                    $optmaxtime = strtotime($optmaxtime);
+                    $currentdDateTime = strtotime($currentdDateTime);
+                    // echo $optmaxtime; echo "<br>";
+                    // echo $currentdDateTime;
+                    if ($currentdDateTime > $optmaxtime) 
+                    {   
+                        $otpExpired = true;
+                    }
                     if(!$otpExpired) {
-                        $sql_existUser = "SELECT * FROM user_vs_email WHERE email_id = ? and is_actvie = '1'";
+                        $sql_existUser = "SELECT * FROM user_vs_email WHERE email_id = ? and is_active = '1'";
                         $q = $pdo->prepare($sql_existUser);
                         $q->execute([$email]);
                         $isPresentUser = $q->fetch(PDO::FETCH_ASSOC);

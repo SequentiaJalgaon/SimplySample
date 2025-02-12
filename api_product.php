@@ -11,11 +11,12 @@ error_reporting(E_ALL);
 $REQUEST_METHOD = $_SERVER["REQUEST_METHOD"];
 $result = "";
 
-if($REQUEST_METHOD == "GET") {
 
+if($REQUEST_METHOD == "GET") {
     include("dist/conf/db.php");
     $pdo = Database::connect();
-
+    $host = "http://".$_SERVER['HTTP_HOST']."/simplysample/uploads/productIamges/";
+    
         if(isset($_GET["productId"]) && $_GET["productId"] > 0 && isset($_GET["brand_id"]) && $_GET["brand_id"] > 0)
         {
             $brand_id = $_GET["brand_id"];
@@ -37,7 +38,7 @@ if($REQUEST_METHOD == "GET") {
                 JOIN    category c ON pm.category_id = c.category_id
                 JOIN    sub_category sc ON pm.sub_category_id = sc.sub_category_id
                 WHERE     pm.is_active = '1'
-                    and   p.brand_id = $brand_id
+                    and   pm.brand_id = $brand_id
             ";
             $q = $pdo->query($sql);
             foreach ($pdo->query($sql) as $row) 
@@ -48,13 +49,42 @@ if($REQUEST_METHOD == "GET") {
                     if (array_key_exists($searchKey, $subarray)) {
                         if($subarray[$searchKey] == $row["product_id"]){
                             if($subarray['is_active'] == '1') {
-                                $foundedImages[] = array($subarray['file_name']); 
+                                $foundedImages[] = array($host.$subarray['file_name']); 
                             }
                         }
                     }
                 }
 
                 count($foundedImages) == 0 ? $foundedImages = null : "";
+
+                //--------------------------------------------- Rating And Review --------------------------------------------------
+                // for distinct user rating
+                // $sqlrating_review = "SELECT SUM(rating) AS totalRating, COUNT(user_id) as totalCustomers FROM (
+                // SELECT DISTINCT user_id, rating
+                // FROM rating_review
+                // WHERE product_id = 3
+                // ) AS productRating";
+                
+                // for user ratings (multiple ratings for same product)
+                $sqlrating_review = "SELECT SUM(rating) as totalRating,COUNT(user_id) as totalCustomers FROM rating_review WHERE product_id = ? and status = 'Active'";
+
+                $rating_review = $pdo->prepare($sqlrating_review);
+                $rating_review->execute(array($row["product_id"]));      
+                $rating_review = $rating_review->fetch(PDO::FETCH_ASSOC);
+                $totalRating = 0;
+                $totalCustomers  = 0;
+                
+                if($rating_review['totalRating'] != null && $rating_review['totalRating'] > 0 && $rating_review['totalRating'] > 0 ) {
+                    //Average rating as per users
+                    $averageRating = (float)$rating_review['totalRating']/$rating_review['totalCustomers'];
+                    
+                    //Round of to 0.5
+                    $averageRating = round($averageRating * 2) / 2;
+                    $totalRating = $averageRating;
+                    $totalCustomers = $rating_review['totalCustomers'];
+                }
+
+                //--------------------------------------------- Rating And Review --------------------------------------------------
 
                 $productElement = array (
                     "product_id" => $row["product_id"],
@@ -75,7 +105,11 @@ if($REQUEST_METHOD == "GET") {
                     "sub_category_name" => $row["sub_category_name"],
                     "sub_category_id" => $row["sub_category_id"],
                     
-                    "quantity" => 100
+                    "quantity" => 100,
+                    "rating_and_review" => [
+                        "rating" => $totalRating,
+                        "customers" => $totalCustomers
+                    ]
                 );
 
                 array_push($products, $productElement);
@@ -117,7 +151,7 @@ if($REQUEST_METHOD == "GET") {
                 JOIN    category c ON pm.category_id = c.category_id
                 JOIN    sub_category sc ON pm.sub_category_id = sc.sub_category_id
                 WHERE     pm.is_active = '1'
-                    and   p.category_id = $category_id
+                    and   pm.category_id = $category_id
             ";
             $q = $pdo->query($sql);
             foreach ($pdo->query($sql) as $row) 
@@ -128,7 +162,7 @@ if($REQUEST_METHOD == "GET") {
                     if (array_key_exists($searchKey, $subarray)) {
                         if($subarray[$searchKey] == $row["product_id"]){
                             if($subarray['is_active'] == '1') {
-                                $foundedImages[] = array($subarray['file_name']); 
+                                $foundedImages[] = array($host.$subarray['file_name']); 
                             }
                         }
                     }
@@ -136,6 +170,35 @@ if($REQUEST_METHOD == "GET") {
 
                 count($foundedImages) == 0 ? $foundedImages = null : "";
 
+                //--------------------------------------------- Rating And Review --------------------------------------------------
+                // for distinct user rating
+                // $sqlrating_review = "SELECT SUM(rating) AS totalRating, COUNT(user_id) as totalCustomers FROM (
+                // SELECT DISTINCT user_id, rating
+                // FROM rating_review
+                // WHERE product_id = 3
+                // ) AS productRating";
+                
+                // for user ratings (multiple ratings for same product)
+                $sqlrating_review = "SELECT SUM(rating) as totalRating,COUNT(user_id) as totalCustomers FROM rating_review WHERE product_id = ? and status = 'Active'";
+
+                $rating_review = $pdo->prepare($sqlrating_review);
+                $rating_review->execute(array($row["product_id"]));      
+                $rating_review = $rating_review->fetch(PDO::FETCH_ASSOC);
+                $totalRating = 0;
+                $totalCustomers  = 0;
+                
+                if($rating_review['totalRating'] != null && $rating_review['totalRating'] > 0 && $rating_review['totalRating'] > 0 ) {
+                    //Average rating as per users
+                    $averageRating = (float)$rating_review['totalRating']/$rating_review['totalCustomers'];
+                    
+                    //Round of to 0.5
+                    $averageRating = round($averageRating * 2) / 2;
+                    $totalRating = $averageRating;
+                    $totalCustomers = $rating_review['totalCustomers'];
+                }
+
+                //--------------------------------------------- Rating And Review --------------------------------------------------
+                
                 $productElement = array (
                     "product_id" => $row["product_id"],
                     "product_name" => $row["product_name"],
@@ -155,7 +218,11 @@ if($REQUEST_METHOD == "GET") {
                     "sub_category_name" => $row["sub_category_name"],
                     "sub_category_id" => $row["sub_category_id"],
                     
-                    "quantity" => 100
+                    "quantity" => 100,
+                    "rating_and_review" => [
+                        "rating" => $totalRating,
+                        "customers" => $totalCustomers
+                    ]
                 );
 
                 array_push($products, $productElement);
@@ -193,7 +260,11 @@ if($REQUEST_METHOD == "GET") {
                 "category_id" => 0,
                 "sub_category_name" => "",
                 "sub_category_id" => 0,                
-                "quantity" => 0
+                "quantity" => 0,
+                "rating_and_review" => [
+                    "rating" => 0,
+                    "customers" => 0
+                ]
             );    
 
             
@@ -237,7 +308,7 @@ if($REQUEST_METHOD == "GET") {
                             if (array_key_exists($searchKey, $subarray)) {
                                 if($subarray[$searchKey] == $productId){
                                     if($subarray['is_active'] == '1') {
-                                        $foundedImages[] = $subarray['file_name']; 
+                                        $foundedImages[] = $host.$subarray['file_name']; 
                                     }
                                 }
                             }
@@ -245,6 +316,33 @@ if($REQUEST_METHOD == "GET") {
                         count($foundedImages) == 0 ? $foundedImages = null : "";
                     }                   
 
+                    //--------------------------------------------- Rating And Review --------------------------------------------------
+                    // for distinct user rating
+                    // $sqlrating_review = "SELECT SUM(rating) AS totalRating, COUNT(user_id) as totalCustomers FROM (
+                    // SELECT DISTINCT user_id, rating
+                    // FROM rating_review
+                    // WHERE product_id = 3
+                    // ) AS productRating";
+                    
+                    // for user ratings (multiple ratings for same product)
+                    $sqlrating_review = "SELECT SUM(rating) as totalRating,COUNT(user_id) as totalCustomers FROM rating_review WHERE product_id = ? and status = 'Active'";
+
+                    $rating_review = $pdo->prepare($sqlrating_review);
+                    $rating_review->execute(array($productId));      
+                    $rating_review = $rating_review->fetch(PDO::FETCH_ASSOC);
+                    $totalRating = 0;
+                    $totalCustomers  = 0;
+                    
+                    if($rating_review['totalRating'] != null && $rating_review['totalRating'] > 0 && $rating_review['totalRating'] > 0 ) {
+                        //Average rating as per users
+                        $averageRating = (float)$rating_review['totalRating']/$rating_review['totalCustomers'];
+                        
+                        //Round of to 0.5
+                        $averageRating = round($averageRating * 2) / 2;
+                        $totalRating = $averageRating;
+                        $totalCustomers = $rating_review['totalCustomers'];
+                    }
+                    //--------------------------------------------- Rating And Review --------------------------------------------------
                     {                      
                         $product["product_id"] = $productInfo["product_id"];
                         $product["product_name"] = $productInfo["product_name"];
@@ -264,12 +362,109 @@ if($REQUEST_METHOD == "GET") {
                         $product["sub_category_id"] = $productInfo["sub_category_id"];
                         
                         $product["quantity"] = 100;
+                        $product["rating_and_review"]["rating"] = $totalRating; 
+                        $product["rating_and_review"]["customers"] = $totalCustomers; 
     
                     }
+
+
+$reviews = array();
+
+                    $sqlrating_review = "SELECT MAX(rating) as rating, message, u.user_id, order_id, product_id, r.user_id, u.first_name, u.last_name,  u.profile_photo, r.added_on FROM rating_review r JOIN users u ON u.user_id = r.user_id WHERE product_id = $productId GROUP BY r.user_id ORDER BY added_on DESC LIMIT 2";
+                    foreach ($pdo->query($sqlrating_review) as $row) 
+                    {
+                        $timeago = "";
+                        if($row["added_on"] == "0000-00-00 00:00:00") $row["added_on"] = date("Y-m-d H:i:s");
+                        $currentTime = new DateTime();
+                        $inputTime = new DateTime($row["added_on"]);  // Time you want to convert to "X days ago"
+                        $interval = $currentTime->diff($inputTime);  // Calculate the difference
+                        if ($interval->y > 0) {
+                            $timeago = $interval->y . ' year\'s ago';
+                        } elseif ($interval->m > 0) {
+                            $timeago = $interval->m . ' month\'s ago';
+                        } elseif ($interval->d > 0) {
+                            $timeago = $interval->d . ' day\'s ago';
+                        } elseif ($interval->h > 0) {
+                            $timeago = $interval->h . ' hour\'s ago';
+                        } elseif ($interval->i > 0) {
+                            $timeago = $interval->i . ' minute\'s ago';
+                        } else {
+                            $timeago = $interval->s . ' second\'s ago';
+                        }
+                        $reviewElement = array (
+                            "profile_photo" => $row["profile_photo"],
+                            "name" => $row["first_name"]." ".$row["last_name"],
+                            "rating" => $row["rating"],
+                            "message" => $row["message"],
+                            "added_on" => $timeago
+                        );
+        
+                        array_push($reviews, $reviewElement);
+                    }
+
+                    $averageRating = 0;
+                    $fiveStarRating = 0;
+                    $fourStarRating = 0;
+                    $threeStarRating = 0;
+                    $twoStarRating = 0;
+                    $oneStarRating = 0;
+
+                    $sqlrating_review = "SELECT SUM(rating) as totalRating, COUNT(user_id) as totalCustomers FROM rating_review WHERE product_id = ? and status = 'Active'";
+                    $rating_review = $pdo->prepare($sqlrating_review);
+                    $rating_review->execute(array($productId));      
+                    $rating_review = $rating_review->fetch(PDO::FETCH_ASSOC);
+                    if($rating_review['totalRating'] != null && $rating_review['totalRating'] > 0 && $rating_review['totalRating'] > 0 ) {
+                        //Average rating as per users
+                        $averageRating = (float)$rating_review['totalRating']/$rating_review['totalCustomers'];
+                        
+                        //Round of to 0.5
+                        // $averageRating = round($averageRating * 2) / 2;
+                    }
+
+                    $sqlrating_review = "SELECT rating, SUM(rating) as totalRating, COUNT(rating) as totalRatingCount FROM rating_review WHERE product_id = $productId and status = 'Active' GROUP BY rating";
+                    // $rating_review = $pdo->prepare($sqlrating_review);
+                    // $rating_review->execute(array($productId));      
+                    // $rating_review = $rating_review->fetchAll(PDO::FETCH_ASSOC);
+                    
+                    foreach ($pdo->query($sqlrating_review) as $rating_review) 
+                    {
+
+                        switch ($rating_review['rating']) {
+                            case 5:
+                              $fiveStarRating++;
+                              break;
+                            case 4:
+                              $fourStarRating++;
+                              break;
+                            case 3:
+                              $threeStarRating++;
+                              break;
+                            case 2:
+                              $twoStarRating++;
+                              break;
+                            case 1:
+                              $oneStarRating++;
+                              break;
+                            default:
+                                1;
+                          }
+                    }
+
+                    $CustomersFeedback = [
+                        "averageRating" => $averageRating,
+                        "fiveStarRating" => $fiveStarRating,
+                        "fourStarRating" => $fourStarRating,
+                        "threeStarRating" => $threeStarRating,
+                        "twoStarRating" => $twoStarRating,
+                        "oneStarRating" => $oneStarRating
+                        ];
+
 
                     $result = array(
                         'data' => "Product Information Feeded",
                         'productInfo' => $product, 
+                        'ratingInfo' => $reviews, 
+                        'CustomersFeedback' => $CustomersFeedback, 
                         'status' => true,
                         'statusCode' => 200
                     );
@@ -325,7 +520,7 @@ if($REQUEST_METHOD == "GET") {
                     if (array_key_exists($searchKey, $subarray)) {
                         if($subarray[$searchKey] == $row["product_id"]){
                             if($subarray['is_active'] == '1') {
-                                $foundedImages[] = array($subarray['file_name']); 
+                                $foundedImages[] = array($host.$subarray['file_name']); 
                             }
                         }
                     }
@@ -333,6 +528,34 @@ if($REQUEST_METHOD == "GET") {
 
                 count($foundedImages) == 0 ? $foundedImages = null : "";
 
+                //--------------------------------------------- Rating And Review --------------------------------------------------
+                // for distinct user rating
+                // $sqlrating_review = "SELECT SUM(rating) AS totalRating, COUNT(user_id) as totalCustomers FROM (
+                // SELECT DISTINCT user_id, rating
+                // FROM rating_review
+                // WHERE product_id = 3
+                // ) AS productRating";
+                
+                // for user ratings (multiple ratings for same product)
+                $sqlrating_review = "SELECT SUM(rating) as totalRating,COUNT(user_id) as totalCustomers FROM rating_review WHERE product_id = ? and status = 'Active'";
+
+                $rating_review = $pdo->prepare($sqlrating_review);
+                $rating_review->execute(array($row["product_id"]));      
+                $rating_review = $rating_review->fetch(PDO::FETCH_ASSOC);
+                $totalRating = 0;
+                $totalCustomers  = 0;
+                
+                if($rating_review['totalRating'] != null && $rating_review['totalRating'] > 0 && $rating_review['totalRating'] > 0 ) {
+                    //Average rating as per users
+                    $averageRating = (float)$rating_review['totalRating']/$rating_review['totalCustomers'];
+                    
+                    //Round of to 0.5
+                    $averageRating = round($averageRating * 2) / 2;
+                    $totalRating = $averageRating;
+                    $totalCustomers = $rating_review['totalCustomers'];
+                }
+
+                //--------------------------------------------- Rating And Review --------------------------------------------------
                 $productElement = array (
                     "product_id" => $row["product_id"],
                     "product_name" => $row["product_name"],
@@ -352,7 +575,11 @@ if($REQUEST_METHOD == "GET") {
                     "sub_category_name" => $row["sub_category_name"],
                     "sub_category_id" => $row["sub_category_id"],
                     
-                    "quantity" => 100
+                    "quantity" => 100,
+                    "rating_and_review" => [
+                        "rating" => $totalRating,
+                        "customers" => $totalCustomers
+                    ]
                 );
 
                 array_push($products, $productElement);
@@ -404,13 +631,43 @@ if($REQUEST_METHOD == "GET") {
                     if (array_key_exists($searchKey, $subarray)) {
                         if($subarray[$searchKey] == $row["product_id"]){
                             if($subarray['is_active'] == '1') {
-                                $foundedImages[] = array($subarray['file_name']); 
+                                $foundedImages[] = array($host.$subarray['file_name']); 
                             }
                         }
                     }
                 }
 
                 count($foundedImages) == 0 ? $foundedImages = null : "";
+
+                //--------------------------------------------- Rating And Review --------------------------------------------------
+                // for distinct user rating
+                // $sqlrating_review = "SELECT SUM(rating) AS totalRating, COUNT(user_id) as totalCustomers FROM (
+                // SELECT DISTINCT user_id, rating
+                // FROM rating_review
+                // WHERE product_id = 3
+                // ) AS productRating";
+                
+                // for user ratings (multiple ratings for same product)
+                $sqlrating_review = "SELECT SUM(rating) as totalRating,COUNT(user_id) as totalCustomers FROM rating_review WHERE product_id = ? and status = 'Active'";
+
+                $rating_review = $pdo->prepare($sqlrating_review);
+                $rating_review->execute(array($row["product_id"]));      
+                $rating_review = $rating_review->fetch(PDO::FETCH_ASSOC);
+                $totalRating = 0;
+                $totalCustomers  = 0;
+                
+                if($rating_review['totalRating'] != null && $rating_review['totalRating'] > 0 && $rating_review['totalRating'] > 0 ) {
+                    //Average rating as per users
+                    $averageRating = (float)$rating_review['totalRating']/$rating_review['totalCustomers'];
+                    
+                    //Round of to 0.5
+                    $averageRating = round($averageRating * 2) / 2;
+                    $totalRating = $averageRating;
+                    $totalCustomers = $rating_review['totalCustomers'];
+                }
+
+                //--------------------------------------------- Rating And Review --------------------------------------------------
+
 
                 $productElement = array (
                     "product_id" => $row["product_id"],
@@ -431,7 +688,11 @@ if($REQUEST_METHOD == "GET") {
                     "sub_category_name" => $row["sub_category_name"],
                     "sub_category_id" => $row["sub_category_id"],
                     
-                    "quantity" => 100
+                    "quantity" => 100,
+                    "rating_and_review" => [
+                        "rating" => $totalRating,
+                        "customers" => $totalCustomers
+                    ]
                 );
 
                 array_push($products, $productElement);

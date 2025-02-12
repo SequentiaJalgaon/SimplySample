@@ -572,7 +572,6 @@ function myFunction() {
               
               let selectedType = "";
               let selectedAnimation = "";
-              
               if(data.status == "success"){
                 
                 document.querySelector('#messageText').innerHTML = data.data;

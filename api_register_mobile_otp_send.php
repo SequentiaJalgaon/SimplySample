@@ -63,6 +63,11 @@ if ($REQUEST_METHOD == "POST") {
                     "status" => "fail",
                     'statusCode' => 422
                 ];
+                
+                // Return the result as JSON
+                echo json_encode($result);
+                exit();
+
             }
 
             try {                

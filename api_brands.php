@@ -27,7 +27,7 @@ if($REQUEST_METHOD == "GET") {
     include("dist/conf/db.php");
     $pdo = Database::connect();
     $brands = array();
-    
+    $host = "http://".$_SERVER['HTTP_HOST']."/simplysample/uploads/logos/";
     if($status == "pending") {
 
         $sql = "SELECT 
@@ -169,6 +169,7 @@ if($REQUEST_METHOD == "GET") {
     $q = $pdo->query($sql);
     foreach ($pdo->query($sql) as $row) 
     {
+        $categoryArray = array();
         $categoryIds = array();
         $categories = array();
         $brand_id = $row["brand_id"];
@@ -179,6 +180,11 @@ if($REQUEST_METHOD == "GET") {
         {
                 array_push($categoryIds, $row12['category_id']);
                 array_push($categories, $row12['category_name']);
+                $categoryElement = [
+                    "category_id" => $row12['category_id'],
+                    "category_name" => $row12['category_name']
+                ];
+                array_push($categoryArray , $categoryElement);
         }
 
         $brandElement = array (
@@ -199,10 +205,11 @@ if($REQUEST_METHOD == "GET") {
             "email" => $row["email"],
             "registration_year" => $row["registration_year"],
             "gst_number" => $row["gst_number"],
-            "brand_logo" => $row["brand_logo"],
+            "brand_logo" => $host.$row["brand_logo"],
             "food_licence_number" => $row["food_licence_number"],
-            "category_id" => implode(",<br>", $categoryIds),
-            "categories" => implode(",<br>", $categories),
+            "category_id" => implode(",", $categoryIds),
+            "categories" => implode(",", $categories),
+            "categoryArray" => $categoryArray,
             "business_name" => $row["business_name"]
         );
 

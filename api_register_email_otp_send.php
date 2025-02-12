@@ -42,14 +42,15 @@ if ($REQUEST_METHOD == "POST") {
         $user_id = isset($data['user_id']) ? ($data['user_id']) : 0;
         $mobile_number = isset($data['mobile_number']) ? trim($data['mobile_number']) : '';
 
-        // if($user_id > 0 || empty($mobile_number)) {
-        //     $result[] = [
-        //         "message" => "Mobile Number / User ID not found .",
-        //         "status" => "fail",
-        //         'statusCode' => 400
-        //     ];
-        //     
-        // }
+        if(empty($mobile_number)) {
+            $result[] = [
+                "message" => "Mobile Number cannot be empty.",
+                "status" => "fail",
+                'statusCode' => 400
+            ];
+            echo json_encode($result);
+            exit();
+        }
 
         
         $whereCondition = "";
@@ -73,34 +74,38 @@ if ($REQUEST_METHOD == "POST") {
             }
 
             // User ID is provided
-            $whereCondition .= "user_id = ?";
+            $whereCondition .= "and user_id = $user_id ";
             $valueToCheck .= $user_id;
         } 
         
         if (!empty($mobile_number)) {
             
-            $sql_existMobile = "SELECT * FROM users WHERE mobile_number = ?";
+            $sql_existMobile = "SELECT * FROM users WHERE mobile_number = ? AND user_id =?";
             $q = $pdo->prepare($sql_existMobile);
-            $q->execute([$mobile_number]);
+            $q->execute([$mobile_number, $user_id]);
             $isPresentUser = $q->fetch(PDO::FETCH_ASSOC);
 
             if(!$isPresentUser) {
                 $result[] = [
-                    "message" => "Mobile number does not exist",
+                    "message" => "Mobile number / User ID does not exist",
                     "status" => "fail",
                     'statusCode' => 422
                 ];
                 echo json_encode($result);
                 exit();
             }
-
+            
+            $user_id = $isPresentUser['user_id'];
+            
             // Mobile Number is provided
-            $whereCondition .= "mobile_number = ?";
+            $whereCondition .= "and mobile_number = '$mobile_number'";
             if($valueToCheck != "") 
                 $valueToCheck .= ", ".$mobile_number;
             else
             $valueToCheck .= $mobile_number;
-        } else {
+        } 
+        
+        if((empty($user_id) || $user_id <= 0) && empty($mobile_number)) {
             // Neither user_id nor mobile_number is provided
             $result[] = [
                 "message" => "Please provide either User ID or Mobile Number.",
@@ -139,6 +144,10 @@ if ($REQUEST_METHOD == "POST") {
                 'statusCode' => 422
             ];
             
+            // Return the result as JSON
+            echo json_encode($result);
+            exit();
+            
         }
         
         // print_r($verification_code);
@@ -151,19 +160,20 @@ if ($REQUEST_METHOD == "POST") {
             
             // Check if the mobile number already exists
             // $sql_check = "SELECT * FROM user_vs_verification_code WHERE email = ? ORDER BY added_on DESC LIMIT 3";
-            $sql_check = "SELECT * FROM user_vs_verification_code WHERE email = ? And $whereCondition  and added_on >= NOW() - INTERVAL ".$fixedInterval." ORDER BY added_on DESC";
+            $sql_check = "SELECT * FROM user_vs_verification_code WHERE email = '$email' $whereCondition  and added_on >= NOW() - INTERVAL ".$fixedInterval." ORDER BY added_on DESC";
             $stmt_check = $pdo->prepare($sql_check);
-            $stmt_check->execute([$email, $valueToCheck]);
+            $stmt_check->execute([]);
             $entries = $stmt_check->fetchAll(PDO::FETCH_ASSOC);
-
             // Check if OTP resend is allowed (after 1 minute)
             $allowResend = true;
 
-            if (count($entries) > 0) {
-                $lastEntry = $entries[0];
-
-                $lastAddedTime = strtotime($lastEntry['added_on']);
-                if (time() - $lastAddedTime < 60) {
+            if (count($entries) >= 0) {
+                
+                $lastAddedTime = null;
+                if(isset($entries[0]['added_on'])) {
+                    $lastAddedTime = strtotime($entries[0]['added_on']);
+                }
+                if ( !is_null($lastAddedTime) && (time() - $lastAddedTime) < 60) {
                     $allowResend = false;
                     // print_r($lastAddedTime);
                     // exit();
