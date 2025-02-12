@@ -2,20 +2,19 @@
 date_default_timezone_set("Asia/Kolkata");
 class Database {
 
-  // private static $dbName = 'zecciunm_simplysample' ; 
-  // private static $dbHost = 'localhost' ;
-  // private static $dbUsername = 'zecciunm_simplysample';
-  // private static $dbUserPassword = '+qiLkyLb,{R*';
-  // private static $cont  = null;
+  private static $dbName = 'zecciunm_simplysample' ; 
+  private static $dbHost = 'localhost' ;
+  private static $dbUsername = 'zecciunm_simplysample';
+  private static $dbUserPassword = '+qiLkyLb,{R*';
+  private static $cont  = null;
    
   //  ------------------------------------------------------------
   
-  // private static $dbName = 'simply_sample'; 
-  private static $dbName = 'simplysample_niranjan'; 
-  private static $dbHost = 'localhost';
-  private static $dbUsername = 'root';
-  private static $dbUserPassword = '';
-  private static $cont  = null;
+  // private static $dbName = 'simplysample_niranjan'; 
+  // private static $dbHost = 'localhost';
+  // private static $dbUsername = 'root';
+  // private static $dbUserPassword = '';
+  // private static $cont  = null;
 
  
     public function __construct() {
