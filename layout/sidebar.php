@@ -82,6 +82,7 @@
                     <div data-i18n="Dashboard">Dashboard</div>
                   </a>
                 </li>
+                
                 <li class="menu-item active open">
                   <a href="products" class="menu-link menu-toggle">
                   <i class="menu-icon tf-icons ri-home-smile-line"></i>
@@ -110,6 +111,7 @@
                     </li>
                   </ul>
                 </li>
+
                 <li class="menu-item">
                   <a href="brands" class="menu-link menu-toggle">
                   <i class="menu-icon tf-icons ri-home-smile-line"></i>
@@ -139,6 +141,7 @@
                     
                   </ul>
                 </li>
+
                 <li class="menu-item">
                   <a href="javascript:void(0);" class="menu-link menu-toggle">
                   <i class="menu-icon tf-icons ri-home-smile-line"></i>
@@ -157,6 +160,7 @@
                     </li>
                   </ul>
                 </li>
+
                 <li class="menu-item">
                   <a href="javascript:void(0);" class="menu-link menu-toggle">
                   <i class="menu-icon tf-icons ri-home-smile-line"></i>
@@ -197,13 +201,21 @@
                     </li>
                   </ul>
                 </li>
+
                 <li class="menu-item">
-                  <!--<a href="app-ecommerce-manage-reviews.html" class="menu-link">-->
-                      <a href="reviews_rating" class="menu-link">
+                  <a href="reviews_rating" class="menu-link">
                   <i class="menu-icon tf-icons ri-home-smile-line"></i>
                     <div data-i18n="Manage Reviews">Manage Reviews</div>
                   </a>
                 </li>
+                
+                <li class="menu-item">
+                  <a href="order_users" class="menu-link">
+                  <i class="menu-icon tf-icons ri-home-smile-line"></i>
+                    <div data-i18n="User Orders Flow">User Orders Flow</div>
+                  </a>
+                </li>
+
                 <li class="menu-item">
                   <a href="contact_form" class="menu-link">
                   <i class="menu-icon tf-icons ri-home-smile-line"></i>

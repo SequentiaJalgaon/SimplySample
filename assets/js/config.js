@@ -13,17 +13,16 @@ var actualPath = "https://zecc.in/simplysample/";
 
 var productImageUploadPath = actualPath + "/uploads/productIamges/";
 var ImgaeUploadAPI = actualPath + "api_uploadProductImage";
-
 var categoryApi = actualPath + "api_category";
 var subcategoryApi = actualPath + "api_subcategory";
 var brandsApi = actualPath + "api_brands";
 var productsApi = actualPath + "api_product";
-
 var contactformenquiryApi = actualPath + "api_cotact_form_enquiry";
-
 var ratingReviewAPI = actualPath + "api_ratingreviews";
-
-//var ratingReviewAPI = "http://localhost/gvk/ss_with_api_nir/simply_sample_materialize/api_ratingreviews";
+var customerdetailsApi = actualPath + "api_customer_details";
+var customerordersApi = actualPath + "api_customerorders";
+var customerorderdetailsApi = actualPath + "api_customer_order_details";
+var contactformenquiryApi = actualPath + "api_cotact_form_enquiry";
 
 // JS global variables
 window.config = {
