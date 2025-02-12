@@ -20,6 +20,7 @@ $(function () {
         { data: 'id' },
         { data: 'id' },
         { data: 'product_name' },
+        { data: 'weight' },
         { data: 'price' },
         { data: 'qty' },
         { data: '' }
@@ -38,15 +39,33 @@ $(function () {
         },
         {
           // For Checkboxes
+          // targets: 1,
+          // orderable: false,
+          // checkboxes: {
+          //   selectAllRender: '<input type="checkbox" class="form-check-input">'
+          // },
+          // render: function () {
+          //   return '<input type="checkbox" class="dt-checkboxes form-check-input" >';
+          // },
+          // searchable: false
+          // ------------------
           targets: 1,
+          searchable: false,
           orderable: false,
-          checkboxes: {
-            selectAllRender: '<input type="checkbox" class="form-check-input">'
-          },
-          render: function () {
-            return '<input type="checkbox" class="dt-checkboxes form-check-input" >';
-          },
-          searchable: false
+          render: function (data, type, full, meta) {
+            var $id = full['id'];
+            var $output = '<span style="margin: auto;display: block;">' + $id + '</span>';
+            return $output;
+          }
+          // 
+          // targets: 1,
+          // responsivePriority: 4,
+          // render: function (data, type, full, meta) {
+          //   var $id = full['id'];
+          //   var $output = '<span>' + $id + '</span>';
+          //   return "<a href='" + order_details + "'><span>#" + $id + '</span></a>';
+          // }
+
         },
         {
           // Product name and product info
@@ -99,19 +118,30 @@ $(function () {
           }
         },
         {
-          // For Price
+          // For Weight
           targets: 3,
           searchable: false,
           orderable: false,
           render: function (data, type, full, meta) {
+            var $weight = full['weight'];
+            var $output = '<span style="white-space: nowrap;">' + $weight + '</span>';
+            return $output;
+          }
+        },
+        {
+          // For Price
+          targets: 4,
+          searchable: false,
+          orderable: false,
+          render: function (data, type, full, meta) {
             var $price = full['price'];
-            var $output = '<span>$' + $price + '</span>';
+            var $output = '<span>' + $price + '</span>';
             return $output;
           }
         },
         {
           // For Qty
-          targets: 4,
+          targets: 5,
           searchable: false,
           orderable: false,
           render: function (data, type, full, meta) {
@@ -122,17 +152,17 @@ $(function () {
         },
         {
           // Total
-          targets: 5,
+          targets: 6,
           searchable: false,
           orderable: false,
           render: function (data, type, full, meta) {
             var $total = full['qty'] * full['price'];
-            var $output = '<span>$' + $total + '</span>';
+            var $output = '<span>' + $total + '</span>';
             return $output;
           }
         }
       ],
-      order: [2, ''], //set any columns order asc/desc
+      order: [1, 'asc'], //set any columns order asc/desc
       dom: 't',
       // For responsive popup
       responsive: {
