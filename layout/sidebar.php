@@ -162,47 +162,6 @@
                 </li>
 
                 <li class="menu-item">
-                  <a href="javascript:void(0);" class="menu-link menu-toggle">
-                  <i class="menu-icon tf-icons ri-home-smile-line"></i>
-                    <div data-i18n="Customer">Customer</div>
-                  </a>
-                  <ul class="menu-sub">
-                    <li class="menu-item">
-                      <a href="app-ecommerce-customer-all.html" class="menu-link">
-                        <div data-i18n="All Customers">All Customers</div>
-                      </a>
-                    </li>
-                    <li class="menu-item">
-                      <a href="javascript:void(0);" class="menu-link menu-toggle">
-                        <div data-i18n="Customer Details">Customer Details</div>
-                      </a>
-                      <ul class="menu-sub">
-                        <li class="menu-item">
-                          <a href="app-ecommerce-customer-details-overview.html" class="menu-link">
-                            <div data-i18n="Overview">Overview</div>
-                          </a>
-                        </li>
-                        <li class="menu-item">
-                          <a href="app-ecommerce-customer-details-security.html" class="menu-link">
-                            <div data-i18n="Security">Security</div>
-                          </a>
-                        </li>
-                        <li class="menu-item">
-                          <a href="app-ecommerce-customer-details-billing.html" class="menu-link">
-                            <div data-i18n="Address & Billing">Address & Billing</div>
-                          </a>
-                        </li>
-                        <li class="menu-item">
-                          <a href="app-ecommerce-customer-details-notifications.html" class="menu-link">
-                            <div data-i18n="Notifications">Notifications</div>
-                          </a>
-                        </li>
-                      </ul>
-                    </li>
-                  </ul>
-                </li>
-
-                <li class="menu-item">
                   <a href="reviews_rating" class="menu-link">
                   <i class="menu-icon tf-icons ri-home-smile-line"></i>
                     <div data-i18n="Manage Reviews">Manage Reviews</div>
