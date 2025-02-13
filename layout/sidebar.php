@@ -176,6 +176,30 @@
                 </li>
 
                 <li class="menu-item">
+                  <a href="javascript:void(0);" class="menu-link menu-toggle">
+                  <i class="menu-icon tf-icons ri-home-smile-line"></i>
+                    <div data-i18n="Manage Reviews">Manage Reviews</div>
+                  </a>
+                  <ul class="menu-sub">
+                    <li class="menu-item">
+                      <a href="reviews_rating" class="menu-link">
+                        <div data-i18n="All Reviews">All Reviews </div>
+                      </a>
+                    </li>
+                    <li class="menu-item">
+                      <a href="reviews_rating_approved" class="menu-link">
+                        <div data-i18n="Published Reviews">Published Reviews</div>
+                      </a>
+                    </li>
+                    <li class="menu-item">
+                      <a href="reviews_rating_rejected" class="menu-link">
+                        <div data-i18n="Rejected Reviews">Rejected Reviews</div>
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+
+                <li class="menu-item">
                   <a href="contact_form" class="menu-link">
                   <i class="menu-icon tf-icons ri-home-smile-line"></i>
                     <div data-i18n="Contact Form Enquiry">Contact Form Enquiry</div>

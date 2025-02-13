@@ -246,16 +246,16 @@ $(function () {
   }
 
   // Variable declaration for table
-  var dt_customer_review = $('.datatables-review'),
+  var dt_customer_review = $('.datatables-review-approved'),
     // customerView = 'app-ecommerce-customer-details-overview.html',
     customerView = '',
     statusObj = {
       Pending: { title: 'Pending', class: 'bg-label-warning' },
-      Approved: { title: 'Published', class: 'bg-label-success' },
-      Rejected: { title: 'Rejected', class: 'bg-label-danger' }
+      approved: { title: 'Approved', class: 'bg-label-success' },
+      rejected: { title: 'Rejected', class: 'bg-label-danger' }
     };
     $.ajax({
-      url: ratingReviewAPI,
+      url: ratingReviewAPIRejected,
       // url: api_category,
       type: 'GET',
       dataType: 'json', // added data type
@@ -279,9 +279,9 @@ $(function () {
               { data: 'product_name' },
               { data: 'reviewer' },
               { data: 'review' },
-              { data: 'date' },
+              { data: 'date' }
               // { data: 'status' },
-              { data: ' ' }
+              // { data: ' ' }
             ],
             columnDefs: [
               {
@@ -494,47 +494,47 @@ $(function () {
               //   }
               // }
 
-              {
-                // Actions
-                targets: -1,
-                title: 'Actions',
-                searchable: false,
-                orderable: false,
-                render: function (data, type, full, meta) {
-                    // Check status for conditional rendering
-                    var status = full['status'];
-                    var actionButtons = '';
+            //   {
+            //     // Actions
+            //     targets: -1,
+            //     title: 'Actions',
+            //     searchable: false,
+            //     orderable: false,
+            //     render: function (data, type, full, meta) {
+            //         // Check status for conditional rendering
+            //         var status = full['status'];
+            //         var actionButtons = '';
             
-                    if (status === 'Approved') {
-                        // Show only the approved button as disabled
-                        actionButtons =
-                            '<button class="btn btn-sm btn-icon btn-text-danger waves-effect waves-light rounded-pill reject-btn" data-bs-toggle="tooltip" onClick="updateStatus('+full['id']+',\'Rejected\')" data-bs-placement="top" title="Make Rejected">' +
-                            '<i class="ri-close-line ri-20px"></i></button>';
-                    } else if (status === 'Rejected') {
-                        // Show only the rejected button as disabled
-                        actionButtons =
-                            '<button class="btn btn-sm btn-icon btn-text-success waves-effect waves-light rounded-pill approve-btn" data-bs-toggle="tooltip" onClick="updateStatus('+full['id']+',\'Approved\')" data-bs-placement="top" title="Make Approved">' +
-                            '<i class="ri-check-line ri-20px"></i></button>';
-                    } else {
-                        // Show both approve and reject buttons as clickable
-                        actionButtons =
-                            '<button class="btn btn-sm btn-icon btn-text-success waves-effect waves-light rounded-pill approve-btn" data-bs-toggle="tooltip" onClick="updateStatus('+full['id']+',\'Approved\')" data-bs-placement="top" title="Make Approved" data-id="' +
-                            full['id'] +
-                            '">' +
-                            '<i class="ri-check-line ri-20px"></i></button>' +
-                            '<button class="btn btn-sm btn-icon btn-text-danger waves-effect waves-light rounded-pill reject-btn" data-bs-toggle="tooltip" onClick="updateStatus('+full['id']+',\'Rejected\')"  data-bs-placement="top" title="Make Rejected" data-id="' +
-                            full['id'] +
-                            '">' +
-                            '<i class="ri-close-line ri-20px"></i></button>';
-                    }
+            //         if (status === 'approved') {
+            //             // Show only the approved button as disabled
+            //             actionButtons =
+            //                 '<button class="btn btn-sm btn-icon btn-text-danger waves-effect waves-light rounded-pill reject-btn" data-bs-toggle="tooltip" onClick="updateStatus('+full['id']+',\'rejected\')" data-bs-placement="top" title="Make Rejected">' +
+            //                 '<i class="ri-close-line ri-20px"></i></button>';
+            //         } else if (status === 'rejected') {
+            //             // Show only the rejected button as disabled
+            //             actionButtons =
+            //                 '<button class="btn btn-sm btn-icon btn-text-success waves-effect waves-light rounded-pill approve-btn" data-bs-toggle="tooltip" onClick="updateStatus('+full['id']+',\'approved\')" data-bs-placement="top" title="Make Approved">' +
+            //                 '<i class="ri-check-line ri-20px"></i></button>';
+            //         } else {
+            //             // Show both approve and reject buttons as clickable
+            //             actionButtons =
+            //                 '<button class="btn btn-sm btn-icon btn-text-success waves-effect waves-light rounded-pill approve-btn" data-bs-toggle="tooltip" onClick="updateStatus('+full['id']+',\'approved\')" data-bs-placement="top" title="Make Approved" data-id="' +
+            //                 full['id'] +
+            //                 '">' +
+            //                 '<i class="ri-check-line ri-20px"></i></button>' +
+            //                 '<button class="btn btn-sm btn-icon btn-text-danger waves-effect waves-light rounded-pill reject-btn" data-bs-toggle="tooltip" onClick="updateStatus('+full['id']+',\'rejected\')"  data-bs-placement="top" title="Make Rejected" data-id="' +
+            //                 full['id'] +
+            //                 '">' +
+            //                 '<i class="ri-close-line ri-20px"></i></button>';
+            //         }
             
-                    return (
-                        '<div class="d-flex align-items-sm-center justify-content-sm-center">' +
-                        actionButtons +
-                        '</div>'
-                    );
-                }
-            }
+            //         return (
+            //             '<div class="d-flex align-items-sm-center justify-content-sm-center">' +
+            //             actionButtons +
+            //             '</div>'
+            //         );
+            //     }
+            // }
             ],
             order: [[0, 'asc']],
             dom:
@@ -761,7 +761,7 @@ $(function () {
     });
 
   // Delete Record
-  $('.datatables-review tbody').on('click', '.delete-record', function () {
+  $('.datatables-review-approved tbody').on('click', '.delete-record', function () {
     dt_review.row($(this).parents('tr')).remove().draw();
   });
 

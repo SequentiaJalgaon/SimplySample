@@ -19,7 +19,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title> All Reviews & Ratings</title>
+    <title> Approved Reviews & Ratings</title>
 
     <meta name="description" content="" />
 
@@ -71,7 +71,7 @@
               <!-- review List Table -->
               <div class="card">
                 <div class="card-header border-bottom">
-                  <h5 class="card-title mb-4">View All Ratings & Reviews</h5>
+                  <h5 class="card-title mb-4">View Approved Ratings & Reviews</h5>
                   <div class="d-flex justify-content-between align-items-center row gap-5 gx-6 gap-md-0">
                     <div class="col-md-4 product_status"></div>
                     <div class="col-md-4 product_category"></div>
@@ -80,7 +80,7 @@
                 </div>
                 <div class="card-datatable table-responsive">
                   <!-- <h3 style="font-size: 20px; font-weight: bold;margin-bottom: 0px;color: #333;text-align: left;padding-left: 18px;margin-top: 17px;">View reviews</h3> -->
-                  <table class="datatables-review table">
+                  <table class="datatables-review-approved table">
                     <thead>
                       <tr>
                         <th></th>
@@ -89,8 +89,8 @@
                         <th class="text-nowrap">User</th>
                         <th>Review</th>
                         <th>Date</th>
-                        <!-- <th class="text-nowrap">Status</th> -->
-                        <th>Actions</th>
+                        <!-- <th class="text-nowrap">Status</th>
+                        <th>Actions</th> -->
                       </tr>
                     </thead>
                   </table>
@@ -127,7 +127,7 @@
 
     <!-- Page JS -->
     <!-- <script src="assets/js/app-ecommerce-sub-category-list.js"></script> -->
-    <script src="assets/js/app-ecommerce-reviews.js"></script>
+    <script src="assets/js/app-ecommerce-reviews-approved.js"></script>
     <!-- <script src="assets/js/app-ecommerce-reviews copy.js"></script> -->
     <!-- <script src="assets/js/extended-ui-star-ratings.js"></script> -->
 
