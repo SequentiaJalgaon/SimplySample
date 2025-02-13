@@ -17,7 +17,7 @@ if($REQUEST_METHOD == "GET") {
     $pdo = Database::connect();
     $host = "http://".$_SERVER['HTTP_HOST']."/simplysample/uploads/productIamges/";
     
-        if(isset($_GET["productId"]) && $_GET["productId"] > 0 && isset($_GET["brand_id"]) && $_GET["brand_id"] > 0)
+        if(isset($_GET["brand_id"]) && $_GET["brand_id"] > 0)
         {
             $brand_id = $_GET["brand_id"];
             $products = array();
@@ -66,7 +66,7 @@ if($REQUEST_METHOD == "GET") {
                 // ) AS productRating";
                 
                 // for user ratings (multiple ratings for same product)
-                $sqlrating_review = "SELECT SUM(rating) as totalRating,COUNT(user_id) as totalCustomers FROM rating_review WHERE product_id = ? and status = 'Active'";
+                $sqlrating_review = "SELECT SUM(rating) as totalRating,COUNT(user_id) as totalCustomers FROM rating_review WHERE product_id = ? and status = 'Approved'";
 
                 $rating_review = $pdo->prepare($sqlrating_review);
                 $rating_review->execute(array($row["product_id"]));      
@@ -130,7 +130,7 @@ if($REQUEST_METHOD == "GET") {
 
         }
 
-        else if(isset($_GET["productId"]) && $_GET["productId"] > 0 && isset($_GET["category_id"]) && $_GET["category_id"] > 0)
+        else if(isset($_GET["category_id"]) && $_GET["category_id"] > 0)
         {
             $category_id = $_GET["category_id"];
             $products = array();
@@ -179,7 +179,7 @@ if($REQUEST_METHOD == "GET") {
                 // ) AS productRating";
                 
                 // for user ratings (multiple ratings for same product)
-                $sqlrating_review = "SELECT SUM(rating) as totalRating,COUNT(user_id) as totalCustomers FROM rating_review WHERE product_id = ? and status = 'Active'";
+                $sqlrating_review = "SELECT SUM(rating) as totalRating,COUNT(user_id) as totalCustomers FROM rating_review WHERE product_id = ? and status = 'Approved'";
 
                 $rating_review = $pdo->prepare($sqlrating_review);
                 $rating_review->execute(array($row["product_id"]));      
@@ -325,7 +325,7 @@ if($REQUEST_METHOD == "GET") {
                     // ) AS productRating";
                     
                     // for user ratings (multiple ratings for same product)
-                    $sqlrating_review = "SELECT SUM(rating) as totalRating,COUNT(user_id) as totalCustomers FROM rating_review WHERE product_id = ? and status = 'Active'";
+                    $sqlrating_review = "SELECT SUM(rating) as totalRating,COUNT(user_id) as totalCustomers FROM rating_review WHERE product_id = ? and status = 'Approved'";
 
                     $rating_review = $pdo->prepare($sqlrating_review);
                     $rating_review->execute(array($productId));      
@@ -368,9 +368,9 @@ if($REQUEST_METHOD == "GET") {
                     }
 
 
-$reviews = array();
+                    $reviews = array();
 
-                    $sqlrating_review = "SELECT MAX(rating) as rating, message, u.user_id, order_id, product_id, r.user_id, u.first_name, u.last_name,  u.profile_photo, r.added_on FROM rating_review r JOIN users u ON u.user_id = r.user_id WHERE product_id = $productId GROUP BY r.user_id ORDER BY added_on DESC LIMIT 2";
+                    $sqlrating_review = "SELECT MAX(rating) as rating, message, u.user_id, order_id, product_id, r.user_id, u.first_name, u.last_name,  u.profile_photo, r.added_on FROM rating_review r JOIN users u ON u.user_id = r.user_id WHERE product_id = $productId and r.status = 'Approved' GROUP BY r.user_id ORDER BY added_on DESC LIMIT 2";
                     foreach ($pdo->query($sqlrating_review) as $row) 
                     {
                         $timeago = "";
@@ -409,7 +409,7 @@ $reviews = array();
                     $twoStarRating = 0;
                     $oneStarRating = 0;
 
-                    $sqlrating_review = "SELECT SUM(rating) as totalRating, COUNT(user_id) as totalCustomers FROM rating_review WHERE product_id = ? and status = 'Active'";
+                    $sqlrating_review = "SELECT SUM(rating) as totalRating, COUNT(user_id) as totalCustomers FROM rating_review WHERE product_id = ? and status = 'Approved'";
                     $rating_review = $pdo->prepare($sqlrating_review);
                     $rating_review->execute(array($productId));      
                     $rating_review = $rating_review->fetch(PDO::FETCH_ASSOC);
@@ -421,7 +421,7 @@ $reviews = array();
                         // $averageRating = round($averageRating * 2) / 2;
                     }
 
-                    $sqlrating_review = "SELECT rating, SUM(rating) as totalRating, COUNT(rating) as totalRatingCount FROM rating_review WHERE product_id = $productId and status = 'Active' GROUP BY rating";
+                    $sqlrating_review = "SELECT rating, SUM(rating) as totalRating, COUNT(rating) as totalRatingCount FROM rating_review WHERE product_id = $productId and status = 'Approved' GROUP BY rating";
                     // $rating_review = $pdo->prepare($sqlrating_review);
                     // $rating_review->execute(array($productId));      
                     // $rating_review = $rating_review->fetchAll(PDO::FETCH_ASSOC);
@@ -431,19 +431,19 @@ $reviews = array();
 
                         switch ($rating_review['rating']) {
                             case 5:
-                              $fiveStarRating++;
+                              $fiveStarRating++;echo 5;
                               break;
                             case 4:
-                              $fourStarRating++;
+                              $fourStarRating++;echo 4;
                               break;
                             case 3:
-                              $threeStarRating++;
+                              $threeStarRating++;echo 3;
                               break;
                             case 2:
-                              $twoStarRating++;
+                              $twoStarRating++;echo 2;
                               break;
                             case 1:
-                              $oneStarRating++;
+                              $oneStarRating++;echo 1;
                               break;
                             default:
                                 1;
@@ -537,7 +537,7 @@ $reviews = array();
                 // ) AS productRating";
                 
                 // for user ratings (multiple ratings for same product)
-                $sqlrating_review = "SELECT SUM(rating) as totalRating,COUNT(user_id) as totalCustomers FROM rating_review WHERE product_id = ? and status = 'Active'";
+                $sqlrating_review = "SELECT SUM(rating) as totalRating,COUNT(user_id) as totalCustomers FROM rating_review WHERE product_id = ? and status = 'Approved'";
 
                 $rating_review = $pdo->prepare($sqlrating_review);
                 $rating_review->execute(array($row["product_id"]));      
@@ -648,7 +648,7 @@ $reviews = array();
                 // ) AS productRating";
                 
                 // for user ratings (multiple ratings for same product)
-                $sqlrating_review = "SELECT SUM(rating) as totalRating,COUNT(user_id) as totalCustomers FROM rating_review WHERE product_id = ? and status = 'Active'";
+                $sqlrating_review = "SELECT SUM(rating) as totalRating,COUNT(user_id) as totalCustomers FROM rating_review WHERE product_id = ? and status = 'Approved'";
 
                 $rating_review = $pdo->prepare($sqlrating_review);
                 $rating_review->execute(array($row["product_id"]));      

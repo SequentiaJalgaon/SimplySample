@@ -127,7 +127,7 @@ else if($REQUEST_METHOD == "POST") {
                 ]);
             } else {
                 $result= ([
-                    "data" => "Category Couln't be added.",
+                    "data" => "Category Couldn't be added.",
                     "categoryTitle" => $categoryTitle,
                     "status" => "fail",
                     'statusCode' => 200

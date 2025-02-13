@@ -604,7 +604,6 @@ $(function () {
 
                   var $output =
                     '<img src="' +
-                    'uploads/productIamges/' +
                     $image +
                     '" alt="Product-' +
                     $id +
