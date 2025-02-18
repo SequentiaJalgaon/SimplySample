@@ -7,22 +7,25 @@
 
 'use strict';
 
-
 // var actualPath = "http://localhost/SimplySample/";
 var actualPath = "https://zecc.in/simplysample/";
 
 var productImageUploadPath = actualPath + "/uploads/productIamges/";
 var ImgaeUploadAPI = actualPath + "api_uploadProductImage";
+
 var categoryApi = actualPath + "api_category";
 var subcategoryApi = actualPath + "api_subcategory";
+
 var brandsApi = actualPath + "api_brands";
 var productsApi = actualPath + "api_product";
 var contactformenquiryApi = actualPath + "api_cotact_form_enquiry";
 var ratingReviewAPI = actualPath + "api_ratingreviews";
+var ratingReviewAPIApproved = actualPath + "api_ratingreviews_approved";
+var ratingReviewAPIRejected = actualPath + "api_ratingreviews_rejected";
+
 var customerdetailsApi = actualPath + "api_customer_details";
 var customerordersApi = actualPath + "api_customerorders";
 var customerorderdetailsApi = actualPath + "api_customer_order_details";
-var contactformenquiryApi = actualPath + "api_cotact_form_enquiry";
 
 // JS global variables
 window.config = {
