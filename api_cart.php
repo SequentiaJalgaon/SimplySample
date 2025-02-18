@@ -26,11 +26,7 @@ if($REQUEST_METHOD == "GET") {
     // if(isset($_POST['mobile_number'])) {
     //     $mobile_number = trim($_POST['mobile_number']);
     // }
-
     
-    include("dist/conf/db.php");
-    $pdo = Database::connect();
-   
         if($user_id != "") {
 
             $sql = "SELECT * FROM users WHERE user_id = ?";
