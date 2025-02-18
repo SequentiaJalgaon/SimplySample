@@ -32,7 +32,7 @@ function saveBase64Image($base64Data, $filePath) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Get the raw POST data (JSON)
     $input = json_decode(file_get_contents('php://input'), true);
-
+    
     // Check if images are provided in the request
     if (isset($input['images']) && is_array($input['images'])) {
         $responses = [];

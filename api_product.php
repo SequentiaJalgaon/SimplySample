@@ -431,19 +431,19 @@ if($REQUEST_METHOD == "GET") {
 
                         switch ($rating_review['rating']) {
                             case 5:
-                              $fiveStarRating++;echo 5;
+                              $fiveStarRating++;
                               break;
                             case 4:
-                              $fourStarRating++;echo 4;
+                              $fourStarRating++;
                               break;
                             case 3:
-                              $threeStarRating++;echo 3;
+                              $threeStarRating++;
                               break;
                             case 2:
-                              $twoStarRating++;echo 2;
+                              $twoStarRating++;
                               break;
                             case 1:
-                              $oneStarRating++;echo 1;
+                              $oneStarRating++;
                               break;
                             default:
                                 1;

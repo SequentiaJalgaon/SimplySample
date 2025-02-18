@@ -19,13 +19,14 @@ if($REQUEST_METHOD == "GET") {
     $user_id = "";
     $mobile_number = "";
     
-    if(isset($_POST['user_id'])) {
-        $user_id = trim($_POST['user_id']);
+    if(isset($_GET['user_id'])) {
+        $user_id = trim($_GET['user_id']);
     }
     
     // if(isset($_POST['mobile_number'])) {
     //     $mobile_number = trim($_POST['mobile_number']);
     // }
+
     
         if($user_id != "") {
 
@@ -45,7 +46,7 @@ if($REQUEST_METHOD == "GET") {
                             
                         if($cartData) {
                             $result= ([
-                                "data" => $cart_data["cart_data"],
+                                "data" => $cartData["cart_data"],
                                 "message" => "Cart Data Present",
                                 "status" => "success",
                                 'statusCode' => 200
@@ -90,6 +91,9 @@ else if($REQUEST_METHOD == "POST") {
     $user_id = "";
     $type = "";
     $mobile_number = "";
+    
+    $_POST = json_decode(file_get_contents('php://input'), true);
+    
     
     if(isset($_POST['cart_data'])) {
         $cart_data = $_POST['cart_data'];

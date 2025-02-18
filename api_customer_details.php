@@ -17,7 +17,7 @@ if($REQUEST_METHOD == "GET") {
     $pdo = Database::connect();
     $categories = array();
 
-    $sql = "SELECT * FROM users";
+    $sql = "SELECT * FROM users u JOIN user_vs_email e ON e.user_id = u.user_id";
     $q = $pdo->query($sql);
     // print_R($sql);
     // exit();
@@ -32,7 +32,7 @@ if($REQUEST_METHOD == "GET") {
             "id"=> $row["user_id"],
             "customer"=> $row["first_name"],
             "customer_id"=> $row["user_id"],
-            "email"=> $row["email"],
+            "email"=> $row["email_id"],
             "country"=> "",
             "country_code"=> "",
             "order"=> "",
