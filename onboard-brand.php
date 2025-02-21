@@ -1,7 +1,9 @@
 <?php
 include("dist/conf/db.php");
 $pdo = Database::connect();
-
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
       if(isset($_REQUEST['id'])) {
         $id = $_REQUEST['id'];
       } else {
@@ -9,32 +11,41 @@ $pdo = Database::connect();
       }
 
 
+    //   $sql = "SELECT 
+    //             b.brand_id, 
+    //             b.brand_name, 
+    //             address_line_1, address_line_2, taluka, city, state, pincode, address_type,
+    //             document_title, file_title,
+    //             first_name, last_name, contact_number, email, registration_year, gst_number, brand_logo, food_licence_number,
+    //             bc.category_id, c.category_name,
+    //             business_name,
+    //             b.is_active as brands_is_active, 
+    //             ba.is_active as ba_is_active, 
+    //             bd.is_active as bd_is_active,
+    //             bc.is_active as bc_is_active, 
+    //             bb.is_active as bb_is_active, 
+    //             bu.is_active as bu_is_active
+    //           FROM    brands b
+    //           JOIN    brand_address ba ON ba.brand_id = b.brand_id
+    //           JOIN    brand_documents bd ON bd.brand_id = b.brand_id
+    //           JOIN    brand_info bi ON bi.brand_id = b.brand_id
+    //           JOIN    brand_vs_category bc ON bc.brand_id = b.brand_id
+    //           JOIN    category c ON c.category_id = bc.category_id
+    //           JOIN    business_vs_brand bb ON bb.brand_id = b.brand_id
+    //           JOIN    business bu ON bu.business_id = bb.business_id
+    //           WHERE   
+    //                   b.brand_id = $id 
+    //                   and status='Approved'
+    //           GROUP BY bc.category_id";
+    
+    
       $sql = "SELECT 
-                b.brand_id, 
-                b.brand_name, 
-                address_line_1, address_line_2, taluka, city, state, pincode, address_type,
-                document_title, file_title,
-                first_name, last_name, contact_number, email, registration_year, gst_number, brand_logo, food_licence_number,
-                bc.category_id, c.category_name,
-                business_name,
-                b.is_active as brands_is_active, 
-                ba.is_active as ba_is_active, 
-                bd.is_active as bd_is_active,
-                bc.is_active as bc_is_active, 
-                bb.is_active as bb_is_active, 
-                bu.is_active as bu_is_active
-              FROM    brands b
-              JOIN    brand_address ba ON ba.brand_id = b.brand_id
-              JOIN    brand_documents bd ON bd.brand_id = b.brand_id
-              JOIN    brand_info bi ON bi.brand_id = b.brand_id
-              JOIN    brand_vs_category bc ON bc.brand_id = b.brand_id
-              JOIN    category c ON c.category_id = bc.category_id
-              JOIN    business_vs_brand bb ON bb.brand_id = b.brand_id
-              JOIN    business bu ON bu.business_id = bb.business_id
-              WHERE   
-                      b.brand_id = $id 
-                      and status='Approved'
-              GROUP BY bc.category_id";
+                b.brand_id, b.brand_name, requested_categories, b.is_active as brands_is_active,
+                first_name, last_name, contact_number, email, registration_year, gst_number, brand_logo, food_licence_number
+            FROM    brands b
+            JOIN    brand_info bi ON bi.brand_id = b.brand_id
+            WHERE   b.brand_id = $id  and status = 'Approved'";
+            
       $q = $pdo->prepare($sql);
       $q->execute(array());
       $dataBrand = $q->fetchAll(PDO::FETCH_ASSOC);
@@ -64,35 +75,53 @@ $pdo = Database::connect();
       $registerAddress = "";
       $delieveryAddress = "";
 
-      $categories = array();
+
+      $primarycategoriesNames = "";
       $categorieIDs = array();
       $categorieNames = array();
+      
       foreach ($dataBrand as $row) 
       { 
-        array_push($categories, $row["category_id"]);
-        array_push($categorieIDs, $row["category_id"]);
-        array_push($categorieNames, $row["category_name"]);
+        $requestedCategories = $row['requested_categories'];
+        if($requestedCategories != "") {
+          $sqlc = "SELECT * FROM category WHERE category_id IN ($requestedCategories)"; 
+          $qc = $pdo->query($sqlc);
+          foreach ($pdo->query($sqlc) as $rowc) {
+            if(!in_array($rowc['category_id'], $categorieIDs)) {
+                array_push($categorieIDs, $rowc["category_id"]);
+                array_push($categorieNames, $rowc["category_name"]);
+                
+                  if($primarycategoriesNames != "") {
+                    $primarycategoriesNames .= ", ".'{"value" : "'.$rowc['category_name'].'","readonly" : true, "title" : "'.$rowc['category_name'].'"}';
+                  } else {
+                    $primarycategoriesNames .= '{"value" : "'.$rowc['category_name'].'","readonly" : true, "title" : "'.$rowc['category_name'].'"}';
+                  }
+            }    
+          } 
+        }
+        
 
-        $brand_name = $row["brand_name"];
-        $address_line_2 = $row["address_line_2"];
-        $address_line_1 = $row["address_line_1"];
-        $taluka = $row["taluka"];
-        $city = $row["city"];
-        $state = $row["state"];
-        $pincode = $row["pincode"];
-        $address_type = $row["address_type"];
-        $document_title = $row["document_title"];
-        $file_title = $row["file_title"];
-        $firstname = $row["first_name"];
-        $lastname = $row["last_name"];
-        $contact = $row["contact_number"];
-        $email = $row["email"];
-        $registration_year = $row["registration_year"];
-        $gst_number = $row["gst_number"];
-        $brand_logo = $row["brand_logo"];
-        $food_licence_number = $row["food_licence_number"];
-        $category_id = $row["category_id"];
-        $business_name = $row["business_name"];
+        if(isset($row["brand_name"])) { $brand_name = $row["brand_name"]; } else { $row["brand_name"] = ""; }
+        if(isset($row["address_line_2"])) { $address_line_2 = $row["address_line_2"]; } else { $row["address_line_2"] = ""; }
+        if(isset($row["address_line_1"])) { $address_line_1 = $row["address_line_1"]; } else { $row["address_line_1"] = ""; }
+        if(isset($row["taluka"])) { $taluka = $row["taluka"]; } else { $row["taluka"] = ""; }
+        if(isset($row["city"])) { $city = $row["city"]; } else { $row["city"] = ""; }
+        if(isset($row["state"])) { $state = $row["state"]; } else { $row["state"] = ""; }
+        if(isset($row["pincode"])) { $pincode = $row["pincode"]; } else { $row["pincode"] = ""; }
+        if(isset($row["address_type"])) { $address_type = $row["address_type"]; } else { $row["address_type"] = ""; }
+        if(isset($row["document_title"])) { $document_title = $row["document_title"]; } else { $row["document_title"] = ""; }
+        if(isset($row["file_title"])) { $file_title = $row["file_title"]; } else { $row["file_title"] = ""; }
+        if(isset($row["first_name"])) { $firstname = $row["first_name"]; } else { $row["first_name"] = ""; }
+        if(isset($row["last_name"])) { $lastname = $row["last_name"]; } else { $row["last_name"] = ""; }
+        if(isset($row["contact_number"])) { $contact = $row["contact_number"]; } else { $row["contact_number"] = ""; }
+        if(isset($row["email"])) { $email = $row["email"]; } else { $row["email"] = ""; }
+        if(isset($row["registration_year"])) { $registration_year = $row["registration_year"]; } else { $row["registration_year"] = ""; }
+        if(isset($row["gst_number"])) { $gst_number = $row["gst_number"]; } else { $row["gst_number"] = ""; }
+        if(isset($row["brand_logo"])) { $brand_logo = $row["brand_logo"]; } else { $row["brand_logo"] = ""; }
+        if(isset($row["food_licence_number"])) { $food_licence_number = $row["food_licence_number"]; } else { $row["food_licence_number"] = ""; }
+        if(isset($row["category_id"])) { $category_id = $row["category_id"]; } else { $row["category_id"] = ""; }
+        if(isset($row["business_name"])) { $business_name = $row["business_name"]; } else { $row["business_name"] = ""; }
+        
         if($address_type == "registered") {
           if($address_line_2 == "") {
             $registerAddress = $address_line_1 . $address_line_2 . $taluka . $city . $pincode;
@@ -100,67 +129,190 @@ $pdo = Database::connect();
             $registerAddress = $address_line_2;
           }
         }
-        if($address_type == "delivery")
+        if($address_type == "delivery") {
           if($address_line_2 == "") {
             $delieveryAddress = $address_line_1 . $address_line_2 . $taluka . $city . $pincode;
           } else {
             $delieveryAddress = $address_line_2;
           }
+        }
       }
       
+      
+      
       if(isset($_POST['submit'])) {
-
-        $id = 1;
+          
         $firstName = $_POST["firstName"];
         $lastname = $_POST["lastname"];
         $email = $_POST["email"];
         $contact = $_POST["contact"];
-        $primaryCategories = $_POST["primaryCategories"];
+        $primaryCategories = $_POST["TagifyReadonly"];
         $businessname = $_POST["businessname"];
-        $registerAddress = $_POST["registerAddress"];
+        // $registerAddress = $_POST["registerAddress"];
         $registration_year = $_POST["registration_year"];
-        $delieveryAddress = $_POST["delieveryAddress"];
+        // $delieveryAddress = $_POST["delieveryAddress"];
         $gst_number = $_POST["gst_number"];
         $food_licence_number = $_POST["food_licence_number"];
-        $providedCategories = $_POST["providedCategories"];
+
         
+        $r_address_line_1 = $_POST["r_address_line_1"];
+        $r_address_line_2 = $_POST["r_address_line_2"];
+        $r_taluka = $_POST["r_taluka"];
+        $r_city = $_POST["r_city"];
+        $r_state = $_POST["r_state"];
+        $r_pincode = $_POST["r_pincode"];
+
+        $d_address_line_1 = $_POST["d_address_line_1"];
+        $d_address_line_2 = $_POST["d_address_line_2"];
+        $d_taluka = $_POST["d_taluka"];
+        $d_city = $_POST["d_city"];
+        $d_state = $_POST["d_state"];
+        $d_pincode = $_POST["d_pincode"];
+
+        // $providedCategories = $_POST["providedCategories"];
+        
+        $sql = "INSERT INTO `brand_address` (
+        `address_line_1`, 
+        `address_line_2`, 
+        `taluka`, 
+        `city`, 
+        `state`, 
+        `pincode`, 
+        address_type, `brand_id`, `is_active` ) VALUES (?,?,?,?,?,?,?,?,?)";
         // $sql = "UPDATE `brand_address` SET `address_line_2` = ? WHERE `brand_id` = ? and address_type = 'registered' ";
-        // $q = $pdo->prepare($sql);
-        // $q->execute(array($registerAddress, $id));
+        $q = $pdo->prepare($sql);
+        $q->execute(array(
+          $r_address_line_1, 
+          $r_address_line_2, 
+          $r_taluka, 
+          $r_city, 
+          $r_state, 
+          $r_pincode, 
+          'registered',  $id, '1'));
 
         // $sql = "UPDATE `brand_address` SET `address_line_2` = ? WHERE `brand_id` = ? and address_type = 'delivery' ";
-        // $q = $pdo->prepare($sql);
-        // $q->execute(array($delieveryAddress, $id));
+        $sql = "INSERT INTO `brand_address` (
+          `address_line_1`, 
+          `address_line_2`, 
+          `taluka`, 
+          `city`, 
+          `state`, 
+          `pincode`, 
+          address_type, `brand_id`, `is_active` ) VALUES (?,?,?,?,?,?,?,?,?)";
+          // $sql = "UPDATE `brand_address` SET `address_line_2` = ? WHERE `brand_id` = ? and address_type = 'registered' ";
+          $q = $pdo->prepare($sql);
+          $q->execute(array(
+            $d_address_line_1, 
+            $d_address_line_2, 
+            $d_taluka, 
+            $d_city, 
+            $d_state, 
+            $d_pincode, 
+            'delivery',  $id, '1'));
 
-        // $sql = "UPDATE `brand_info` SET 
-        // `first_name` = ? ,
-        // `last_name` = ? ,
-        // `contact_number` = ? ,
-        // `email` = ? ,
-        // `registration_year` = ? ,
-        // `gst_number` = ? ,
-        // `food_licence_number` = ?        
-        // WHERE `brand_id` = ? ";
-        // $q = $pdo->prepare($sql);
-        // $q->execute(array( 
-        //   $firstName,
-        //   $lastname,
-        //   $contact,
-        //   $email,
-        //   $registration_year,
-        //   $gst_number,
-        //   $food_licence_number,
-        //   $id
-        // ));
+        $sql = "INSERT INTO `business` (`business_name`, `is_active` ) VALUES (?,?)";
+        $q = $pdo->prepare($sql);
+        $q->execute(array($businessname, '1'));
+        $businessId = $pdo->lastInsertId();
+        
+        $sql = "INSERT INTO `business_vs_brand` (`business_id`, `brand_id`, `is_active` ) VALUES (?,?,?)";
+        $q = $pdo->prepare($sql);
+        $q->execute(array($businessId, $id, '1'));
+
+
+        $sql = "UPDATE `brand_info` SET 
+        `first_name` = ? ,
+        `last_name` = ? ,
+        `contact_number` = ? ,
+        `email` = ? ,
+        `registration_year` = ? ,
+        `gst_number` = ? ,
+        `food_licence_number` = ?, 
+        `is_active` = ?
+        WHERE `brand_id` = ? ";
+        $q = $pdo->prepare($sql);
+        $q->execute(array( 
+          $firstName,
+          $lastname,
+          $contact,
+          $email,
+          $registration_year,
+          $gst_number,
+          $food_licence_number,
+          '1',
+          $id
+        ));
+
+        $sql = "UPDATE `brands` SET `status` = 'Onboarded' WHERE `brand_id` = ?";
+        $q = $pdo->prepare($sql);
+        $q->execute(array($id));
 
         $sql = "UPDATE `brand_vs_category` SET `is_active` = '0' WHERE `brand_id` = ?";
         $q = $pdo->prepare($sql);
         $q->execute(array($id));
-        foreach($providedCategories as $category) {
-          $sql = "INSERT INTO `brand_vs_category` ( `category_id`, `brand_id`) VALUES ( ? , ?)";
-          $q = $pdo->prepare($sql);
-          $q->execute(array($category, $id));
+        
+        $json = $_POST["ProvidedCategories"];
+        $data = json_decode($json, true);
+        foreach ($data as $item) {
+            $categoryTitle = $item['value'];
+            if($categoryTitle != null && $categoryTitle != "") {
+                  
+                  $sqlcc = "SELECT * FROM category WHERE category_name = '$categoryTitle'";
+                  $qcc = $pdo->prepare($sqlcc);
+                  $qcc->execute(array());
+                  $dataCategory = $qcc->fetch(PDO::FETCH_ASSOC);
+                  
+                    if($dataCategory) {
+                        $category_id = $dataCategory['category_id'];
+                        $sql = "INSERT INTO `brand_vs_category` ( `category_id`, `brand_id`, `is_active`) VALUES ( $category_id, $id, '1')";
+                        $q = $pdo->prepare($sql);
+                        $q->execute(array()); 
+                        
+                    }
+            }
         }
+        
+        $foodlicense = $_FILES["foodlicense"];
+        $gst_cert = $_FILES["gst_cert"];
+        
+        $gst_cert_title = "";
+        $foodlicense_title = "";
+        
+        $documentPath = "brandDocuments/".$id."/";
+        
+        if($foodlicense['name'] != "") {
+            
+            if (!file_exists($documentPath)) {
+                mkdir($documentPath, 0777, true);
+            }
+
+            $foodlicense_file = $_FILES['foodlicense'];    
+            $foodlicense_title = "foodlicense_".date('d_m_Y_H_i_s')."_".$foodlicense['name'];
+            move_uploaded_file($_FILES['foodlicense']['tmp_name'], $documentPath.$foodlicense_title);
+            
+            $sql = "INSERT INTO `brand_documents`(`brand_id`, `document_title`, `file_title`, `is_active`) VALUES (?, ?, ?, ?)";
+            $q = $pdo->prepare($sql);
+            $q->execute(array($id, "Food License", $foodlicense_title, '1')); 
+        }
+        
+        if($gst_cert['name'] != "") {
+            
+            if (!file_exists($documentPath)) {
+                mkdir($documentPath, 0777, true);
+            }
+
+            $gst_cert_file = $_FILES['gst_cert'];    
+            $gst_cert_title = "gst_certificate_".date('d_m_Y_H_i_s')."_".$gst_cert['name'];
+            move_uploaded_file($_FILES['gst_cert']['tmp_name'], $documentPath.$gst_cert_title);
+            
+            $sql = "INSERT INTO `brand_documents`(`brand_id`, `document_title`, `file_title`, `is_active`) VALUES (?, ?, ?, ?)";
+            $q = $pdo->prepare($sql);
+            $q->execute(array($id, "GST Certificate", $gst_cert_title, '1')); 
+        }
+        
+        header("location: onboarded-brands");
+        
+                        
       }
 ?>
 <!doctype html>
@@ -219,7 +371,7 @@ $pdo = Database::connect();
               <div class="app-ecommerce">
                 <!-- OnBoard Brand -->
                  
-                <form action="#" method="POST" enctype="multipart/form-data">
+                <form action="#" method="POST" enctype="multipart/form-data" id="myForm">
                     <div
                       class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-6 row-gap-4">
                       <div class="d-flex flex-column justify-content-center">
@@ -227,7 +379,7 @@ $pdo = Database::connect();
                         <!-- <p class="mb-0">Orders placed across your store</p> -->
                       </div>
                       <div class="d-flex align-content-center flex-wrap gap-4">
-                        <button class="btn btn-outline-secondary">Discard</button>
+                        <button type="button" onclick="javascript: window.location.href = 'approved-brands';" class="btn btn-outline-secondary">Discard</button>
                         <!-- <button class="btn btn-outline-primary">Save draft</button> -->
                         <button type="submit" name="submit" class="btn btn-primary">OnBoard Brand</button>
                       </div>
@@ -342,74 +494,52 @@ $pdo = Database::connect();
                             <hr>
                           </div>
                           <div class="card-body">
-                            <!-- Base Price -->
+                              
                             <div class="form-floating form-floating-outline mb-5">
                               <input
                                 type="text"
                                 class="form-control"
-                                id="ecommerce-product-price"
-                                placeholder="Price"
+                                id="businessname"
+                                placeholder="Business Name"
                                 name="businessname"
                                 value="<?php echo $business_name; ?>"
-                                aria-label="Brand price" />
+                                aria-label="Business Name" />
                               <label for="ecommerce-product-price">Business Name</label>
-                            </div>
-
-                            <div class="form-floating form-floating-outline mb-5">
-                              <input
-                                type="text"
-                                class="form-control"
-                                id="ecommerce-product-discount-price"
-                                placeholder="Discounted Price"
-                                name="registerAddress"
-                                value="<?php echo $registerAddress; ?>"
-                                aria-label="Brand discounted price" />
-                              <label for="ecommerce-product-discount-price">Registered Address</label>
                             </div>
                             <div class="form-floating form-floating-outline mb-5">
                               <input
                                 type="number"
                                 class="form-control"
-                                id="ecommerce-product-discount-price"
-                                placeholder="Discounted Price"
+                                id="registration_year"
+                                placeholder="Year of Registration In Industry"
                                 name="registration_year"
-                                value="<?php echo $registration_year; ?>"
-                                aria-label="Brand discounted price" />
+                                value="<?php echo $registration_year == 0000 ? "" : $registration_year; ?>"
+                                aria-label="Year of Registration In Industry" />
                               <label for="ecommerce-product-discount-price">Year of Registration In Industry</label>
+                            </div>
+                            
+                            <div class="form-floating form-floating-outline mb-5">
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="gst_number"
+                                placeholder="GST Number"
+                                name="gst_number"
+                                value="<?php echo $gst_number; ?>"
+                                aria-label="GST Number" />
+                              <label for="GST Number">GST Number</label>
                             </div>
                             <div class="form-floating form-floating-outline mb-5">
                               <input
                                 type="text"
                                 class="form-control"
-                                id="ecommerce-product-discount-price"
-                                placeholder="Discounted Price"
-                                name="delieveryAddress"
-                                value="<?php echo $delieveryAddress; ?>"
-                                aria-label="Brand discounted price" />
-                              <label for="ecommerce-product-discount-price">Delivery Pick-up Address </label>
-                            </div>
-                            <!-- <div class="form-floating form-floating-outline mb-5">
-                              <input
-                                type="text"
-                                class="form-control"
-                                id="ecommerce-product-discount-price"
-                                placeholder="Discounted Price"
-                                name="gst_number"
-                                value="<?php echo $gst_number; ?>"
-                                aria-label="Brand discounted price" />
-                              <label for="ecommerce-product-discount-price">GST Number</label>
-                            </div> -->
-                            <!-- <div class="form-floating form-floating-outline mb-5">
-                              <input
-                                type="text"
-                                class="form-control"
-                                id="ecommerce-product-discount-price"
-                                placeholder="Discounted Price"
+                                id="food_licence_number"
+                                placeholder="Food Licence Number"
                                 name="food_licence_number"
                                 value="<?php echo $food_licence_number; ?>"
-                                aria-label="Brand discounted price" />
-                              <label for="ecommerce-product-discount-price">Food Licence</label>
-                            </div> -->
+                                aria-label="Food Licence Number" />
+                              <label for="Food Licence Number">Food Licence Number</label>
+                            </div>
                             <!-- Charge tax check box -->
                             <!-- <div class="form-check m-2 me-0 pb-2">
                               <input class="form-check-input" type="checkbox" value="" id="price-charge-tax" checked />
@@ -428,6 +558,171 @@ $pdo = Database::connect();
                         </div>
                         <!-- /Business Information -->                         
 
+                        <div class="card mb-6">
+                          <div class="card-header">
+                            <h5 class="card-title mb-0">Registered Address</h5>
+                            <hr>
+                          </div>
+                          <div class="card-body">
+                              
+                            <div class="form-floating form-floating-outline mb-5">
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="r_address_line_1"
+                                placeholder="Registered Address Line 1"
+                                name="r_address_line_1"
+                                
+                                aria-label="Registered-Address-Line-1" />
+                              <label for="Registered-Address-Line-1">Registered Address Line 1</label>
+                            </div>
+                            <div class="form-floating form-floating-outline mb-5">
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="r_address_line_2"
+                                placeholder="Registered Address Line 2"
+                                name="r_address_line_2"
+                                
+                                aria-label="Registered-Address-Line-2" />
+                              <label for="Registered-Address-Line-2">Registered Address Line 2</label>
+                            </div>
+                            
+                            <div class="form-floating form-floating-outline mb-5">
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="r_taluka"
+                                placeholder="Registered Taluka"
+                                name="r_taluka"
+                                
+                                aria-label="Registered Taluka" />
+                              <label for="Registered Taluka">Registered Taluka</label>
+                            </div>
+                            
+                            <div class="form-floating form-floating-outline mb-5">
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="r_city"
+                                placeholder="Registered City"
+                                name="r_city"
+                                
+                                aria-label="Registered City" />
+                              <label for="Registered City">Registered City</label>
+                            </div>
+                            
+                            <div class="form-floating form-floating-outline mb-5">
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="r_state"
+                                placeholder="Registered State"
+                                name="r_state"
+                                
+                                aria-label="Registered State" />
+                              <label for="Registered State">Registered State</label>
+                            </div>
+                            
+                            <div class="form-floating form-floating-outline mb-5">
+                              <input
+                                type="number"
+                                maxlength="6"
+                                class="form-control"
+                                id="r_pincode"
+                                placeholder="Registered Pincode"
+                                name="r_pincode"
+                                
+                                aria-label="Registered Pincode" />
+                              <label for="Registered Pincode">Registered Pincode</label>
+                            </div>
+                            
+                          </div>
+                        </div>
+
+                        <div class="card mb-6">
+                          <div class="card-header">
+                            <h5 class="card-title mb-0">Delivery Address</h5>
+                            <hr>
+                          </div>
+                          <div class="card-body">
+                              
+                            <div class="form-floating form-floating-outline mb-5">
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="d_address_line_1"
+                                placeholder="Delivery Address Line 1"
+                                name="d_address_line_1"
+                                
+                                aria-label="Delivery-Address-Line-1" />
+                              <label for="Delivery-Address-Line-1">Delivery Address Line 1</label>
+                            </div>
+                            <div class="form-floating form-floating-outline mb-5">
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="d_address_line_2"
+                                placeholder="Delivery Address Line 2"
+                                name="d_address_line_2"
+                                
+                                aria-label="Delivery-Address-Line-2" />
+                              <label for="Delivery-Address-Line-2">Delivery Address Line 2</label>
+                            </div>
+                            
+                            <div class="form-floating form-floating-outline mb-5">
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="d_taluka"
+                                placeholder="Delivery Taluka"
+                                name="d_taluka"
+                                
+                                aria-label="Delivery Taluka" />
+                              <label for="Delivery Taluka">Delivery Taluka</label>
+                            </div>
+                            
+                            <div class="form-floating form-floating-outline mb-5">
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="d_city"
+                                placeholder="Delivery City"
+                                name="d_city"
+                                
+                                aria-label="Delivery City" />
+                              <label for="Delivery City">Delivery City</label>
+                            </div>
+                            
+                            <div class="form-floating form-floating-outline mb-5">
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="d_state"
+                                placeholder="Delivery State"
+                                name="d_state"
+                                
+                                aria-label="Delivery State" />
+                              <label for="Delivery State">Delivery State</label>
+                            </div>
+                            
+                            <div class="form-floating form-floating-outline mb-5">
+                              <input
+                                type="number"
+                                maxlength="6"
+                                class="form-control"
+                                id="d_pincode"
+                                placeholder="Delivery Pincode"
+                                name="d_pincode"
+                                
+                                aria-label="Delivery Pincode" />
+                              <label for="Delivery Pincode">Delivery Pincode</label>
+                            </div>
+                            
+                          </div>
+                        </div>
+
+                            
                         <!-- Documents -->
                         <div class="card mb-6">
                           <div class="card-header">
@@ -478,7 +773,7 @@ $pdo = Database::connect();
                                       </div>
                                     </div>
                                   </div>
-                                  <div class="row gx-5">
+                                  <div class="row gx-5" style="display: none;">
                                     <div class="mb-2 col-sm-12">
                                       <div class="input-group">
                                         <label class="input-group-text" for="inputGroupFile03"><b>Food License</b></label>
@@ -486,7 +781,7 @@ $pdo = Database::connect();
                                       </div>
                                     </div>
                                   </div>
-                                  <div class="row gx-5">
+                                  <div class="row gx-5" style="display: none;">
                                     <div class="mb-2 col-sm-12">
                                       <div class="input-group">
                                         <label class="input-group-text" for="inputGroupFile04"><b>Food License</b></label>
@@ -526,6 +821,7 @@ $pdo = Database::connect();
                                     </div>
                                 <?php } ?>
                                 <!-- <form action="/upload" class="dropzone needsclick" id="dropzone-basic"> -->
+                                
                                 <div action="/upload" class="dropzone needsclick" id="dropzone-basic">
                                     <div class="dz-message needsclick">
                                     Drop file here or click to update
@@ -539,6 +835,7 @@ $pdo = Database::connect();
                                     </div>
                                 </div>
                                 <!-- </form> -->
+                                <button type="button" onclick="myFunction(event, <?php echo $id; ?>)" class="btn btn-primary mt-4">Upload Logo</button>
                             </div>
                         </div>
                         <!-- /Logo -->
@@ -593,7 +890,7 @@ $pdo = Database::connect();
                                 <div class="form-floating form-floating-outline">
                                   <input
                                     id="ProvidedCategoriesSuggestion"
-                                    name="ProvidedCategoriesSuggestion"
+                                    name="ProvidedCategories"
                                     class="form-control h-auto"
                                     placeholder="select Categories"
                                     value="<?php echo implode(", ", $categorieNames); ?>"
