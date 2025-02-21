@@ -552,7 +552,7 @@ $(function () {
           columns: [
             // columns according to JSON
             { data: 'product_id' },
-            { data: 'product_id' },
+            // { data: 'product_id' },
             { data: 'product_name' },
             { data: 'category_id' },
             { data: 'brand_name' },
@@ -574,21 +574,21 @@ $(function () {
                 return '';
               }
             },
-            {
-              // For Checkboxes
-              targets: 1,
-              orderable: false,
-              checkboxes: {
-                selectAllRender: '<input type="checkbox" class="form-check-input">'
-              },
-              render: function () {
-                return '<input type="checkbox" class="dt-checkboxes form-check-input" >';
-              },
-              searchable: false
-            },
+            // {
+            //   // For Checkboxes
+            //   targets: 1,
+            //   orderable: false,
+            //   checkboxes: {
+            //     selectAllRender: '<input type="checkbox" class="form-check-input">'
+            //   },
+            //   render: function () {
+            //     return '<input type="checkbox" class="dt-checkboxes form-check-input" >';
+            //   },
+            //   searchable: false
+            // },
             {
               // Product name and brand_name
-              targets: 2,
+              targets: 1,
               responsivePriority: 1,
               render: function (data, type, full, meta) {
                 var $name = full['product_name'],
@@ -641,7 +641,7 @@ $(function () {
             {
               // Product Category
 
-              targets: 3,
+              targets: 2,
               responsivePriority: 5,
               render: function (data, type, full, meta) {
                   // var $category = categoryObj[full['category']].title;
@@ -702,7 +702,7 @@ $(function () {
             },
             {
               // Stock
-              targets: 4,
+              targets: 3,
               orderable: false,
               responsivePriority: 3,
               render: function (data, type, full, meta) {
@@ -737,7 +737,7 @@ $(function () {
             },
             {
               // weight
-              targets: 5,
+              targets: 4,
               render: function (data, type, full, meta) {
                 var $weight = full['weight'];
 
@@ -746,7 +746,7 @@ $(function () {
             },
             {
               // price
-              targets: 6,
+              targets: 5,
               render: function (data, type, full, meta) {
                 var $price = full['price'];
 
@@ -755,7 +755,7 @@ $(function () {
             },
             {
               // quantity
-              targets: 7,
+              targets: 6,
               responsivePriority: 4,
               render: function (data, type, full, meta) {
                 var $quantity = full['quantity'];

@@ -66,7 +66,7 @@ $(function () {
             data: data.data,
             columns: [
               // columns according to JSON
-              { data: '' },
+            //   { data: '' },
               { data: 'CategoryID' },
               { data: 'CategoryName' },
               { data: 'Active' },
@@ -84,23 +84,23 @@ $(function () {
                   return '';
                 }
               },
-              {
-                // For Checkboxes
-                targets: 1,
-                orderable: false,
-                searchable: false,
-                responsivePriority: 4,
-                checkboxes: true,
-                render: function () {
-                  return '<input type="checkbox" class="dt-checkboxes form-check-input" title="Formatting">';
-                },
-                checkboxes: {
-                  selectAllRender: '<input type="checkbox" class="form-check-input">'
-                }
-              },
+            //   {
+            //     // For Checkboxes
+            //     targets: 1,
+            //     orderable: false,
+            //     searchable: false,
+            //     responsivePriority: 4,
+            //     checkboxes: true,
+            //     render: function () {
+            //       return '<input type="checkbox" class="dt-checkboxes form-check-input" title="Formatting">';
+            //     },
+            //     checkboxes: {
+            //       selectAllRender: '<input type="checkbox" class="form-check-input">'
+            //     }
+            //   },
               {
                 // Categories and Category Detail
-                targets: 2,
+                targets: 1,
                 responsivePriority: 2,
                 render: function (data, type, full, meta) {
                   var $CategoryName = full['CategoryName'],
@@ -142,7 +142,7 @@ $(function () {
               },
               {
                 // Total products
-                targets: 3,
+                targets: 2,
                 responsivePriority: 3,
                 render: function (data, type, full, meta) {
                   var $Active = full['Active'];

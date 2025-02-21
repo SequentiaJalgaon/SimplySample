@@ -62,7 +62,7 @@ $(function () {
             data: data.data,
             columns: [
               // columns according to JSON
-              { data: '' },
+            //   { data: '' },
               { data: 'id' },
               { data: 'firstname' },
               { data: 'lastname' },
@@ -82,20 +82,20 @@ $(function () {
                   return '';
                 }
               },
-              {
-                // For Checkboxes
-                targets: 1,
-                orderable: false,
-                searchable: false,
-                responsivePriority: 4,
-                checkboxes: true,
-                render: function () {
-                  return '<input type="checkbox" class="dt-checkboxes form-check-input">';
-                },
-                checkboxes: {
-                  selectAllRender: '<input type="checkbox" class="form-check-input">'
-                }
-              },
+            //   {
+            //     // For Checkboxes
+            //     targets: 1,
+            //     orderable: false,
+            //     searchable: false,
+            //     responsivePriority: 4,
+            //     checkboxes: true,
+            //     render: function () {
+            //       return '<input type="checkbox" class="dt-checkboxes form-check-input">';
+            //     },
+            //     checkboxes: {
+            //       selectAllRender: '<input type="checkbox" class="form-check-input">'
+            //     }
+            //   },
               // {
                 // Categories and Category Detail
                 // targets: 2,
@@ -147,7 +147,7 @@ $(function () {
               // },
               {
                 // Total products
-                targets: 2,
+                targets: 1,
                 responsivePriority: 2,
                 render: function (data, type, full, meta) {
                   var $firstname = full['firstname'];
@@ -156,7 +156,7 @@ $(function () {
               },
               {
                 // Total products
-                targets: 3,
+                targets: 2,
                 responsivePriority: 3,
                 render: function (data, type, full, meta) {
                   var $lastname = full['lastname'];
@@ -165,7 +165,7 @@ $(function () {
               },
               {
                 // Total Earnings
-                targets: 4,
+                targets: 3,
                 orderable: false,
                 render: function (data, type, full, meta) {
                   var $email = full['email'];
@@ -174,7 +174,7 @@ $(function () {
               },
               {
                 // Total Earnings
-                targets: 5,
+                targets: 4,
                 orderable: false,
                 render: function (data, type, full, meta) {
                   var $contact = full['contact'];
@@ -183,7 +183,7 @@ $(function () {
               },
               {
                 // Total Earnings
-                targets: 6,
+                targets: 5,
                 orderable: false,
                 render: function (data, type, full, meta) {
                   var $categories = full['categories'];

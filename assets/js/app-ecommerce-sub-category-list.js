@@ -63,7 +63,7 @@ $(function () {
           data: data.data,
           columns: [
             // columns according to JSON
-            { data: '' },
+            // { data: '' },
             { data: 'id' },
             // { data: 'sub_categoryID' },
             { data: 'sub_categoryName' },
@@ -83,20 +83,20 @@ $(function () {
                 return '';
               }
             },
-            {
-              // For Checkboxes
-              targets: 1,
-              orderable: false,
-              searchable: false,
-              responsivePriority: 4,
-              checkboxes: true,
-              render: function () {
-                return '<input type="checkbox" class="dt-checkboxes form-check-input">';
-              },
-              checkboxes: {
-                selectAllRender: '<input type="checkbox" class="form-check-input">'
-              }
-            },
+            // {
+            //   // For Checkboxes
+            //   targets: 1,
+            //   orderable: false,
+            //   searchable: false,
+            //   responsivePriority: 4,
+            //   checkboxes: true,
+            //   render: function () {
+            //     return '<input type="checkbox" class="dt-checkboxes form-check-input">';
+            //   },
+            //   checkboxes: {
+            //     selectAllRender: '<input type="checkbox" class="form-check-input">'
+            //   }
+            // },
             // {
             //   // Categories and Category Detail
             //   targets: 2,
@@ -155,7 +155,7 @@ $(function () {
             //   }
             // },
             {              
-              targets: 2,
+              targets: 1,
               responsivePriority: 2,
               render: function (data, type, full, meta) {
                 var $sub_categoryName = full['sub_categoryName'];
@@ -170,7 +170,7 @@ $(function () {
             //   }
             // },
             {              
-              targets: 3,
+              targets: 2,
               responsivePriority: 3,
               render: function (data, type, full, meta) {
                 var $categoryName = full['categoryName'];
@@ -179,7 +179,7 @@ $(function () {
               }
             },
             {
-              targets: 5,
+              targets: 4,
               responsivePriority: 1,
               render: function (data, type, full, meta) {
                 var $Active = full['sub_active'];
@@ -190,7 +190,7 @@ $(function () {
               }
             },
             {
-              targets: 4,
+              targets: 3,
               responsivePriority: 1,
               render: function (data, type, full, meta) {
                 var $total_products = full['total_products'];
@@ -199,7 +199,7 @@ $(function () {
             },
             {
               // Actions
-              targets: 6,
+              targets: 5,
               title: 'Actions',
               searchable: false,
               orderable: false,
@@ -210,16 +210,36 @@ $(function () {
                 var $categoryName =  full["categoryName"];
                 var $sub_active =  full["sub_active"];
                 var $cat_subcat_id =  full["cat_subcat_id"];
-                return (
+                var $is_active = full["mapping_active"];
+                //   '<a href="javascript:0;" class="dropdown-item">View</a>' +
+                var $return =
                   '<div class="d-flex align-items-sm-center justify-content-sm-center">' +
-                    '<button class="btn btn-sm btn-icon btn-text-secondary waves-effect waves-light rounded-pill" type="button" data-bs-toggle="offcanvas" data-bs-target ="#offcanvasEcommerceCategoryListedit" onclick="editSubCategory(\''+$sub_categoryName+'\',\''+$categoryName+'\','+$id+','+$cat_subcat_id+','+$sub_active+')"><i class="ri-edit-box-line ri-20px"></i></button>' +
-                  '<button class="btn btn-sm btn-icon btn-text-secondary waves-effect waves-light rounded-pill dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ri-more-2-line ri-20px"></i></button>' +
-                  '<div class="dropdown-menu dropdown-menu-end m-0">' +
-                  '<a href="javascript:0;" class="dropdown-item">View</a>' +
-                  '<a href="javascript:0;" class="dropdown-item">Suspend</a>' +
-                  '</div>' +
-                  '</div>'
-                );
+                    '<button class="btn btn-sm btn-icon btn-text-secondary waves-effect waves-light rounded-pill" type="button" data-bs-toggle="offcanvas" data-bs-target ="#offcanvasEcommerceCategoryListedit" onclick="editSubCategory(\''+$sub_categoryName+'\',\''+$categoryName+'\','+$id+','+$cat_subcat_id+','+$sub_active+')"><i class="ri-edit-box-line ri-20px"></i></button>';
+                
+                $return += '<button class="btn btn-sm btn-icon btn-text-secondary waves-effect waves-light rounded-pill dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ri-more-2-line ri-20px"></i></button>';
+                if($is_active == 1) {
+                    $return += 
+                    '<div class="dropdown-menu dropdown-menu-end m-0">' +
+                    '<a href="javascript:SubmitForm(\'delete\',\''+$id+'\',\''+$categoryID+'\',\''+$cat_subcat_id+'\');" class="dropdown-item">Suspend</a>' +
+                    '</div>' +
+                    '</div>';
+                }
+                
+                if($is_active == 0) {
+                    $return += 
+                    '<div class="dropdown-menu dropdown-menu-end m-0">' +
+                    '<a href="javascript:SubmitForm(\'active\',\''+$id+'\',\''+$categoryID+'\',\''+$cat_subcat_id+'\');" class="dropdown-item">Active</a>' +
+                    '</div>' +
+                    '</div>';
+                }   
+                // $return +=
+                //   '<button class="btn btn-sm btn-icon btn-text-secondary waves-effect waves-light rounded-pill dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ri-more-2-line ri-20px"></i></button>' +
+                //   '<div class="dropdown-menu dropdown-menu-end m-0">' +
+                //   '<a href="javascript:0;" class="dropdown-item">Suspend</a>' +
+                //   '</div>' +
+                //   '</div>';
+                
+                return $return;
               }
             }
           ],
@@ -546,6 +566,7 @@ function getCategories(categoryNameA = "") {
   xmlhttpr.open("GET", "api_category.php", true);
   xmlhttpr.send();
 }
+
 function myFunction() {
     
   event.preventDefault(); // Prevent default form submission
@@ -701,4 +722,97 @@ function myFunctionUpdate() {
   } else {
         alert("Please enter a sub category title.");
   }
+}
+
+
+function SubmitForm(action, submittedid = 0, categoryID = 0, cat_subcat_id= 0) {
+            
+  let formData = new FormData();
+
+  if((action == "delete" || action == "active") && submittedid != 0)
+  {
+        let subCategoryID = submittedid;
+    
+        if(subCategoryID != "") {
+            
+        var subCategoryData = {
+            "status": action,
+            "subCategoryID": subCategoryID,
+            "CategoryID": categoryID,
+            "cat_subcat_id": cat_subcat_id
+        };
+        
+        // let jsonObj = JSON.stringify(
+        //   {
+        //     "status": action,
+        //     "subCategoryID": subCategoryID,
+        //     "CategoryID": categoryID,
+        //     "cat_subcat_id": cat_subcat_id,
+        //   }
+        // );
+        
+        //   body: jsonObj,
+        
+        fetch("api_subcategory.php", {
+              method: "PUT",
+              body: JSON.stringify( {subCategoryData} ),
+          })
+        .then(response => response.json())
+        .then(data => {
+          
+          let selectedType = "";
+          let selectedAnimation = "";
+
+          if(data.status == "success"){
+            
+            document.querySelector('#messageText').innerHTML = data.data;
+            document.querySelector('#entityTitle').innerHTML = data.categoryTitle;
+            
+            const toastAnimationExample = document.querySelector('.toast-ex');
+            // document.querySelector('#offcanvasEcommerceCategoryListEdit').classList.remove("show");
+            // document.querySelector('body').setAttribute('style', "");
+            // document.querySelector('.offcanvas-backdrop').classList.remove("show");
+            selectedType = "bg-success";
+            selectedAnimation = "swing";
+
+            toastAnimationExample.querySelectorAll('i[class^="ri-"]').forEach(function (element) {
+              element.classList.add(selectedType);
+            });
+            toastAnimationExample.classList.remove(selectedAnimation, "bg-danger");
+            toastAnimationExample.classList.add(selectedAnimation, "bg-success");
+            let toastAnimation = new bootstrap.Toast(toastAnimationExample);
+            toastAnimation.show();
+            setTimeout(function() {
+              // Redirect to another URL, replacing the current page in history
+              window.location.replace('sub-category');
+            }, 2000);
+
+          }
+          if(data.status == "fail"){
+            
+            document.querySelector('#messageText').innerHTML = data.data;
+            document.querySelector('#entityTitle').innerHTML = data.categoryTitle;
+            
+            const toastAnimationExample = document.querySelector('.toast-ex');
+            selectedType = "bg-danger";
+            selectedAnimation = "swing";
+
+            toastAnimationExample.querySelectorAll('i[class^="ri-"]').forEach(function (element) {
+              element.classList.add(selectedType);
+            });
+            toastAnimationExample.classList.remove(selectedAnimation, "bg-success");
+            toastAnimationExample.classList.add(selectedAnimation, "bg-danger");
+            let toastAnimation = new bootstrap.Toast(toastAnimationExample);
+            toastAnimation.show();
+          } 
+        });
+        // .catch(error => {
+        //     console.error("Error occurred while updating category:", error);
+        //     alert("Error occurred while updating category.");
+        // });
+    } else {
+        alert("Please enter a correct information.");
+    }
+  }
+  
 }

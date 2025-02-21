@@ -62,8 +62,9 @@ $(function () {
             data: data.data,
             columns: [
               // columns according to JSON
-              { data: '' },
+            //   { data: '' },
               { data: 'id' },
+               { data: 'brand_name' },
               { data: 'firstname' },
               { data: 'lastname' },
               { data: 'email' },
@@ -82,20 +83,20 @@ $(function () {
                   return '';
                 }
               },
-              {
-                // For Checkboxes
-                targets: 1,
-                orderable: false,
-                searchable: false,
-                responsivePriority: 4,
-                checkboxes: true,
-                render: function () {
-                  return '<input type="checkbox" class="dt-checkboxes form-check-input">';
-                },
-                checkboxes: {
-                  selectAllRender: '<input type="checkbox" class="form-check-input">'
-                }
-              },
+            //   {
+            //     // For Checkboxes
+            //     targets: 1,
+            //     orderable: false,
+            //     searchable: false,
+            //     responsivePriority: 4,
+            //     checkboxes: true,
+            //     render: function () {
+            //       return '<input type="checkbox" class="dt-checkboxes form-check-input">';
+            //     },
+            //     checkboxes: {
+            //       selectAllRender: '<input type="checkbox" class="form-check-input">'
+            //     }
+            //   },
               {
                 // Categories and Category Detail
                 // targets: 2,
@@ -147,6 +148,15 @@ $(function () {
               },
               {
                 // Total products
+                targets: 1,
+                responsivePriority: 3,
+                render: function (data, type, full, meta) {
+                  var $brand_name = full['brand_name'];
+                  return '<div class="text-sm-start">' + $brand_name + '</div>';
+                }
+              },
+              {
+                // Total products
                 targets: 2,
                 responsivePriority: 2,
                 render: function (data, type, full, meta) {
@@ -163,6 +173,7 @@ $(function () {
                   return '<div class="text-sm-start">' + $lastname + '</div>';
                 }
               },
+              
               {
                 // Total Earnings
                 targets: 4,
@@ -187,7 +198,7 @@ $(function () {
                 orderable: false,
                 render: function (data, type, full, meta) {
                   var $categories = full['categories'];
-                  return "<div class='text-sm-start'>" + $categories + '</div>';
+                  return "<div class='text-sm-start'>" + $categories.replace(/,/g, ', ') + '</div>';
                 }
               },
               {
@@ -197,14 +208,14 @@ $(function () {
                 searchable: false,
                 orderable: false,
                 render: function (data, type, full, meta) {
-                  return '<div class="d-flex align-items-sm-center justify-content-sm-center">' +
-                    '<button class="btn btn-sm btn-icon btn-text-secondary waves-effect waves-light rounded-pill"><i class="ri-edit-box-line ri-20px"></i></button>' +
-                    '<button class="btn btn-sm btn-icon btn-text-secondary waves-effect waves-light rounded-pill dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ri-more-2-line ri-20px"></i></button>' +
-                    '<div class="dropdown-menu dropdown-menu-end m-0">' +
-                    '<a href="javascript:0;" class="dropdown-item">View</a>' +
-                    '<a href="javascript:0;" class="dropdown-item">Suspend</a>' +
-                    '</div>' +
-                    '</div>';
+                //   return '<div class="d-flex align-items-sm-center justify-content-sm-center">' +
+                //     '<button class="btn btn-sm btn-icon btn-text-secondary waves-effect waves-light rounded-pill"><i class="ri-edit-box-line ri-20px"></i></button>' +
+                //     '<button class="btn btn-sm btn-icon btn-text-secondary waves-effect waves-light rounded-pill dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ri-more-2-line ri-20px"></i></button>' +
+                //     '<div class="dropdown-menu dropdown-menu-end m-0">' +
+                //     '<a href="javascript:0;" class="dropdown-item">View</a>' +
+                //     '<a href="javascript:0;" class="dropdown-item">Suspend</a>' +
+                //     '</div>' +
+                //     '</div>';
                   // return (
                   //   '<div class="d-flex align-items-sm-left justify-content-sm-left">' +
                   //   '<a class="btn btn-sm rounded-pill btn-label-success waves-effect" href="brand-details.php"><span class="tf-icons ri-check-double-line ri-16px me-2"></span>View Details</a>' +
@@ -216,6 +227,11 @@ $(function () {
                   //   '</div>' +
                   //   '</div>'
                   // );
+                   return (
+                     '<div class="d-flex align-items-sm-left justify-content-sm-left">' +
+                     '<a class="btn btn-sm rounded-pill btn-label-info waves-effect" href="view_brand_information.php?brand_id='+full["id"]+'">View Details</a>' +
+                     '&nbsp;&nbsp;'
+                   );
                 }
               }
             ],

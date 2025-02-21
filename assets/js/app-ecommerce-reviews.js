@@ -247,12 +247,11 @@ $(function () {
 
   // Variable declaration for table
   var dt_customer_review = $('.datatables-review'),
-    // customerView = 'app-ecommerce-customer-details-overview.html',
-    customerView = '',
+    customerView = 'app-ecommerce-customer-details-overview.html',
+    // customerView = 'reviews_rating.php',
     statusObj = {
       Pending: { title: 'Pending', class: 'bg-label-warning' },
-      Approved: { title: 'Published', class: 'bg-label-success' },
-      Rejected: { title: 'Rejected', class: 'bg-label-danger' }
+      Published: { title: 'Published', class: 'bg-label-success' }
     };
     $.ajax({
       url: ratingReviewAPI,
@@ -260,12 +259,12 @@ $(function () {
       type: 'GET',
       dataType: 'json', // added data type
       success: function(data) {
-      console.log(data);
+
         // reviewer datatable
         if (dt_customer_review.length) {
           var dt_review = dt_customer_review.DataTable({
             searching: false,
-            paging:true,
+            paging:false,
             // ordering: false,      
             // info: false,
             // ajax: assetsPath + 'json/app-ecommerce-reviews.json', // JSON file to add data
@@ -274,79 +273,86 @@ $(function () {
             
             columns: [
               // columns according to JSON
-              { data: '' },
-              { data: 'order_id' },
-              { data: 'product_name' },
+              // { data: '' },
+              // { data: 'id' },
+              { data: 'product' },
               { data: 'reviewer' },
               { data: 'review' },
               { data: 'date' },
-              // { data: 'status' },
+              { data: 'status' },
               { data: ' ' }
             ],
             columnDefs: [
+              // {
+              //   // For Responsive
+              //   className: 'control',
+              //   searchable: false,
+              //   orderable: false,
+              //   responsivePriority: 2,
+              //   targets: 0,
+              //   render: function (data, type, full, meta) {
+              //     return '';
+              //   }
+              // },
+              // {
+              //   // For Checkboxes
+              //   targets: 1,
+              //   orderable: false,
+              //   searchable: false,
+              //   responsivePriority: 3,
+              //   checkboxes: true,
+              //   render: function () {
+              //     return '<input type="checkbox" class="dt-checkboxes form-check-input">';
+              //   },
+              //   checkboxes: {
+              //     selectAllRender: '<input type="checkbox" class="form-check-input">'
+              //   }
+              // },
               {
-                // For Responsive
-                className: 'control',
-                searchable: false,
-                orderable: false,
-                responsivePriority: 2,
-                targets: 0,
-                render: function (data, type, full, meta) {
-                  return '';
-                }
-              },
-              {
-                // For Checkboxes
-                targets: 1,
-                orderable: false,
-                searchable: false,
-                // responsivePriority: 3,
-                checkboxes: false,
-                render: function (data, type, full, meta) {
-                  var $id = full['order_id'];
+                  //  id
+                  targets: 0,
+                  render: function (data, type, full, meta) {
+                  var $id = full['id'];
 
                   return (
                     '<span class="">' +
                     $id +
                     '</span>'
-                  )
-                },
-                // checkboxes: {
-                //   selectAllRender: '<input type="checkbox" class="form-check-input">'
-                // }
+                  );
+                }
               },
+
               {
                 // product
-                targets: 2,
-                // responsivePriority: 1,
+                targets: 1,
+                // responsivePriority: 2,
                 render: function (data, type, full, meta) {
-                  
-                  // var $product = full['product_name'],
-                  var $product = full['product_name'].substring(0,20),
-                    // $product_description = full['product_description'],
-                    $product_description = full['product_description'].substring(0,20),
-                    $product_id = full['product_id'],
+                  var $product = full['product'],
+                    $company_name = full['company_name'],
+                    $id = full['id'],
                     $image = full['product_image'];
 
                   if ($image) {
                     // For Avatar image
                     var $output =
-                      '<img src="' + $image +'" alt="Product-' + $product_id +'" class="rounded-2">';
-
-                    // var $output = "";
+                      '<img src="' +
+                      assetsPath +
+                      'img/products/' +
+                      $image +
+                      '" alt="Product-' +
+                      $id +
+                      '" class="rounded-2">';
                   } else {
-
-                    // var $output = "";
-
                     // For Avatar badge
                     var stateNum = Math.floor(Math.random() * 6);
                     var states = ['success', 'danger', 'warning', 'info', 'dark', 'primary', 'secondary'];
                     var $state = states[stateNum],
-                      $product = full['product_name'],
+                      $product = full['product'],
                       $initials = $product.match(/\b\w/g) || [];
                     $initials = (($initials.shift() || '') + ($initials.pop() || '')).toUpperCase();
                     $output = '<span class="avatar-initial rounded bg-label-' + $state + '">' + $initials + '</span>';
                   }
+                  // Creates full output for row
                   var $row_output =
                     '<div class="d-flex justify-content-start align-items-center customer-name">' +
                     '<div class="avatar-wrapper">' +
@@ -359,29 +365,26 @@ $(function () {
                     $product +
                     '</span></a>' +
                     '<small>' +
-                    $product_description +
+                    $company_name +
                     '</small>' +
                     '</div>' +
                     '</div>';
                   return $row_output;
-
-                  // return $product;
                 }
               },
               {
                 // reviewer
-                targets: 3,
-                // responsivePriority: 1,
+                targets: 2,
+                responsivePriority: 1,
                 render: function (data, type, full, meta) {
                   var $name = full['reviewer'],
-                    $email = full['email'].substring(0,20),
+                    $email = full['email'],
                     $avatar = full['avatar'];
 
                   if ($avatar) {
                     // For Avatar image
                     var $output =
-                      // '<img src="' + assetsPath + 'img/avatars/' + $avatar + '" alt="Avatar" class="rounded-circle">';
-                      '<img src="' + $avatar + '" alt="Avatar" class="rounded-circle">';
+                      '<img src="' + assetsPath + 'img/avatars/' + $avatar + '" alt="Avatar" class="rounded-circle">';
                   } else {
                     // For Avatar badge
                     var stateNum = Math.floor(Math.random() * 6);
@@ -416,12 +419,11 @@ $(function () {
               },
               {
                 // Review
-                targets: 4,
-                // responsivePriority: 2,
+                targets: 3,
+                responsivePriority: 2,
                 render: function (data, type, full, meta) {
                   var $num = full['review'];
                   var $heading = full['head'];
-                  // var $comment = full['para'].substring(0,20);
                   var $comment = full['para'];
                   var $readOnlyRatings = $('<div class="read-only-ratings ps-0 mb-2"></div>');
 
@@ -443,7 +445,7 @@ $(function () {
                     '<h6 class="mb-1 text-truncate text-capitalize">' +
                     $heading +
                     '</h6>' +
-                    '<small class="text-break pe-3" title='+full['para']+'>' +
+                    '<small class="text-break pe-3">' +
                     $comment +
                     '</small>' +
                     '</div>';
@@ -453,29 +455,14 @@ $(function () {
               },
               {
                 // date
-                targets: 5,
+                targets: 4,
                 render: function (data, type, full, meta) {
                   var date = new Date(full.date); // convert the date string to a Date object
                   var formattedDate = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
                   return '<span class="text-nowrap">' + formattedDate + '</span>';
                 }
               },
-              // {
-              //   // User Status
-              //   targets: 6,
-              //   render: function (data, type, full, meta) {
-              //     var $status = full['status'];
-
-              //     return (
-              //       '<span class="badge rounded-pill ' +
-              //       statusObj[$status].class +
-              //       '" text-capitalized>' +
-              //       statusObj[$status].title +
-              //       '</span>'
-              //     );
-
-              //   }
-              // },
+              
 
               // {
               //   // Actions
@@ -505,24 +492,24 @@ $(function () {
                     var status = full['status'];
                     var actionButtons = '';
             
-                    if (status === 'Approved') {
+                    if (status === 'approved') {
                         // Show only the approved button as disabled
                         actionButtons =
-                            '<button class="btn btn-sm btn-icon btn-text-danger waves-effect waves-light rounded-pill reject-btn" data-bs-toggle="tooltip" onClick="updateStatus('+full['id']+',\'Rejected\')" data-bs-placement="top" title="Make Rejected">' +
+                            '<button class="btn btn-sm btn-icon btn-text-danger waves-effect waves-light rounded-pill reject-btn" data-bs-toggle="tooltip" onClick="updateStatus('+full['id']+',\'rejected\')" data-bs-placement="top" title="Make Rejected">' +
                             '<i class="ri-close-line ri-20px"></i></button>';
-                    } else if (status === 'Rejected') {
+                    } else if (status === 'rejected') {
                         // Show only the rejected button as disabled
                         actionButtons =
-                            '<button class="btn btn-sm btn-icon btn-text-success waves-effect waves-light rounded-pill approve-btn" data-bs-toggle="tooltip" onClick="updateStatus('+full['id']+',\'Approved\')" data-bs-placement="top" title="Make Approved">' +
+                            '<button class="btn btn-sm btn-icon btn-text-success waves-effect waves-light rounded-pill approve-btn" data-bs-toggle="tooltip" onClick="updateStatus('+full['id']+',\'approved\')" data-bs-placement="top" title="Make Approved">' +
                             '<i class="ri-check-line ri-20px"></i></button>';
                     } else {
                         // Show both approve and reject buttons as clickable
                         actionButtons =
-                            '<button class="btn btn-sm btn-icon btn-text-success waves-effect waves-light rounded-pill approve-btn" data-bs-toggle="tooltip" onClick="updateStatus('+full['id']+',\'Approved\')" data-bs-placement="top" title="Make Approved" data-id="' +
+                            '<button class="btn btn-sm btn-icon btn-text-success waves-effect waves-light rounded-pill approve-btn" data-bs-toggle="tooltip" onClick="updateStatus('+full['id']+',\'approved\')" data-bs-placement="top" title="Make Approved" data-id="' +
                             full['id'] +
                             '">' +
                             '<i class="ri-check-line ri-20px"></i></button>' +
-                            '<button class="btn btn-sm btn-icon btn-text-danger waves-effect waves-light rounded-pill reject-btn" data-bs-toggle="tooltip" onClick="updateStatus('+full['id']+',\'Rejected\')"  data-bs-placement="top" title="Make Rejected" data-id="' +
+                            '<button class="btn btn-sm btn-icon btn-text-danger waves-effect waves-light rounded-pill reject-btn" data-bs-toggle="tooltip" onClick="updateStatus('+full['id']+',\'rejected\')"  data-bs-placement="top" title="Make Rejected" data-id="' +
                             full['id'] +
                             '">' +
                             '<i class="ri-close-line ri-20px"></i></button>';
@@ -705,7 +692,7 @@ $(function () {
                 display: $.fn.dataTable.Responsive.display.modal({
                   header: function (row) {
                     var data = row.data();
-                    return 'Details of ' + data['product_name'];
+                    return 'Details of ' + data['product'];
                   }
                 }),
                 type: 'column',
