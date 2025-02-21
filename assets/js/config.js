@@ -12,6 +12,7 @@ var actualPath = "https://zecc.in/simplysample/";
 
 var productImageUploadPath = actualPath + "/uploads/productIamges/";
 var ImgaeUploadAPI = actualPath + "api_uploadProductImage";
+var ImgaeUploadBrandAPI = actualPath + "api_uploadBrandImage";
 
 var categoryApi = actualPath + "api_category";
 var subcategoryApi = actualPath + "api_subcategory";
