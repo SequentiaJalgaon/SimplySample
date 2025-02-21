@@ -15,53 +15,113 @@ if($REQUEST_METHOD == "GET") {
 
     include("dist/conf/db.php");
     $pdo = Database::connect();
-    $categories = array();
-    $sql = "SELECT 
-                c.category_id,
-                c.category_name,
-                c.category_image,
-                c.is_active,
-                c.added_on
-            FROM 
-                category c
-            JOIN 
-                category_sequence cs
-            ON 
-                c.category_id = cs.category_id
-            WHERE
-                cs.is_active = '1'
-            GROUP BY 
-                c.category_id
-            ORDER BY 
-                sequence_number";
-    $q = $pdo->query($sql);
-    foreach ($pdo->query($sql) as $row) 
-    {
-        $categoryElement = array (
-            "CategoryID" => $row["category_id"],
-            "CategoryName" => $row["category_name"],
-            "CategoryImage" => $row["category_image"],
-            "Active" => $row["is_active"],
-            "AddedOn" => $row["added_on"]
-        );
-
-        array_push($categories, $categoryElement);
+    
+    $brand_id_edit = 0;
+    if(isset($_GET['brand_id'])) {
+        $brand_id_edit = intval($_GET['brand_id']); 
     }
+    
+    if($brand_id_edit > 0) {
+        $categories = array();
+        $sql = "SELECT 
+                    c.category_id,
+                    c.category_name,
+                    c.category_image,
+                    c.is_active,
+                    c.added_on
+                FROM 
+                    category c
+                JOIN
+                    brand_vs_category bc
+                ON
+                    bc.category_id = c.category_id
+                WHERE
+                    bc.is_active = '1'
+                    and
+                    bc.brand_id = $brand_id_edit
+                GROUP BY 
+                    c.category_id,
+                    bc.category_id
+                ORDER BY 
+                    sequence_number";
+        $q = $pdo->query($sql);
+        foreach ($pdo->query($sql) as $row) 
+        {
+            $categoryElement = array (
+                "CategoryID" => $row["category_id"],
+                "CategoryName" => $row["category_name"],
+                "CategoryImage" => $row["category_image"],
+                "Active" => $row["is_active"],
+                "AddedOn" => $row["added_on"]
+            );
 
-    if(count($categories) > 0) {
-        // echo "<pre>";
-        // var_dump (($categories));
-        // echo "</pre>";
-        $result = array(
-            'data' => $categories, 
-            'status' => true,
-            'statusCode' => 200
-        );
+            array_push($categories, $categoryElement);
+        }
+
+        if(count($categories) > 0) {
+            // echo "<pre>";
+            // var_dump (($categories));
+            // echo "</pre>";
+            $result = array(
+                'data' => $categories, 
+                'status' => true,
+                'statusCode' => 200
+            );
+        } else {
+            $result = array(
+                'data' => 'No Record Found', 
+                'status' => false, 
+                'statusCode' => 200);
+        }
     } else {
-        $result = array(
-            'data' => 'No Record Found', 
-            'status' => false, 
-            'statusCode' => 200);
+        $categories = array();
+        $sql = "SELECT 
+                    c.category_id,
+                    c.category_name,
+                    c.category_image,
+                    c.is_active,
+                    c.added_on
+                FROM 
+                    category c
+                JOIN 
+                    category_sequence cs
+                ON 
+                    c.category_id = cs.category_id
+                WHERE
+                    cs.is_active = '1'
+                GROUP BY 
+                    c.category_id
+                ORDER BY 
+                    sequence_number";
+        $q = $pdo->query($sql);
+        foreach ($pdo->query($sql) as $row) 
+        {
+            $categoryElement = array (
+                "CategoryID" => $row["category_id"],
+                "CategoryName" => $row["category_name"],
+                "CategoryImage" => $row["category_image"],
+                "Active" => $row["is_active"],
+                "AddedOn" => $row["added_on"]
+            );
+
+            array_push($categories, $categoryElement);
+        }
+
+        if(count($categories) > 0) {
+            // echo "<pre>";
+            // var_dump (($categories));
+            // echo "</pre>";
+            $result = array(
+                'data' => $categories, 
+                'status' => true,
+                'statusCode' => 200
+            );
+        } else {
+            $result = array(
+                'data' => 'No Record Found', 
+                'status' => false, 
+                'statusCode' => 200);
+        }
     }
 }
 
