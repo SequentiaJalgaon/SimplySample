@@ -15,7 +15,7 @@ $result = "";
 if($REQUEST_METHOD == "GET") {
     include("dist/conf/db.php");
     $pdo = Database::connect();
-    $host = "http://".$_SERVER['HTTP_HOST']."/simplysample/uploads/productIamges/";
+    $host = "https://".$_SERVER['HTTP_HOST']."/simplysample/uploads/productIamges/";
     
         if(isset($_GET["brand_id"]) && $_GET["brand_id"] > 0)
         {
@@ -28,7 +28,7 @@ if($REQUEST_METHOD == "GET") {
             $AllProductImages = $AllProductImages->fetchAll(PDO::FETCH_ASSOC);    
             
             $sql = "SELECT 
-                        p.product_id, p.product_name, p.product_description, p.price, p.weight, p.is_active as productActive, p.is_featured,
+                        p.product_id, p.product_name, p.product_description, p.price, p.weight, p.is_active as productActive, p.is_featured, p.expiryDate,
                         b.brand_name, b.brand_id,
                         c.category_name, c.category_id, c.category_image as categoryImage,
                         sc.sub_category_name, sc.sub_category_id
@@ -49,7 +49,11 @@ if($REQUEST_METHOD == "GET") {
                     if (array_key_exists($searchKey, $subarray)) {
                         if($subarray[$searchKey] == $row["product_id"]){
                             if($subarray['is_active'] == '1') {
-                                $foundedImages[] = array($host.$subarray['file_name']); 
+                                // $foundedImages[] = array($host.$subarray['file_name']); 
+                                $productImagePath = 'uploads/productIamges/'.$subarray['file_name'];
+                                if (file_exists($productImagePath)) {
+                                    $foundedImages[] = array($host.$subarray['file_name']); 
+                                }
                             }
                         }
                     }
@@ -86,12 +90,19 @@ if($REQUEST_METHOD == "GET") {
 
                 //--------------------------------------------- Rating And Review --------------------------------------------------
 
+                if($row["expiryDate"] != "" && !is_null($row["expiryDate"]) && $row["expiryDate"] != "0000-00-00" ) {
+                   if($row["expiryDate"] <= date("Y-m-d")) {
+                       $row["productActive"] = 0;
+                   } 
+                }
+
                 $productElement = array (
                     "product_id" => $row["product_id"],
                     "product_name" => $row["product_name"],
                     "product_description" => mb_convert_encoding($row["product_description"], 'UTF-8', 'UTF-8'),
                     "price" => $row["price"],
                     "weight" => $row["weight"],
+                    "expiryDate" => $row["expiryDate"],
                     "is_active" => $row["productActive"] == '1' ? "Active" : "Deactive",
                     "is_featured" => $row["is_featured"] == '1' ? "Featured" : "",
 
@@ -141,7 +152,7 @@ if($REQUEST_METHOD == "GET") {
             $AllProductImages = $AllProductImages->fetchAll(PDO::FETCH_ASSOC);    
             
             $sql = "SELECT 
-                        p.product_id, p.product_name, p.product_description, p.price, p.weight, p.is_active as productActive, p.is_featured,
+                        p.product_id, p.product_name, p.product_description, p.price, p.weight, p.is_active as productActive, p.is_featured, p.expiryDate,
                         b.brand_name, b.brand_id,
                         c.category_name, c.category_id, c.category_image as categoryImage,
                         sc.sub_category_name, sc.sub_category_id
@@ -162,7 +173,10 @@ if($REQUEST_METHOD == "GET") {
                     if (array_key_exists($searchKey, $subarray)) {
                         if($subarray[$searchKey] == $row["product_id"]){
                             if($subarray['is_active'] == '1') {
-                                $foundedImages[] = array($host.$subarray['file_name']); 
+                                $productImagePath = 'uploads/productIamges/'.$subarray['file_name'];
+                                if (file_exists($productImagePath)) {
+                                    $foundedImages[] = array($host.$subarray['file_name']); 
+                                }
                             }
                         }
                     }
@@ -199,12 +213,19 @@ if($REQUEST_METHOD == "GET") {
 
                 //--------------------------------------------- Rating And Review --------------------------------------------------
                 
+                if($row["expiryDate"] != "" && !is_null($row["expiryDate"]) && $row["expiryDate"] != "0000-00-00" ) {
+                   if($row["expiryDate"] >= date("Y-m-d")) {
+                       $row["productActive"] = 0;
+                   } 
+                }
+                
                 $productElement = array (
                     "product_id" => $row["product_id"],
                     "product_name" => $row["product_name"],
                     "product_description" => mb_convert_encoding($row["product_description"], 'UTF-8', 'UTF-8'),
                     "price" => $row["price"],
                     "weight" => $row["weight"],
+                    "expiryDate" => $row["expiryDate"],
                     "is_active" => $row["productActive"] == '1' ? "Active" : "Deactive",
                     "is_featured" => $row["is_featured"] == '1' ? "Featured" : "",
 
@@ -251,6 +272,7 @@ if($REQUEST_METHOD == "GET") {
                 "product_description" => "",
                 "price" => 0,
                 "weight" => 0,
+                "expiryDate" => null,
                 "is_active" => "Deactive",
                 "product_images" => null,                
                 "brand_name" => "",
@@ -278,7 +300,7 @@ if($REQUEST_METHOD == "GET") {
 
                 $sql = "SELECT 
                                 p.product_id, p.product_name, p.product_description, p.price, p.weight, p.is_active as productActive, p.is_featured,
-                                b.brand_name, b.brand_id,
+                                b.brand_name, b.brand_id, p.expiryDate,
                                 c.category_name, c.category_id, c.category_image as categoryImage,
                                 sc.sub_category_name, sc.sub_category_id
                         FROM    products p
@@ -302,13 +324,22 @@ if($REQUEST_METHOD == "GET") {
                         $AllProductImages->execute(array($productId));      
                         $AllProductImages = $AllProductImages->fetchAll(PDO::FETCH_ASSOC);  
 
+                        $foundedImagesString = "";
                         $foundedImages = [];
                         $searchKey = "product_id";
                         foreach ($AllProductImages as $subarray) {
                             if (array_key_exists($searchKey, $subarray)) {
                                 if($subarray[$searchKey] == $productId){
                                     if($subarray['is_active'] == '1') {
-                                        $foundedImages[] = $host.$subarray['file_name']; 
+                                        // $foundedImages[] = $host.$subarray['file_name']; 
+                                        $productImagePath = 'uploads/productIamges/'.$subarray['file_name'];
+                                        if (file_exists($productImagePath)) {
+                                            $foundedImages[] = array($host.$subarray['file_name']); 
+                                            if($foundedImagesString == "")
+                                            $foundedImagesString .= $host.$subarray['file_name'];
+                                            else
+                                            $foundedImagesString .= ",".$host.$subarray['file_name'];
+                                        }
                                     }
                                 }
                             }
@@ -343,15 +374,21 @@ if($REQUEST_METHOD == "GET") {
                         $totalCustomers = $rating_review['totalCustomers'];
                     }
                     //--------------------------------------------- Rating And Review --------------------------------------------------
+                    
+                    if($productInfo["expiryDate"] != "" && !is_null($productInfo["expiryDate"]) && $productInfo["expiryDate"] != "0000-00-00" ) {
+                       if($productInfo["expiryDate"] >= date("Y-m-d")) {
+                           $productInfo["productActive"] = 0;
+                       } 
+                    }
                     {                      
                         $product["product_id"] = $productInfo["product_id"];
                         $product["product_name"] = $productInfo["product_name"];
                         $product["product_description"] = mb_convert_encoding($productInfo["product_description"], 'UTF-8', 'UTF-8');
                         $product["price"] = $productInfo["price"];
                         $product["weight"] = $productInfo["weight"];
+                        $product["expiryDate"] = $productInfo["expiryDate"];
                         $product["is_active"] = $productInfo["productActive"] == '1' ? "Active" : "Deactive";
-
-                        $product["product_images"] = implode(",",$foundedImages);
+                        $product["product_images"] = $foundedImagesString;
                         
                         $product["brand_name"] = $productInfo["brand_name"];
                         $product["brand_id"] = $productInfo["brand_id"];
@@ -500,7 +537,7 @@ if($REQUEST_METHOD == "GET") {
             $AllProductImages = $AllProductImages->fetchAll(PDO::FETCH_ASSOC);    
             
             $sql = "SELECT 
-                        p.product_id, p.product_name, p.product_description, p.price, p.weight, p.is_active as productActive, p.is_featured,
+                        p.product_id, p.product_name, p.product_description, p.price, p.weight, p.is_active as productActive, p.is_featured,p.expiryDate,
                         b.brand_name, b.brand_id,
                         c.category_name, c.category_id, c.category_image as categoryImage,
                         sc.sub_category_name, sc.sub_category_id
@@ -509,7 +546,7 @@ if($REQUEST_METHOD == "GET") {
                 JOIN    brands b ON pm.brand_id = b.brand_id
                 JOIN    category c ON pm.category_id = c.category_id
                 JOIN    sub_category sc ON pm.sub_category_id = sc.sub_category_id
-                WHERE   pm.is_active = '1' and is_featured = '1' LIMIT 4
+                WHERE   pm.is_active = '1' and is_featured = '1' and b.status = 'OnBoarded' LIMIT 4
             ";
             $q = $pdo->query($sql);
             foreach ($pdo->query($sql) as $row) 
@@ -520,7 +557,11 @@ if($REQUEST_METHOD == "GET") {
                     if (array_key_exists($searchKey, $subarray)) {
                         if($subarray[$searchKey] == $row["product_id"]){
                             if($subarray['is_active'] == '1') {
-                                $foundedImages[] = array($host.$subarray['file_name']); 
+                                // $foundedImages[] = array($host.$subarray['file_name']); 
+                                $productImagePath = 'uploads/productIamges/'.$subarray['file_name'];
+                                if (file_exists($productImagePath)) {
+                                    $foundedImages[] = array($host.$subarray['file_name']); 
+                                }
                             }
                         }
                     }
@@ -555,6 +596,12 @@ if($REQUEST_METHOD == "GET") {
                     $totalCustomers = $rating_review['totalCustomers'];
                 }
 
+                if($row["expiryDate"] != "" && !is_null($row["expiryDate"]) && $row["expiryDate"] != "0000-00-00" ) {
+                   if($row["expiryDate"] >= date("Y-m-d")) {
+                       $row["productActive"] = 0;
+                   } 
+                }
+                
                 //--------------------------------------------- Rating And Review --------------------------------------------------
                 $productElement = array (
                     "product_id" => $row["product_id"],
@@ -562,6 +609,7 @@ if($REQUEST_METHOD == "GET") {
                     "product_description" => mb_convert_encoding($row["product_description"], 'UTF-8', 'UTF-8'),
                     "price" => $row["price"],
                     "weight" => $row["weight"],
+                    "expiryDate" => $row["expiryDate"],
                     "is_active" => $row["productActive"] == '1' ? "Active" : "Deactive",
                     "is_featured" => $row["is_featured"] == '1' ? "Featured" : "",
 
@@ -611,7 +659,7 @@ if($REQUEST_METHOD == "GET") {
             $AllProductImages = $AllProductImages->fetchAll(PDO::FETCH_ASSOC);    
             
             $sql = "SELECT 
-                        p.product_id, p.product_name, p.product_description, p.price, p.weight, p.is_active as productActive, p.is_featured,
+                        p.expiryDate,p.product_id, p.product_name, p.product_description, p.price, p.weight, p.is_active as productActive, p.is_featured,
                         b.brand_name, b.brand_id,
                         c.category_name, c.category_id, c.category_image as categoryImage,
                         sc.sub_category_name, sc.sub_category_id
@@ -631,7 +679,11 @@ if($REQUEST_METHOD == "GET") {
                     if (array_key_exists($searchKey, $subarray)) {
                         if($subarray[$searchKey] == $row["product_id"]){
                             if($subarray['is_active'] == '1') {
-                                $foundedImages[] = array($host.$subarray['file_name']); 
+                                // $foundedImages[] = array($host.$subarray['file_name']); 
+                                $productImagePath = 'uploads/productIamges/'.$subarray['file_name'];
+                                if (file_exists($productImagePath)) {
+                                    $foundedImages[] = array($host.$subarray['file_name']); 
+                                }
                             }
                         }
                     }
@@ -668,13 +720,19 @@ if($REQUEST_METHOD == "GET") {
 
                 //--------------------------------------------- Rating And Review --------------------------------------------------
 
-
+                if($row["expiryDate"] != "" && !is_null($row["expiryDate"]) && $row["expiryDate"] != "0000-00-00" ) {
+                   if($row["expiryDate"] <= date("Y-m-d")) {
+                       $row["productActive"] = 0;
+                   } 
+                }
+                
                 $productElement = array (
                     "product_id" => $row["product_id"],
                     "product_name" => $row["product_name"],
                     "product_description" => mb_convert_encoding($row["product_description"], 'UTF-8', 'UTF-8'),
                     "price" => $row["price"],
                     "weight" => $row["weight"],
+                    "expiryDate" => $row["expiryDate"],
                     "is_active" => $row["productActive"] == '1' ? "Active" : "Deactive",
                     "is_featured" => $row["is_featured"] == '1' ? "Featured" : "",
 
@@ -736,6 +794,7 @@ else if($REQUEST_METHOD == "POST") {
     $brand = $productInfo['brand'];
     $category = $productInfo['category'];
     $subcategory = $productInfo['subcategory'];
+    $expiryDate = date("Y-m-d", strtotime($productInfo['expiryDate']));
     $image = $productInfo['image'];
 
     include("dist/conf/db.php");
@@ -765,10 +824,11 @@ else if($REQUEST_METHOD == "POST") {
                 `product_description`,
                 `price`,
                 `weight`,
-                `is_active`
+                `is_active`,
+                `expiryDate`
                 )
                 VALUES
-                (?,?,?,?,?);
+                (?,?,?,?,?,?);
             ";
             $q = $pdo->prepare($sql);
             $p1isAdded = $q->execute(array(
@@ -776,7 +836,8 @@ else if($REQUEST_METHOD == "POST") {
                 $productDescription,
                 $productprice,
                 $productweight,
-                '1'
+                '1',
+                $expiryDate
             ));
             $product_id = $pdo->LastInsertId();
 
@@ -859,6 +920,7 @@ else if($REQUEST_METHOD == "PUT") {
         $image = isset($productInfo['image']) ? $productInfo['image'] : "";
         $action = isset($productInfo['action']) ? $productInfo['action'] : "";
         $featured = isset($productInfo['featured']) ? $productInfo['featured'] : "";
+        $expiryDate = isset($productInfo['expiryDate']) ? $productInfo['expiryDate'] : "";
 
         include("dist/conf/db.php");
         $pdo = Database::connect();
@@ -905,7 +967,8 @@ else if($REQUEST_METHOD == "PUT") {
                         `product_name` = ?,
                         `product_description` = ?,
                         `price` = ?,
-                        `weight` = ?
+                        `weight` = ?,
+                        `expiryDate` = ?
                         WHERE 
                         product_id = ?;
                     ";
@@ -915,6 +978,7 @@ else if($REQUEST_METHOD == "PUT") {
                         $productDescription,
                         $productprice,
                         $productweight,
+                        $expiryDate,
                         $productID
                     ));
 
