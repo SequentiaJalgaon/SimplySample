@@ -178,11 +178,11 @@ else if($REQUEST_METHOD == "POST") {
 
                     $amount_gst = 0.00;
                     $product_count = count($product_info);
-
+                    $todayDate = date("Y-m-d");
                     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                    $sql = "INSERT INTO `orders`(`user_id`,`address_id`,`amount_gst`,`amount_total`,`amount_final`,`product_count`)VALUES (?,?,?,?,?,?)";
+                    $sql = "INSERT INTO `orders`(`user_id`,`address_id`,`amount_gst`,`amount_total`,`amount_final`,`product_count`,`order_date`)VALUES (?,?,?,?,?,?,?)";
                     $q = $pdo->prepare($sql);
-                    $isAdded = $q->execute(array($user_id, $address_id, $amount_gst, $amount_total, $amount_final, $product_count));
+                    $isAdded = $q->execute(array($user_id, $address_id, $amount_gst, $amount_total, $amount_final, $product_count, $todayDate));
 
                     $order_id = $pdo->lastInsertId();
                     if($order_id > 0)
@@ -251,10 +251,28 @@ else if($REQUEST_METHOD == "POST") {
                                 }
                             }
 
+                            $userEmail = "";
+                            $sql = "SELECT email_id FROM user_vs_email WHERE user_id = ? and is_active = '1'";
+                            $q = $pdo->prepare($sql);
+                            $q->execute(array($user_id));
+                            $isUserEmailPresent = $q->fetch(PDO::FETCH_ASSOC);
+                            if($isUserEmailPresent) {
+                                $userEmail = $isUserEmailPresent['email_id'];
+                            }
+                            $orderDetailResponse = [
+                                "order_id" => $order_id,
+                                "date" => $todayDate,
+                                "email" => $userEmail,
+                                "total" => $amount_final,
+                                "payment_method" => "cash_on_delivery",
+                                "address" => $isAddressPresent['address_line_1'].", ".$isAddressPresent['address_line_2'].", ".$isAddressPresent['state'].", ".$isAddressPresent['taluka'].", ".$isAddressPresent['city'].", -".$isAddressPresent['pincode']
+                                
+                            ];
+
                             if($isAdded == true && ($productAdded == $product_count)) {
                                 $result= ([
                                     "data" => "Order is placed.",
-                                    "message" => $order_id,
+                                    "message" => $orderDetailResponse,
                                     "status" => "success",
                                     'statusCode' => 200
                                 ]);
