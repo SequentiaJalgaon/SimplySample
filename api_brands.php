@@ -236,7 +236,7 @@ if($REQUEST_METHOD == "GET") {
         
         $sql = "SELECT 
                 b.brand_id, 
-                b.brand_name,
+                b.brand_name,b.status,
                 document_title, file_title,
                 first_name, last_name, contact_number, email, registration_year, gst_number, brand_logo, food_licence_number,requested_categories,
                 bc.category_id, c.category_name,
@@ -268,7 +268,8 @@ if($REQUEST_METHOD == "GET") {
         {
                 $categoryElement = [
                     "category_id"=> $row12["category_id"],
-                    "category_name"=> $row12['category_name']
+                    "category_name"=> $row12['category_name'],
+                    "category_image"=> $row12['category_image']
                 ];
                 array_push($categories, $categoryElement);
         }
@@ -283,7 +284,8 @@ if($REQUEST_METHOD == "GET") {
         {
                 $categoryElement = [
                     "category_id"=> $rowreq["category_id"],
-                    "category_name"=> $rowreq['category_name']
+                    "category_name"=> $rowreq['category_name'],
+                    "category_image"=> $rowreq['category_image']
                 ];
                 array_push($requested_categories, $categoryElement);
         }
@@ -335,6 +337,7 @@ if($REQUEST_METHOD == "GET") {
 
         $brandElement = array (
             "id" => $brandPresent["brand_id"],
+            "status" => $brandPresent["status"],
             "brand_name" => $brandPresent["brand_name"],
             "registered_address"=> $registeredAddress,
             "delievery_address"=> $delieveryAddress,
