@@ -36,11 +36,11 @@ if ($REQUEST_METHOD == "GET") {
     if (!empty($orders)) {
         // Since order_id is unique, there will be at most one order
         $order = $orders[0];
+        
+        // $order = array_map('trim', $orders[0]);
 
-        $order = array_map('trim', $orders[0]);
-
-        $id_user_vs_address = $order['user_address_id'] ?? null;
-        // $id_user_vs_address = 1;
+        $id_user_vs_address = $order['address_id'] ?? null;
+        // $id_user_vs_address = $order['user_address_id'] ?? null;
         
         // Fetch products related to this order
         $sql1 = "SELECT * FROM order_vs_product WHERE order_id = ?";

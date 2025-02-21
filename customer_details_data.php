@@ -18,8 +18,10 @@ if($REQUEST_METHOD == "GET") {
     $categories = array();
 
     $status = "";
-    $sql = "SELECT * FROM users ";
+    // $sql = "SELECT * FROM users ";
+    $sql = "SELECT * FROM users where user_id =2";
     $q = $pdo->query($sql);
+    
     // print_R($sql);
     // exit();
     
@@ -41,7 +43,8 @@ if($REQUEST_METHOD == "GET") {
             "id"=> $row["user_id"],
             "first_name"=> $row["first_name"],
             "customer_id"=> $row["user_id"],
-            "email"=> $row["email"],
+            // "email"=> $row["email"],
+            "email"=> 'Demo@gmail.com',
             "status"=> $status,
             "image"=> "3.png",
             "contact"=> $row["mobile_number"],

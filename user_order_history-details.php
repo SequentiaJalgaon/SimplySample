@@ -205,9 +205,9 @@
                         </div>
                         <div class="d-flex flex-column">
                           <a href="app-user-view-account.html">
-                            <h6 class="mb-0" id="first_name">Loading..</h6>
+                            <h6 class="mb-0 first_name" id="">Loading..</h6>
                           </a>
-                          <span>Customer ID: <span id="">#58909</span> </span>
+                          <span>Customer ID: <span class="customer_id">Loading..</span> </span>
                         </div>
                       </div>
                       <div class="d-flex justify-content-start align-items-center mb-6">
@@ -223,8 +223,8 @@
                           <a href=" javascript:;" data-bs-toggle="modal" data-bs-target="#editUser">Edit</a>
                         </h6> -->
                       </div>
-                      <p class="mb-1">Email: <span id="email"> Loading..</span></p>
-                      <p class="mb-0">Mobile: <span id="contact">+1 (609) 972-22-22 </span></p>
+                      <p class="mb-1">Email: <span class="email"> Loading..</span></p>
+                      <p class="mb-0">Mobile: <span class="contact"> Loading.. </span></p>
                     </div>
                   </div>
 
