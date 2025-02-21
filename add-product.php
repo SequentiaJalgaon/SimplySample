@@ -96,8 +96,8 @@
                     <div
                       class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-6 row-gap-4">
                       <div class="d-flex flex-column justify-content-center">
-                        <h4 class="mb-1">Add a new Product</h4>
-                        <p class="mb-0">Orders placed across your store</p>
+                        <h4 class="mb-1">Add New Product</h4>
+                        <!--<p class="mb-0">Orders placed across your store</p>-->
                       </div>
                       <div class="d-flex align-content-center flex-wrap gap-4">
                         <button type="button" onclick="window.location.href='products'"  class="btn btn-outline-secondary">Discard</button>
@@ -113,7 +113,7 @@
                         <!-- Product Information -->
                         <div class="card mb-6">
                           <div class="card-header">
-                            <h5 class="card-tile mb-0">Product information</h5>
+                            <h5 class="card-tile mb-0">Product Information</h5>
                           </div>
                           <div class="card-body">
                             <div class="form-floating form-floating-outline mb-5">
@@ -124,7 +124,6 @@
                                 placeholder="Product title"
                                 name="productTitle"
                                 aria-label="Product title" 
-                                value="adjskdhgsh djahs djsag djahs djgsa j"
                                 required />
                               <label for="ecommerce-product-name">Product Title*</label>
                             </div>
@@ -508,7 +507,6 @@
                                 placeholder="Price"
                                 name="productPrice"
                                 aria-label="Product price" 
-                                value="100"
                                 required />
                               <label for="ecommerce-product-price">Best Price*</label>
                             </div>
@@ -523,9 +521,8 @@
                                     placeholder="00000"
                                     name="productweight"
                                     aria-label="Product weight" 
-                                    value="200"
                                     required />
-                                  <label for="ecommerce-product-weight">Weight*</label>
+                                  <label for="ecommerce-product-weight">Weight in grams*</label>
                                 </div>
                             <!-- Charge tax check box -->
                             <!-- <div class="form-check m-2 me-0 pb-2">
@@ -541,12 +538,14 @@
                                 </div>
                               </div>
                             </div>
-
+                            <br>
+                            
+                            <!--expiryDate-->
                             <div class="form-floating form-floating-outline">
-                              <input type="text" class="form-control" placeholder="YYYY-MM-DD" id="flatpickr-date" />
-                              <label for="flatpickr-date">Date Picker</label>
+                              <input type="text" class="form-control" placeholder="YYYY-MM-DD" name="expiry_date" id="flatpickr-date" />
+                              <label for="flatpickr-date">Offer Valid Till Date</label>
                             </div>
-
+                            
                           </div>
                         </div>
                         <!-- /Pricing Card -->
@@ -595,17 +594,18 @@
                                   name="brand"
                                   data-allow-clear="true" 
                                   placeholder="Select Brands"
+                                  onchange="fetchCategories(this.value)"
                                   required>
                                   <option selected disabled value="">Select Brands*</option>
-                                  <?php 
-                                      $sql = "SELECT * FROM brands WHERE is_active = '1'";
-                                      $q = $pdo->query($sql);
-                                      foreach ($pdo->query($sql) as $row) {
-                                          if($row['brand_name'] != "") {
-                                            echo "<option selected value =".$row['brand_id'].">".$row['brand_name']."</option>";
-                                          }
-                                      } 
-                                  ?>
+                                //   <?php 
+                                //       $sql = "SELECT * FROM brands WHERE is_active = '1' and status = 'OnBoarded'";
+                                //       $q = $pdo->query($sql);
+                                //       foreach ($pdo->query($sql) as $row) {
+                                //           if($row['brand_name'] != "") {
+                                //             echo "<option value =".$row['brand_id'].">".$row['brand_name']."</option>";
+                                //           }
+                                //       } 
+                                //   ?>
                                 </select>
                                 <label for="brands">Brand*</label>
                                 <div class="invalid-feedback">
@@ -620,16 +620,17 @@
                                   id="select3Basic"
                                   class="select2 form-select form-select-lg"
                                   name="category"
+                                  onchange="fetchSubcategories(this.value)"
                                   data-allow-clear="true" required>
                                   <option selected disabled value="">Select Category*</option>
                                   <?php 
-                                      $sql = "SELECT * FROM category WHERE is_active = '1'";
-                                      $q = $pdo->query($sql);
-                                      foreach ($pdo->query($sql) as $row) {
-                                          if($row['category_name'] != "") {
-                                            echo "<option selected value =".$row['category_id'].">".$row['category_name']."</option>";
-                                          }
-                                      } 
+                                    //   $sql = "SELECT * FROM category WHERE is_active = '1'";
+                                    //   $q = $pdo->query($sql);
+                                    //   foreach ($pdo->query($sql) as $row) {
+                                    //       if($row['category_name'] != "") {
+                                    //         echo "<option value =".$row['category_id'].">".$row['category_name']."</option>";
+                                    //       }
+                                    //   } 
                                   ?>
                                 </select>
                                 <label for="select3Basic">Category*</label>
@@ -648,13 +649,13 @@
                                     data-allow-clear="true" required>
                                     <option selected disabled value="">Select Sub Category*</option>
                                     <?php 
-                                        $sql = "SELECT * FROM sub_category WHERE is_active = '1'";
-                                        $q = $pdo->query($sql);
-                                        foreach ($pdo->query($sql) as $row) {
-                                            if($row['sub_category_name'] != "") {
-                                              echo "<option selected value =".$row['sub_category_id'].">".$row['sub_category_name']."</option>";
-                                            }
-                                        } 
+                                        // $sql = "SELECT * FROM sub_category WHERE is_active = '1'";
+                                        // $q = $pdo->query($sql);
+                                        // foreach ($pdo->query($sql) as $row) {
+                                        //     if($row['sub_category_name'] != "") {
+                                        //       echo "<option value =".$row['sub_category_id'].">".$row['sub_category_name']."</option>";
+                                        //     }
+                                        // } 
                                     ?>
                                   </select>
                                   <label for="select4Basic" class="form-label">Sub Category*</label>
@@ -736,9 +737,11 @@
     <?php include('layout/footer_css.php'); ?>
 
     <!-- Page JS -->
-    <script src="assets/js/forms-pickers.js"></script>
-    <!-- Page JS -->
     <script src="assets/js/app-ecommerce-product-add.js"></script>
+    
+    <script src="assets/js/forms-pickers.js"></script>
+    
+    
     <script>
 
       // var texteditor = document.getElementsByClassName("ql-editor")[0];
@@ -816,7 +819,7 @@
       // }
 
     </script>
-    // To submit the text editor data in the db
+     <!--To submit the text editor data in the db-->
     <!-- document.getElementsByClassName("ql-editor")[2].innerHTML -->
   </body>
 </html>
