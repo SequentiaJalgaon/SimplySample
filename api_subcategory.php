@@ -251,6 +251,13 @@ else if($REQUEST_METHOD == "PUT") {
                         $isUpdated2 = $q->execute(array($category_id, $sub_category_id, '1'));
                     }
                 }
+            } else {
+                $result= ([
+                    "data" => "Category Not Found.",
+                    "sub_categoryTitle" => $subcategoryTitle,
+                    "status" => "fail",
+                    'statusCode' => 400
+                ]);
             }
             
             if($isUpdated == true){
