@@ -16,19 +16,47 @@ if($REQUEST_METHOD == "GET") {
     include("dist/conf/db.php");
     $pdo = Database::connect();
     $categories = array();
-    $sql = "SELECT 
-                c.category_id, c.category_name, s.is_active as sub_is_active,
-                sc.cat_subcat_id, sc.is_active as catsub_is_active,
-                s.sub_category_id, s.sub_category_name,   
-                c.is_active as cat_is_active
-        FROM    category_vs_subcategory sc
-        JOIN    category c ON sc.category_id = c.category_id
-        JOIN    sub_category s ON sc.sub_category_id = s.sub_category_id
-        WHERE   sc.is_active = '1'
-    ";
+    $category_id = 0;
+    if(isset($_GET['category_id'])) {
+        $category_id = intval($_GET['category_id']); 
+    }
+    
+    if($category_id > 0) {
+        $sql = "SELECT 
+                    c.category_id, c.category_name, s.is_active as sub_is_active,
+                    sc.cat_subcat_id, sc.is_active as catsub_is_active,
+                    s.sub_category_id, s.sub_category_name,   
+                    c.is_active as cat_is_active
+            FROM    category_vs_subcategory sc
+            JOIN    category c ON sc.category_id = c.category_id
+            JOIN    sub_category s ON sc.sub_category_id = s.sub_category_id
+            WHERE   sc.is_active = '1' and c.category_id = $category_id
+            ORDER BY sub_category_name
+        ";
+    } else {
+        $sql = "SELECT 
+                    c.category_id, c.category_name, s.is_active as sub_is_active,
+                    sc.cat_subcat_id, sc.is_active as catsub_is_active,
+                    s.sub_category_id, s.sub_category_name,   
+                    c.is_active as cat_is_active
+            FROM    category_vs_subcategory sc
+            JOIN    category c ON sc.category_id = c.category_id
+            JOIN    sub_category s ON sc.sub_category_id = s.sub_category_id
+            WHERE   sc.is_active = '1'
+            ORDER BY sub_category_name
+        ";
+    }
     $q = $pdo->query($sql);
     foreach ($pdo->query($sql) as $row) 
     {
+        $sub_category_id = $row["sub_category_id"];
+        $sqlp = "SELECT count(*) as productCount FROM product_mapping WHERE sub_category_id = $sub_category_id";
+        $qp = $pdo->prepare($sqlp);
+        $qp->execute(array());
+        $subCategoryArray = $qp->fetch(PDO::FETCH_ASSOC);
+        
+        $productCount = $subCategoryArray["productCount"];
+        
         $sub_categoryElement = array (
             "cat_subcat_id" => $row["cat_subcat_id"],
             "id" => $row["sub_category_id"],
@@ -38,7 +66,7 @@ if($REQUEST_METHOD == "GET") {
             "mapping_active" => $row["catsub_is_active"],
             "sub_active" => $row["sub_is_active"],
             "cat_active" => $row["cat_is_active"],
-            "total_products" => 100
+            "total_products" => $productCount
         );
 
         array_push($categories, $sub_categoryElement);
@@ -168,8 +196,11 @@ else if($REQUEST_METHOD == "PUT") {
     $subcategoryTitle = "";
     $parentCategoryName = "";
     $isActive = "";
-
+    $status= "";
+    $categoryID = 0;
+    
     $subCategoryInfo = json_decode(file_get_contents('php://input'), true);
+    
     if($subCategoryInfo != null) {
         $subCategoryInfo = $subCategoryInfo["subCategoryData"];
     }
@@ -192,100 +223,216 @@ else if($REQUEST_METHOD == "PUT") {
         if($isActive == true) $isActive = 1;
     }
 
+    if(isset($subCategoryInfo['status'])) {
+        $status = trim($subCategoryInfo['status']);
+    }
+    
+    if(isset($subCategoryInfo['CategoryID'])) {
+        $categoryID = trim($subCategoryInfo['CategoryID']);
+    }
     
     include("dist/conf/db.php");
     $pdo = Database::connect();
 
-    if(
-        $cat_subcat_id > 0 &&
-        $subcategoryid_edit > 0 &&
-        $subcategoryTitle != "" &&
-        $parentCategoryName != "" &&
-        $isActive != ""    
-    ) {
-
-        $sql = "SELECT * FROM sub_category WHERE sub_category_id = ?";
-        $q = $pdo->prepare($sql);
-        $q->execute(array($subcategoryid_edit));
-        $subCategoryArray = $q->fetch(PDO::FETCH_ASSOC);
-        
-        if($subCategoryArray != "") {
-            
-            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $sql = "UPDATE `sub_category` SET `sub_category_name` = ?, `is_active` = ? WHERE sub_category_id = ?";
+    if($subcategoryid_edit > 0){
+        if(
+            $cat_subcat_id > 0 &&
+            $subcategoryTitle != "" &&
+            $parentCategoryName != "" &&
+            $isActive != ""    
+        ) {
+    
+            $sql = "SELECT * FROM sub_category WHERE sub_category_id = ?";
             $q = $pdo->prepare($sql);
-            $isUpdated = $q->execute(array($subcategoryTitle, $isActive, $subcategoryid_edit));
+            $q->execute(array($subcategoryid_edit));
+            $subCategoryArray = $q->fetch(PDO::FETCH_ASSOC);
             
-            $sql = "SELECT * FROM category WHERE category_name = ?";
-            $q = $pdo->prepare($sql);
-            $q->execute(array($parentCategoryName));
-            $categoryArray = $q->fetch(PDO::FETCH_ASSOC);
-
-            if($categoryArray) {
-                $category_id = $categoryArray['category_id'];
-                $sub_category_id = $subCategoryArray['sub_category_id'];
-
-                $sql = "SELECT * FROM category_vs_subcategory WHERE cat_subcat_id = ?";
+            if($subCategoryArray != "") {
+                
+                $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                $sql = "UPDATE `sub_category` SET `sub_category_name` = ?, `is_active` = ? WHERE sub_category_id = ?";
                 $q = $pdo->prepare($sql);
-                $q->execute(array($cat_subcat_id));
-                $cat_subcat_id_exist = $q->fetch(PDO::FETCH_ASSOC);
-
-                if($cat_subcat_id_exist) {
-
-                    $sql = "SELECT * FROM category_vs_subcategory WHERE category_id = ? AND sub_category_id = ? and is_active = '1'";
+                $isUpdated = $q->execute(array($subcategoryTitle, $isActive, $subcategoryid_edit));
+                
+                $sql = "SELECT * FROM category WHERE category_name = ?";
+                $q = $pdo->prepare($sql);
+                $q->execute(array($parentCategoryName));
+                $categoryArray = $q->fetch(PDO::FETCH_ASSOC);
+    
+                if($categoryArray) {
+                    $category_id = $categoryArray['category_id'];
+                    $sub_category_id = $subCategoryArray['sub_category_id'];
+    
+                    $sql = "SELECT * FROM category_vs_subcategory WHERE cat_subcat_id = ?";
                     $q = $pdo->prepare($sql);
-                    $q->execute(array($category_id, $sub_category_id));
-                    $category_vs_subcategory = $q->fetch(PDO::FETCH_ASSOC);
-
-                    if(!$category_vs_subcategory) {
-                        
-                        if($cat_subcat_id_exist['is_active'] == 1) {
-                            $sql = "UPDATE `category_vs_subcategory` SET `is_active` = '0' WHERE cat_subcat_id = ?";
-                            $q = $pdo->prepare($sql);
-                            $isUpdated1 = $q->execute(array($cat_subcat_id));
-                        }
-
-                        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                        $sql = "INSERT INTO `category_vs_subcategory`(`category_id`,`sub_category_id`,`is_active`) VALUES (?,?,?)";
+                    $q->execute(array($cat_subcat_id));
+                    $cat_subcat_id_exist = $q->fetch(PDO::FETCH_ASSOC);
+    
+                    if($cat_subcat_id_exist) {
+    
+                        $sql = "SELECT * FROM category_vs_subcategory WHERE category_id = ? AND sub_category_id = ? and is_active = '1'";
                         $q = $pdo->prepare($sql);
-                        $isUpdated2 = $q->execute(array($category_id, $sub_category_id, '1'));
+                        $q->execute(array($category_id, $sub_category_id));
+                        $category_vs_subcategory = $q->fetch(PDO::FETCH_ASSOC);
+    
+                        if(!$category_vs_subcategory) {
+                            
+                            if($cat_subcat_id_exist['is_active'] == 1) {
+                                $sql = "UPDATE `category_vs_subcategory` SET `is_active` = '0' WHERE cat_subcat_id = ?";
+                                $q = $pdo->prepare($sql);
+                                $isUpdated1 = $q->execute(array($cat_subcat_id));
+                            }
+    
+                            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                            $sql = "INSERT INTO `category_vs_subcategory`(`category_id`,`sub_category_id`,`is_active`) VALUES (?,?,?)";
+                            $q = $pdo->prepare($sql);
+                            $isUpdated2 = $q->execute(array($category_id, $sub_category_id, '1'));
+                        }
                     }
                 }
-            } else {
+                
+                if($isUpdated == true){
+                    $result= ([
+                        "data" => "Sub Category Updated successfully.",
+                        "sub_categoryTitle" => $subcategoryTitle,
+                        "status" => "success",
+                        'statusCode' => 200
+                    ]);
+                }
+    
+            } 
+            else {
                 $result= ([
-                    "data" => "Category Not Found.",
+                    "data" => "Sub Category Not Found.",
                     "sub_categoryTitle" => $subcategoryTitle,
                     "status" => "fail",
                     'statusCode' => 400
                 ]);
             }
+        } else if($status != "" && $categoryID > 0 && $cat_subcat_id > 0) {
             
-            if($isUpdated == true){
+            $sql = "SELECT * FROM sub_category WHERE sub_category_id = ?";
+            $q = $pdo->prepare($sql);
+            $q->execute(array($subcategoryid_edit));
+            $subCategoryArray = $q->fetch(PDO::FETCH_ASSOC);
+            
+            if($subCategoryArray != "") {
+                $subCategoryTitle = $subCategoryArray["sub_category_name"];
+                 $sql = "SELECT * FROM category WHERE category_id = ?";
+                $q = $pdo->prepare($sql);
+                $q->execute(array($categoryID));
+                $categoryArray = $q->fetch(PDO::FETCH_ASSOC);
+    
+                if($categoryArray) {   
+                    $category_id = $categoryArray['category_id'];
+                    $sub_category_id = $subCategoryArray['sub_category_id'];
+    
+                    $sql = "SELECT * FROM category_vs_subcategory WHERE cat_subcat_id = $cat_subcat_id";
+                    $q = $pdo->prepare($sql);
+                    $q->execute(array());
+                    $cat_subcat_id_exist = $q->fetch(PDO::FETCH_ASSOC);
+                    
+                    if($cat_subcat_id_exist) {
+                        $sql = "SELECT * FROM category_vs_subcategory WHERE category_id = ? AND sub_category_id = ?";
+                        $q = $pdo->prepare($sql);
+                        $q->execute(array($category_id, $sub_category_id));
+                        $category_vs_subcategory = $q->fetch(PDO::FETCH_ASSOC);
+                        
+                        if($category_vs_subcategory) {
+                            
+                            if($status == "delete" && $category_vs_subcategory["is_active"] == '1') {
+                                $sql = "UPDATE `category_vs_subcategory` SET `is_active` = ? WHERE cat_subcat_id = ?";
+                                $q = $pdo->prepare($sql);
+                                $isAdded = $q->execute(array( '0', $cat_subcat_id));
+                                
+                                if($isAdded == true){
+                                    $result= ([
+                                        "data" => "Sub Category Status Updated successfully.",
+                                        "subCategoryTitle" => $subCategoryTitle,
+                                        "status" => "success",
+                                        'statusCode' => 200
+                                    ]);
+                                }
+                
+                            } else if($status == "active" && $category_vs_subcategory["is_active"] == '0') {
+                
+                                $sql = "UPDATE `category_vs_subcategory` SET `is_active` = ? WHERE cat_subcat_id = ?";
+                                $q = $pdo->prepare($sql);
+                                $isAdded = $q->execute(array( '1', $cat_subcat_id));
+                                
+                                if($isAdded == true){
+                                    $result= ([
+                                        "data" => "Sub Category Status Updated successfully.",
+                                        "subCategoryTitle" => $subCategoryTitle,
+                                        "status" => "success",
+                                        'statusCode' => 200
+                                    ]);
+                                }
+                            } else if($status == "") {
+                                $result= ([
+                                    "data" => "Invalid Action.",
+                                    "subCategoryTitle" => "",
+                                    "status" => "fail",
+                                    'statusCode' => 204
+                                ]);
+                            } else {
+                                $result= ([
+                                    "data" => "Status is same.",
+                                    "subCategoryTitle" => "",
+                                    "status" => "fail",
+                                    'statusCode' => 204
+                                ]);
+                            }
+                            
+                        } else {
+                            $result= ([
+                                "data" => "Mapping Not Found.",
+                                "sub_categoryTitle" => $subCategoryTitle,
+                                "status" => "fail",
+                                'statusCode' => 400
+                            ]);
+                        }
+                    } else {
+                        $result= ([
+                            "data" => "Mapping Not Found.",
+                            "sub_categoryTitle" => $subCategoryTitle,
+                            "status" => "fail",
+                            'statusCode' => 400
+                        ]);
+                    }
+                } else {
+                    $result= ([
+                        "data" => "Category Not Found.",
+                        "sub_categoryTitle" => $subCategoryTitle,
+                        "status" => "fail",
+                        'statusCode' => 400
+                    ]);
+                }
+            } else {
                 $result= ([
-                    "data" => "Sub Category Updated successfully.",
-                    "sub_categoryTitle" => $subcategoryTitle,
-                    "status" => "success",
-                    'statusCode' => 200
+                    "data" => "Sub Category Not Found.",
+                    "sub_categoryTitle" => "",
+                    "status" => "fail",
+                    'statusCode' => 400
                 ]);
             }
-
-        } 
-        else {
+        } else {
             $result= ([
-                "data" => "Sub Category Not Found.",
-                "sub_categoryTitle" => $subcategoryTitle,
+                "data" => "Insufficient Information.",
+                "sub_categoryTitle" => "",
                 "status" => "fail",
-                'statusCode' => 400
+                'statusCode' => 200
             ]);
         }
     } else {
         $result= ([
-            "data" => "Incomplete inforamtion.",
-            "sub_categoryTitle" => $subcategoryTitle,
+            "data" => "Sub Category ID empty.",
+            "sub_categoryTitle" => "",
             "status" => "fail",
             'statusCode' => 300
         ]);
     }
+        
 
 } 
 
