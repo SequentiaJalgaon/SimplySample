@@ -93,16 +93,20 @@
                 <div class="container-xxl flex-grow-1 container-p-y">
                   <div class="app-ecommerce">
                     <!-- Edit Product -->
-                    <div
-                      class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-6 row-gap-4">
-                      <div class="d-flex flex-column justify-content-center">
+                
+                    <div class=" col-md-12 d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-centerxx mb-6 row-gap-4">
+                      <!--<div class="col-md-12 d-flex flex-column justify-content-center">-->
                         <h4 class="mb-1">Update Product - <span class="text-danger" id="editProductNameShow"></span></h4>
-                        <p class="mb-0">Orders placed across your store</p>
-                      </div>
-                      <div class="d-flex align-content-center flex-wrap gap-4">
+                        <!--<p class="mb-0">Orders placed across your store</p>-->
+                      <!--</div>-->
+                      <br>
+                    </div>
+                    
+                    <div class=" col-md-12 d-flex flex-column flex-md-row justify-content-end align-items-start align-items-md-centerxx mb-6 row-gap-4">
+                        <!--<div class="col-md-12 d-flex align-content-center flex-wrap gap-4">-->
+                      <div class="d-flex align-content-center flex-wrap">
                         <button type="button" onclick="window.location.href='products'" class="btn btn-outline-secondary">Discard</button>
-                        <!-- <button class="btn btn-outline-primary">Save draft</button> -->
-                        <button name="submit" type="submit" class="btn btn-primary">Update product</button>
+                        <button name="submit" type="submit" class="btn btn-primary ms-3">Update product</button>
                       </div>
                     </div>
 
@@ -220,6 +224,13 @@
                                 </div>
                               </div>
                             </div>
+                            
+                            <br>
+                            <div class="form-floating form-floating-outline">
+                              <input type="text" class="form-control" placeholder="YYYY-MM-DD" name="expiry_date" id="flatpickr-date" />
+                              <label for="flatpickr-date">Offer Valid Till Date</label>
+                            </div>
+                            
                           </div>
                         </div>
                         <!-- /Pricing Card -->
@@ -381,6 +392,7 @@
     <!-- Page JS -->
     <script src="assets/js/app-ecommerce-product-edit.js"></script>
     
+    <script src="assets/js/forms-pickers.js"></script>
     <script>
       function removeProductImage(index) {
         var productImagesDiv = document.querySelectorAll('#dropzone-multi-productImages .dz-preview');
