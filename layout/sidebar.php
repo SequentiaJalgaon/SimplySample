@@ -44,7 +44,7 @@
                         x2="10.3357"
                         y2="24.1155"
                         gradientUnits="userSpaceOnUse">
-                        <stop offset="0" stop-opacity="1" />
+                        <stop offset="0" stop-opacity="1" />a
                         <stop offset="1" stop-opacity="0" />
                       </linearGradient>
                     </defs>
@@ -83,7 +83,7 @@
                   </a>
                 </li>
                 
-                <li class="menu-item active open">
+                <li class="menu-item">
                   <a href="products" class="menu-link menu-toggle">
                   <i class="menu-icon tf-icons ri-home-smile-line"></i>
                     <div data-i18n="Products">Products</div>
@@ -99,7 +99,7 @@
                         <div data-i18n="Add Product">Add Product</div>
                       </a>
                     </li>
-                    <li class="menu-item active">
+                    <li class="menu-item">
                       <a href="category" class="menu-link">
                         <div data-i18n="Category List">Category List</div>
                       </a>
@@ -120,22 +120,22 @@
                   <ul class="menu-sub">
                     <li class="menu-item">
                       <a href="primary-brands" class="menu-link">
-                        <div data-i18n="Pending List">Pending Brands</div>
+                        <div data-i18n="Pending Brands">Pending Brands</div>
                       </a>
                     </li>
                     <li class="menu-item">
                       <a href="approved-brands" class="menu-link">
-                        <div data-i18n="Approved List">Approved Brands</div>
+                        <div data-i18n="Approved Brands">Approved Brands</div>
                       </a>
                     </li>
                     <li class="menu-item">
                       <a href="onboarded-brands" class="menu-link">
-                        <div data-i18n="OnBoarded List">OnBoarded Brands</div>
+                        <div data-i18n="OnBoarded Brands">OnBoarded Brands</div>
                       </a>
                     </li>
                     <li class="menu-item">
                       <a href="rejected-brands" class="menu-link">
-                        <div data-i18n="Rejected List">Rejected Brands</div>
+                        <div data-i18n="Rejected Brands">Rejected Brands</div>
                       </a>
                     </li>
                     
@@ -160,6 +160,54 @@
                     </li>
                   </ul>
                 </li>
+                
+                <li class="menu-item">
+                  <a href="order_users" class="menu-link">
+                  <i class="menu-icon tf-icons ri-home-smile-line"></i>
+                    <div data-i18n="Customer">Customer</div>
+                  </a>
+                </li>
+
+                <!--<li class="menu-item">-->
+                <!--  <a href="javascript:void(0);" class="menu-link menu-toggle">-->
+                <!--  <i class="menu-icon tf-icons ri-home-smile-line"></i>-->
+                <!--    <div data-i18n="Customer">Customer</div>-->
+                <!--  </a>-->
+                <!--  <ul class="menu-sub">-->
+                <!--    <li class="menu-item">-->
+                <!--      <a href="app-ecommerce-customer-all.html" class="menu-link">-->
+                <!--        <div data-i18n="All Customers">All Customers</div>-->
+                <!--      </a>-->
+                <!--    </li>-->
+                <!--    <li class="menu-item">-->
+                <!--      <a href="javascript:void(0);" class="menu-link menu-toggle">-->
+                <!--        <div data-i18n="Customer Details">Customer Details</div>-->
+                <!--      </a>-->
+                <!--      <ul class="menu-sub">-->
+                <!--        <li class="menu-item">-->
+                <!--          <a href="app-ecommerce-customer-details-overview.html" class="menu-link">-->
+                <!--            <div data-i18n="Overview">Overview</div>-->
+                <!--          </a>-->
+                <!--        </li>-->
+                <!--        <li class="menu-item">-->
+                <!--          <a href="app-ecommerce-customer-details-security.html" class="menu-link">-->
+                <!--            <div data-i18n="Security">Security</div>-->
+                <!--          </a>-->
+                <!--        </li>-->
+                <!--        <li class="menu-item">-->
+                <!--          <a href="app-ecommerce-customer-details-billing.html" class="menu-link">-->
+                <!--            <div data-i18n="Address & Billing">Address & Billing</div>-->
+                <!--          </a>-->
+                <!--        </li>-->
+                <!--        <li class="menu-item">-->
+                <!--          <a href="app-ecommerce-customer-details-notifications.html" class="menu-link">-->
+                <!--            <div data-i18n="Notifications">Notifications</div>-->
+                <!--          </a>-->
+                <!--        </li>-->
+                <!--      </ul>-->
+                <!--    </li>-->
+                <!--  </ul>-->
+                <!--</li>-->
 
                 <li class="menu-item">
                   <a href="reviews_rating" class="menu-link">
@@ -168,36 +216,7 @@
                   </a>
                 </li>
                 
-                <li class="menu-item">
-                  <a href="order_users" class="menu-link">
-                  <i class="menu-icon tf-icons ri-home-smile-line"></i>
-                    <div data-i18n="User Orders Flow">User Orders Flow</div>
-                  </a>
-                </li>
-
-                <li class="menu-item">
-                  <a href="javascript:void(0);" class="menu-link menu-toggle">
-                  <i class="menu-icon tf-icons ri-home-smile-line"></i>
-                    <div data-i18n="Manage Reviews">Manage Reviews</div>
-                  </a>
-                  <ul class="menu-sub">
-                    <li class="menu-item">
-                      <a href="reviews_rating" class="menu-link">
-                        <div data-i18n="All Reviews">All Reviews </div>
-                      </a>
-                    </li>
-                    <li class="menu-item">
-                      <a href="reviews_rating_approved" class="menu-link">
-                        <div data-i18n="Published Reviews">Published Reviews</div>
-                      </a>
-                    </li>
-                    <li class="menu-item">
-                      <a href="reviews_rating_rejected" class="menu-link">
-                        <div data-i18n="Rejected Reviews">Rejected Reviews</div>
-                      </a>
-                    </li>
-                  </ul>
-                </li>
+                
 
                 <li class="menu-item">
                   <a href="contact_form" class="menu-link">
