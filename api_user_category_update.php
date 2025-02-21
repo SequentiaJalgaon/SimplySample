@@ -76,7 +76,7 @@ if($REQUEST_METHOD == "POST") {
                 
                 $categoriesString = implode(",", $categories);
                 
-                $sql = "SELECT * FROM category WHERE category_id IN ($categoriesString) ORDER BY $categoriesString ";
+                $sql = "SELECT * FROM category WHERE category_id IN ($categoriesString) ORDER BY category_id";
                 $q = $pdo->prepare($sql);
                 $q->execute(array());
                 $categoriesFound = $q->fetchAll(PDO::FETCH_ASSOC);
