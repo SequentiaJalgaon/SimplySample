@@ -29,6 +29,10 @@
       background: #640062 !important;
       border: 1px solid #640062 !important;
   }
+  td,
+  th {
+      text-transform: capitalize !important;
+  }
 </style>
         <nav
             class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
