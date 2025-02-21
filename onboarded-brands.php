@@ -63,8 +63,9 @@
                     <table class="datatables-category-list table">
                       <thead>
                         <tr>
+                            <!--<th></th>-->
                             <th></th>
-                            <th></th>
+                            <th>Brand name</th>
                             <th>first name</th>
                             <th>last name</th>
                             <th>email</th>

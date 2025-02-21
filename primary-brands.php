@@ -63,7 +63,7 @@
                     <table class="datatables-category-list table">
                       <thead>
                         <tr>
-                            <th></th>
+                            <!--<th></th>-->
                             <th></th>
                             <th>first name</th>
                             <th>last name</th>

@@ -93,7 +93,7 @@
                     <table class="datatables-sub-category-list table">
                       <thead>
                         <tr>
-                          <th></th>
+                          <!--<th></th>-->
                           <th></th>
                           <th>Sub Categories</th>
                           <!-- <th class="hidden"></th> -->

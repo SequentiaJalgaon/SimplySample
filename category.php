@@ -97,7 +97,7 @@
                       <thead>
                         <tr>
                           <th style="width: 10%;"></th>
-                          <th style="width: 10%;"></th>
+                          <!--<th style="width: 10%;"></th>-->
                           <th style="width: 50%;">Categories</th>
                           <th style="width: 10%;" class="text-nowrap text-sm-end">Status &nbsp;</th>
                           <!-- <th class="text-nowrap text-sm-end">Total Earning</th> -->
