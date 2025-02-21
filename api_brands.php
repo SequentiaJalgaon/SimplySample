@@ -28,65 +28,59 @@ if($REQUEST_METHOD == "GET") {
     $pdo = Database::connect();
     $brands = array();
     $host = "http://".$_SERVER['HTTP_HOST']."/simplysample/uploads/logos/";
-    if($status == "pending") {
+    if($status == "pending" || $status == "Pending") {
 
         $sql = "SELECT 
-                b.brand_id, 
-                b.brand_name, 
-                address_line_1, address_line_2, taluka, city, state, pincode, address_type,
-                document_title, file_title,
+                b.brand_id, b.brand_name, b.status, requested_categories,
                 first_name, last_name, contact_number, email, registration_year, gst_number, brand_logo, food_licence_number,
-                bc.category_id, c.category_name,
-                business_name,
-                b.is_active as brands_is_active, 
-                ba.is_active as ba_is_active, 
-                bd.is_active as bd_is_active,
-                bc.is_active as bc_is_active, 
-                bb.is_active as bb_is_active, 
-                bu.is_active as bu_is_active
+                b.is_active as brands_is_active
             FROM    brands b
-            JOIN    brand_address ba ON ba.brand_id = b.brand_id
-            JOIN    brand_documents bd ON bd.brand_id = b.brand_id
             JOIN    brand_info bi ON bi.brand_id = b.brand_id
-            JOIN    brand_vs_category bc ON bc.brand_id = b.brand_id
-            JOIN    category c ON c.category_id = bc.category_id
-            JOIN    business_vs_brand bb ON bb.brand_id = b.brand_id
-            JOIN    business bu ON bu.business_id = bb.business_id
-            WHERE   status = 'Pending'
+            WHERE    b.status = 'Pending'
             GROUP BY b.brand_id
         ";
     } else if($status == "approved") {
 
+        // $sql = "SELECT 
+        //         b.brand_id, 
+        //         b.brand_name, 
+        //         address_line_1, address_line_2, taluka, city, state, pincode, address_type,
+        //         document_title, file_title,
+        //         first_name, last_name, contact_number, email, registration_year, gst_number, brand_logo, food_licence_number,
+        //         bc.category_id, c.category_name,
+        //         business_name,
+        //         b.is_active as brands_is_active, 
+        //         ba.is_active as ba_is_active, 
+        //         bd.is_active as bd_is_active,
+        //         bc.is_active as bc_is_active, 
+        //         bb.is_active as bb_is_active, 
+        //         bu.is_active as bu_is_active
+        //     FROM    brands b
+        //     JOIN    brand_address ba ON ba.brand_id = b.brand_id
+        //     JOIN    brand_documents bd ON bd.brand_id = b.brand_id
+        //     JOIN    brand_info bi ON bi.brand_id = b.brand_id
+        //     JOIN    brand_vs_category bc ON bc.brand_id = b.brand_id
+        //     JOIN    category c ON c.category_id = bc.category_id
+        //     JOIN    business_vs_brand bb ON bb.brand_id = b.brand_id
+        //     JOIN    business bu ON bu.business_id = bb.business_id
+        //     WHERE   status = 'Approved'
+        //     GROUP BY b.brand_id
+        // ";
+        
         $sql = "SELECT 
-                b.brand_id, 
-                b.brand_name, 
-                address_line_1, address_line_2, taluka, city, state, pincode, address_type,
-                document_title, file_title,
+                b.brand_id, b.brand_name, b.status, requested_categories,
                 first_name, last_name, contact_number, email, registration_year, gst_number, brand_logo, food_licence_number,
-                bc.category_id, c.category_name,
-                business_name,
-                b.is_active as brands_is_active, 
-                ba.is_active as ba_is_active, 
-                bd.is_active as bd_is_active,
-                bc.is_active as bc_is_active, 
-                bb.is_active as bb_is_active, 
-                bu.is_active as bu_is_active
+                b.is_active as brands_is_active
             FROM    brands b
-            JOIN    brand_address ba ON ba.brand_id = b.brand_id
-            JOIN    brand_documents bd ON bd.brand_id = b.brand_id
             JOIN    brand_info bi ON bi.brand_id = b.brand_id
-            JOIN    brand_vs_category bc ON bc.brand_id = b.brand_id
-            JOIN    category c ON c.category_id = bc.category_id
-            JOIN    business_vs_brand bb ON bb.brand_id = b.brand_id
-            JOIN    business bu ON bu.business_id = bb.business_id
             WHERE   status = 'Approved'
             GROUP BY b.brand_id
         ";
+        
     } else if($status == "onboard") {
 
         $sql = "SELECT 
-                b.brand_id, 
-                b.brand_name, 
+                b.brand_id, b.brand_name, b.status,
                 address_line_1, address_line_2, taluka, city, state, pincode, address_type,
                 document_title, file_title,
                 first_name, last_name, contact_number, email, registration_year, gst_number, brand_logo, food_licence_number,
@@ -112,8 +106,7 @@ if($REQUEST_METHOD == "GET") {
     } else if($status == "rejected") {
 
         $sql = "SELECT 
-                b.brand_id, 
-                b.brand_name, 
+                b.brand_id, b.brand_name, b.status,
                 address_line_1, address_line_2, taluka, city, state, pincode, address_type,
                 document_title, file_title,
                 first_name, last_name, contact_number, email, registration_year, gst_number, brand_logo, food_licence_number,
@@ -139,8 +132,7 @@ if($REQUEST_METHOD == "GET") {
     } else {
 
         $sql = "SELECT 
-                b.brand_id, 
-                b.brand_name, 
+                b.brand_id, b.brand_name, b.status,
                 address_line_1, address_line_2, taluka, city, state, pincode, address_type,
                 document_title, file_title,
                 first_name, last_name, contact_number, email, registration_year, gst_number, brand_logo, food_licence_number,
@@ -160,32 +152,74 @@ if($REQUEST_METHOD == "GET") {
             JOIN    category c ON c.category_id = bc.category_id
             JOIN    business_vs_brand bb ON bb.brand_id = b.brand_id
             JOIN    business bu ON bu.business_id = bb.business_id
-            WHERE   1
+            WHERE   status = 'Onboarded'
             GROUP BY b.brand_id
         ";
 
     }
 
-    $q = $pdo->query($sql);
+    // $q = $pdo->query($sql);
     foreach ($pdo->query($sql) as $row) 
     {
+        $brand_id = $row["brand_id"];
         $categoryArray = array();
         $categoryIds = array();
         $categories = array();
-        $brand_id = $row["brand_id"];
-
-        $sql12 = "SELECT * FROM brand_vs_category bc JOIN category c ON bc.category_id = c.category_id  WHERE brand_id = '$brand_id'";
-        $q12 = $pdo->query($sql12);
-        foreach ($pdo->query($sql12) as $row12) 
-        {
-                array_push($categoryIds, $row12['category_id']);
-                array_push($categories, $row12['category_name']);
-                $categoryElement = [
-                    "category_id" => $row12['category_id'],
-                    "category_name" => $row12['category_name']
-                ];
-                array_push($categoryArray , $categoryElement);
+        
+        if($row['status'] == "Approved" || $row['status'] == "Pending") {
+            $requested_categories = $row['requested_categories'];
+            if($requested_categories != "") {
+                $sql12 = "SELECT * FROM category WHERE category_id  IN ($requested_categories)";
+                $q12 = $pdo->query($sql12);
+                foreach ($pdo->query($sql12) as $row12) 
+                {
+                        array_push($categoryIds, $row12['category_id']);
+                        array_push($categories, $row12['category_name']);
+                        $categoryElement = [
+                            "category_id" => $row12['category_id'],
+                            "category_name" => $row12['category_name']
+                        ];
+                        array_push($categoryArray , $categoryElement);
+                }
+            }
+        } 
+        else {
+            $sql12 = "SELECT * FROM brand_vs_category bc JOIN category c ON bc.category_id = c.category_id  WHERE brand_id = '$brand_id'";
+            $q12 = $pdo->query($sql12);
+            foreach ($pdo->query($sql12) as $row12) 
+            {
+                    array_push($categoryIds, $row12['category_id']);
+                    array_push($categories, $row12['category_name']);
+                    $categoryElement = [
+                        "category_id" => $row12['category_id'],
+                        "category_name" => $row12['category_name']
+                    ];
+                    array_push($categoryArray , $categoryElement);
+            }
         }
+        
+        if(isset($row["brand_id"]))  { $row["brand_id"] = $row["brand_id"]; } else { $row["brand_id"] = ""; }
+        if(isset($row["brand_name"]))  { $row["brand_name"] = $row["brand_name"]; } else { $row["brand_name"] = ""; }
+        if(isset($row["address_line_1"]))  { $row["address_line_1"] = $row["address_line_1"]; } else { $row["address_line_1"] = ""; }
+        if(isset($row["address_line_2"]))  { $row["address_line_2"] = $row["address_line_2"]; } else { $row["address_line_2"] = ""; }
+        if(isset($row["taluka"]))  { $row["taluka"] = $row["taluka"]; } else { $row["taluka"] = ""; }
+        if(isset($row["city"]))  { $row["city"] = $row["city"]; } else { $row["city"] = ""; }
+        if(isset($row["state"]))  { $row["state"] = $row["state"]; } else { $row["state"] = ""; }
+        if(isset($row["pincode"]))  { $row["pincode"] = $row["pincode"]; } else { $row["pincode"] = ""; }
+        if(isset($row["address_type"]))  { $row["address_type"] = $row["address_type"]; } else { $row["address_type"] = ""; }
+        if(isset($row["document_title"]))  { $row["document_title"] = $row["document_title"]; } else { $row["document_title"] = ""; }
+        if(isset($row["file_title"]))  { $row["file_title"] = $row["file_title"]; } else { $row["file_title"] = ""; }
+        if(isset($row["first_name"]))  { $row["first_name"] = $row["first_name"]; } else { $row["first_name"] = ""; }
+        if(isset($row["last_name"]))  { $row["last_name"] = $row["last_name"]; } else { $row["last_name"] = ""; }
+        if(isset($row["contact_number"]))  { $row["contact_number"] = $row["contact_number"]; } else { $row["contact_number"] = ""; }
+        if(isset($row["email"]))  { $row["email"] = $row["email"]; } else { $row["email"] = ""; }
+        if(isset($row["registration_year"]))  { $row["registration_year"] = $row["registration_year"]; } else { $row["registration_year"] = ""; }
+        if(isset($row["gst_number"]))  { $row["gst_number"] = $row["gst_number"]; } else { $row["gst_number"] = ""; }
+        if(isset($row["brand_logo"]))  { $row["brand_logo"] = $host.$row["brand_logo"]; } else { $row["brand_logo"] = ""; }
+        if(isset($row["food_licence_number"]))  { $row["food_licence_number"] = $row["food_licence_number"]; } else { $row["food_licence_number"] = ""; }
+        if(isset($row["business_name"]))  { $row["business_name"] = $row["business_name"]; } else { $row["business_name"] = ""; }
+
+
 
         $brandElement = array (
             "id" => $row["brand_id"],
@@ -205,7 +239,7 @@ if($REQUEST_METHOD == "GET") {
             "email" => $row["email"],
             "registration_year" => $row["registration_year"],
             "gst_number" => $row["gst_number"],
-            "brand_logo" => $host.$row["brand_logo"],
+            "brand_logo" => $row["brand_logo"],
             "food_licence_number" => $row["food_licence_number"],
             "category_id" => implode(",", $categoryIds),
             "categories" => implode(",", $categories),
@@ -215,7 +249,7 @@ if($REQUEST_METHOD == "GET") {
 
         array_push($brands, $brandElement);
     }
-
+    
     if(count($brands) > 0) {
         // echo "<pre>";
         // var_dump (($brands));
@@ -379,7 +413,7 @@ else if($REQUEST_METHOD == "POST") {
 
     // parse_str(file_get_contents('php://input'), $_POST);
     $_POST = json_decode(file_get_contents('php://input'));
-    if(count($_POST) > 0) $_POST = (array) $_POST[0];
+    if(count((array)$_POST) > 0) $_POST = (array) $_POST[0];
 
     if(isset($_POST['firstname'])) {
         $firstname = trim($_POST['firstname']);
