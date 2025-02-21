@@ -541,6 +541,12 @@
                                 </div>
                               </div>
                             </div>
+
+                            <div class="form-floating form-floating-outline">
+                              <input type="text" class="form-control" placeholder="YYYY-MM-DD" id="flatpickr-date" />
+                              <label for="flatpickr-date">Date Picker</label>
+                            </div>
+
                           </div>
                         </div>
                         <!-- /Pricing Card -->
@@ -729,6 +735,8 @@
 
     <?php include('layout/footer_css.php'); ?>
 
+    <!-- Page JS -->
+    <script src="assets/js/forms-pickers.js"></script>
     <!-- Page JS -->
     <script src="assets/js/app-ecommerce-product-add.js"></script>
     <script>
