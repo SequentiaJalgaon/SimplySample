@@ -210,6 +210,156 @@
           document.getElementById("ecommerce-category-description").style.setProperty('border', '2px solid red', 'important');
         }
       };
+      
+      // Function to fetch brands from the API
+        async function fetchBrands() {
+          try {
+            
+            const brandDropdown = document.getElementById('select2Basic');
+            const categoryDropdown = document.getElementById('select3Basic');
+            const subcategoryDropdown = document.getElementById('select4Basic');
+            
+            // Clear category and subcategory and brands dropdowns
+            brandDropdown.innerHTML = '<option value="">Select Brand</option>';
+            categoryDropdown.innerHTML = '<option value="">Select Category</option>';
+            subcategoryDropdown.innerHTML = '<option value="">Select Subcategory</option>';
+            brandDropdown.disabled = true;
+            subcategoryDropdown.disabled = true;
+            categoryDropdown.disabled = true;
+                
+            $.ajax({
+              url: brandsApi,
+              type: 'GET',
+              dataType: 'json', // added data type
+              success: function(data) { 
+                    brandDropdown.disabled = false;
+                    categoryDropdown.disabled = false;
+                    data.data.forEach(brand => {
+                        const option = document.createElement('option');
+                        option.value = brand.id;
+                        option.textContent = brand.brand_name;
+                        brandDropdown.appendChild(option);
+                    });
+                  
+                }
+              });
+            
+          } catch (error) {
+            console.error('Error fetching brands:', error);
+          }
+        }
+        
+        // Function to fetch categories based on selected brand
+        async function fetchCategories(brandId) {
+          try {
+              
+                const categoryDropdown = document.getElementById('select3Basic');
+                const subcategoryDropdown = document.getElementById('select4Basic');
+            
+                // Clear category and subcategory dropdowns
+                categoryDropdown.innerHTML = '<option value="">Select Category</option>';
+                subcategoryDropdown.innerHTML = '<option value="">Select Subcategory</option>';
+                subcategoryDropdown.disabled = true;
+                categoryDropdown.disabled = true;
+            
+                $.ajax({
+                  url: categoryApi+`?brand_id=${brandId}`,
+                  type: 'GET',
+                  dataType: 'json', // added data type
+                  success: function(data) { 
+                        
+                        categoryDropdown.disabled = false;              
+                        subcategoryDropdown.disabled = false;              
+                      
+                        data.data.forEach(categories => {
+                            const option = document.createElement('option');
+                            if(categories.Active == "1") {
+                                option.value = categories.CategoryID;
+                                option.textContent = categories.CategoryName;
+                                categoryDropdown.appendChild(option);
+                            }
+                        });
+                      
+                            
+                    }
+                });
+            
+          } catch (error) {
+            console.error('Error fetching categories:', error);
+          }
+        }
+        
+        // Function to fetch subcategories based on selected category
+        async function fetchSubcategories(categoryId) {
+          try {
+            
+            // Clear subcategory dropdown
+            const subcategoryDropdown = document.getElementById('select4Basic');
+            subcategoryDropdown.innerHTML = '<option value="">Select Subcategory</option>';
+            subcategoryDropdown.disabled = true;
+            
+            $.ajax({
+              url: subcategoryApi+`?category_id=${categoryId}`,
+              type: 'GET',
+              dataType: 'json', // added data type
+              success: function(data) { 
+                  subcategoryDropdown.disabled = false;          
+                  
+                    data.data.forEach(subcategories => {
+                        const option = document.createElement('option');
+                        if(subcategories.mapping_active == "1" && subcategories.sub_active == "1") {
+                            option.value = subcategories.id;
+                            option.textContent = subcategories.sub_categoryName;
+                            subcategoryDropdown.appendChild(option);
+                        }
+                    });
+                  
+                        
+                }
+              });
+              
+              
+          } catch (error) {
+            console.error('Error fetching subcategories:', error);
+          }
+        }
+        
+        // Event listener to fetch categories when a brand is selected
+        document.getElementById('select2Basic').addEventListener('change', function () {
+          const brandId = this.value;
+          const categoryDropdown = document.getElementById('select3Basic');
+          const subcategoryDropdown = document.getElementById('select4Basic');
+        
+          // Clear category and subcategory dropdowns
+          categoryDropdown.innerHTML = '<option value="">Select Category</option>';
+          subcategoryDropdown.innerHTML = '<option value="">Select Subcategory</option>';
+          subcategoryDropdown.disabled = true;
+        
+          if (brandId) {
+            fetchCategories(brandId);
+          } else {
+            categoryDropdown.disabled = true;
+          }
+        });
+        
+        // Event listener to fetch subcategories when a category is selected
+        document.getElementById('select3Basic').addEventListener('change', function () {
+          const categoryId = this.value;
+          const subcategoryDropdown = document.getElementById('select4Basic');
+        
+          // Clear subcategory dropdown
+          subcategoryDropdown.innerHTML = '<option value="">Select Subcategory</option>';
+        
+          if (categoryId) {
+            fetchSubcategories(categoryId);
+          } else {
+            subcategoryDropdown.disabled = true;
+          }
+        });
+        
+        // Load brands when the page loads
+        window.onload = fetchBrands;
+
 
       async function myFunction(event) {
           
@@ -272,6 +422,7 @@
                   var brand = document.getElementById("select2Basic").value;
                   var category = document.getElementById("select3Basic").value;
                   var subcategory = document.getElementById("select4Basic").value;
+                  var expiryDate = document.getElementById("flatpickr-date").value;
       
                   var productData = {
                     productname : productname ,
@@ -282,7 +433,8 @@
                     brand : brand ,
                     category : category ,
                     subcategory : subcategory ,
-                    image : imagesSaved
+                    image : imagesSaved,
+                    expiryDate : expiryDate
                   };
 
 
@@ -675,3 +827,4 @@
       //         console.error('Error during fetch:', error);
       //     }
       // }
+     
